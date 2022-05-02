@@ -146,7 +146,7 @@ let Dashboard = () => {
                                                     <span className="direct-chat-timestamp float-right">23 Jan 2:00 pm</span>
                                                 </div>
                                                 {/* /.direct-chat-infos */}
-                                                <img className="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image" />
+                                                <img className="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="ramany" />
                                                 {/* /.direct-chat-img */}
                                                 <div className="direct-chat-text">
                                                     Is this template really for free? That's unbelievable!
@@ -161,7 +161,7 @@ let Dashboard = () => {
                                                     <span className="direct-chat-timestamp float-left">23 Jan 2:05 pm</span>
                                                 </div>
                                                 {/* /.direct-chat-infos */}
-                                                <img className="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image" />
+                                                <img className="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="ramany" />
                                                 {/* /.direct-chat-img */}
                                                 <div className="direct-chat-text">
                                                     You better believe it!
@@ -176,7 +176,7 @@ let Dashboard = () => {
                                                     <span className="direct-chat-timestamp float-right">23 Jan 5:37 pm</span>
                                                 </div>
                                                 {/* /.direct-chat-infos */}
-                                                <img className="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="message user image" />
+                                                <img className="direct-chat-img" src="dist/img/user1-128x128.jpg" alt="ramany" />
                                                 {/* /.direct-chat-img */}
                                                 <div className="direct-chat-text">
                                                     Working with AdminLTE on a great new app! Wanna join?
@@ -191,7 +191,7 @@ let Dashboard = () => {
                                                     <span className="direct-chat-timestamp float-left">23 Jan 6:10 pm</span>
                                                 </div>
                                                 {/* /.direct-chat-infos */}
-                                                <img className="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="message user image" />
+                                                <img className="direct-chat-img" src="dist/img/user3-128x128.jpg" alt="ramany" />
                                                 {/* /.direct-chat-img */}
                                                 <div className="direct-chat-text">
                                                     I would love to.
@@ -206,7 +206,7 @@ let Dashboard = () => {
                                             <ul className="contacts-list">
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user1-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user1-128x128.jpg" alt="ramany"/>
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 Count Dracula
@@ -220,7 +220,7 @@ let Dashboard = () => {
                                                 {/* End Contact Item */}
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user7-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user7-128x128.jpg" alt="ramany" />
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 Sarah Doe
@@ -234,7 +234,7 @@ let Dashboard = () => {
                                                 {/* End Contact Item */}
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user3-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user3-128x128.jpg" alt="ramany"/>
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 Nadia Jolie
@@ -248,7 +248,7 @@ let Dashboard = () => {
                                                 {/* End Contact Item */}
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user5-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user5-128x128.jpg" alt="ramany" />
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 Nora S. Vans
@@ -262,7 +262,7 @@ let Dashboard = () => {
                                                 {/* End Contact Item */}
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user6-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user6-128x128.jpg" alt="ramany"/>
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 John K.
@@ -276,7 +276,7 @@ let Dashboard = () => {
                                                 {/* End Contact Item */}
                                                 <li>
                                                     <a href="index3.html">
-                                                        <img className="contacts-list-img" src="dist/img/user8-128x128.jpg" />
+                                                        <img className="contacts-list-img" src="dist/img/user8-128x128.jpg" alt="ramany"/>
                                                         <div className="contacts-list-info">
                                                             <span className="contacts-list-name">
                                                                 Kenneth M.
