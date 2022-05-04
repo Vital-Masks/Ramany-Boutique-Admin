@@ -1,4 +1,5 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
 
 let SideNav = ()=>{
     return(
@@ -36,9 +37,10 @@ let SideNav = ()=>{
           </li>
           <li className="nav-item has-treeview">
             <a href="index3.html" className="nav-link">
+            
               <i className="nav-icon fas fa-copy" />
               <p>
-                Products
+              Products
                 <i className="fas fa-angle-left right" />
                 
               </p>
@@ -47,7 +49,7 @@ let SideNav = ()=>{
               <li className="nav-item">
                 <a href="pages/layout/top-nav.html" className="nav-link">
                   <i className="far fa-circle nav-icon" />
-                  <p>View Products</p>
+                  <p><Link to="/product">View Products</Link></p>
                 </a>
               </li>
               <li className="nav-item">
