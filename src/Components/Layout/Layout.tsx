@@ -1,20 +1,17 @@
-import React from 'react';
-import Footer from './Footer/Footer';
-import SideNav from './SideNav/SideNav';
-import Header from './Header/Header'
-import Dashboard from './Dashboard/Dashboard'
+import React from "react";
+import Footer from "./Footer/Footer";
+import SideNav from "./SideNav/SideNav";
+import Header from "./Header/Header";
 
-let Layout = () => {
-    return (
-        <div className='wrapper'>
-            
-            <Header />
-            <SideNav />
-           <Dashboard/>
-            <Footer />
-            
-        </div>
-    );
-}
+let Layout = ({ children }: { children: any }) => {
+  return (
+    <div className="wrapper">
+      <Header />
+      <SideNav />
+      {children}
+      <Footer />
+    </div>
+  );
+};
 
 export default Layout;
