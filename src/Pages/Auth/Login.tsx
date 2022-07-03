@@ -3,7 +3,7 @@ import React from 'react';
 
 let Login = () => {
     return (
-        <div className='wrapper'>
+        <div >
             <h1>This is Login</h1>            
         </div>
     );

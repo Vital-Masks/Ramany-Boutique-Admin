@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 let SideNav = ()=>{
     return(
@@ -27,13 +27,13 @@ let SideNav = ()=>{
           {/* Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library */}
          
-          <li className="nav-item">
-            <a href="pages/widgets.html" className="nav-link">
+          <li className="nav-item ">
+            <Link to="/" className="nav-link">
               <i className="nav-icon fas fa-th" />
               <p>
-                Main Dashboard                
+              Main Dashboard   
               </p>
-            </a>
+            </Link>
           </li>
           <li className="nav-item has-treeview">
             <a href="index3.html" className="nav-link">
@@ -47,16 +47,16 @@ let SideNav = ()=>{
             </a>
             <ul className="nav nav-treeview">
               <li className="nav-item">
-                <a href="pages/layout/top-nav.html" className="nav-link">
+                <Link to="/viewProducts" className="nav-link">
                   <i className="far fa-circle nav-icon" />
-                  <p><Link to="/product">View Products</Link></p>
-                </a>
+                  <p>View Products</p>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="pages/layout/boxed.html" className="nav-link">
+              <Link to="/addProduct" className="nav-link">
                   <i className="far fa-circle nav-icon" />
                   <p>Add Product</p>
-                </a>
+                </Link>
               </li>        
             </ul>
           </li>
