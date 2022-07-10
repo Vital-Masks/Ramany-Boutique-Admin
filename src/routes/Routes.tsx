@@ -4,7 +4,7 @@ import {
     Route,
 } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
-import { Dashboard, Login, ViewProducts, AddProduct } from "../Pages";
+import { Dashboard, Login, ViewCloths, AddCloth, UpdateCloth } from "../Pages";
 
 function Routes() {
     const loggedIn = true;
@@ -15,8 +15,9 @@ function Routes() {
                 <Layout>
                     <Switch>
                         <Route path="/" element={<Dashboard />} />
-                        <Route path="/viewProducts" element={<ViewProducts />} />
-                        <Route path="/addProduct" element={<AddProduct />} />
+                        <Route path="/viewCloths" element={<ViewCloths />} />
+                        <Route path="/addCloth" element={<AddCloth />} />
+                        <Route path="/updateCloth" element={<UpdateCloth/>}/>
                     </Switch>
                 </Layout>
             </Router>

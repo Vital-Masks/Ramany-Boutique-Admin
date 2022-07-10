@@ -47,13 +47,13 @@ let SideNav = ()=>{
             </a>
             <ul className="nav nav-treeview">
               <li className="nav-item">
-                <Link to="/viewProducts" className="nav-link">
+                <Link to="/viewCloths" className="nav-link">
                   <i className="far fa-circle nav-icon" />
                   <p>View Products</p>
                 </Link>
               </li>
               <li className="nav-item">
-              <Link to="/addProduct" className="nav-link">
+              <Link to="/addCloth" className="nav-link">
                   <i className="far fa-circle nav-icon" />
                   <p>Add Product</p>
                 </Link>
