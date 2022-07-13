@@ -99,7 +99,7 @@ let SideNav = ()=>{
          
           {/* <li className="nav-header">Manage Orders</li> */}
           <li className="nav-item">
-            <a href="https://adminlte.io/docs/3.0" className="nav-link">
+            <a className="nav-link">
               <i className="nav-icon fas fa-file" />
               <p>Manage Orders</p>
             </a>
