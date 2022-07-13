@@ -3,3 +3,7 @@ export { default as Dashboard } from './Dashboard/Dashboard';
 export { default as ViewCloths } from './Cloth/ViewCloths';
 export { default as AddCloth} from './Cloth/AddCloth'
 export { default as UpdateCloth} from './Cloth/UpdateCloth'
+export { default as ViewJewellerys } from './Jewellery/ViewJewellery';
+export { default as AddJewellery} from './Jewellery/AddJewlellery'
+export { default as UpdateJewellery} from './Jewellery/UpdateJewellery'
+export { default as Categories} from './Categories/Categories'

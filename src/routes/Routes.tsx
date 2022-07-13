@@ -4,7 +4,7 @@ import {
     Route,
 } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
-import { Dashboard, Login, ViewCloths, AddCloth, UpdateCloth } from "../Pages";
+import { Dashboard, Login, ViewCloths, AddCloth, UpdateCloth, ViewJewellerys, AddJewellery,UpdateJewellery , Categories} from "../Pages";
 
 function Routes() {
     const loggedIn = true;
@@ -18,6 +18,10 @@ function Routes() {
                         <Route path="/viewCloths" element={<ViewCloths />} />
                         <Route path="/addCloth" element={<AddCloth />} />
                         <Route path="/updateCloth" element={<UpdateCloth/>}/>
+                        <Route path="/viewJewellerys" element={<ViewJewellerys />} />
+                        <Route path="/addJewellery" element={<AddJewellery />} />
+                        <Route path="/updateJewellery" element={<UpdateJewellery/>}/>
+                        <Route path="/categories" element={<Categories/>}/>
                     </Switch>
                 </Layout>
             </Router>

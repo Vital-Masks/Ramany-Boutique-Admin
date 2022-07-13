@@ -60,16 +60,41 @@ let SideNav = ()=>{
               </li>        
             </ul>
           </li>
+          <li className="nav-item has-treeview">
+            <a href="index3.html" className="nav-link">
+            
+              <i className="nav-icon fas fa-copy" />
+              <p>
+              Jewellery
+                <i className="fas fa-angle-left right" />
+                
+              </p>
+            </a>
+            <ul className="nav nav-treeview">
+              <li className="nav-item">
+                <Link to="/viewJewellerys" className="nav-link">
+                  <i className="far fa-circle nav-icon" />
+                  <p>View Jewelleries</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+              <Link to="/addJewellery" className="nav-link">
+                  <i className="far fa-circle nav-icon" />
+                  <p>Add Jewellery</p>
+                </Link>
+              </li>        
+            </ul>
+          </li>
          
           {/* <li className="nav-header">Category</li> */}
           <li className="nav-item">
-            <a href="pages/calendar.html" className="nav-link">
+            <Link to="/categories"className="nav-link">
               <i className="nav-icon far fa-calendar-alt" />
               <p>
                 Manage Categories
                 {/* <span className="badge badge-info right">2</span> */}
               </p>
-            </a>
+              </Link>
           </li>
          
           {/* <li className="nav-header">Manage Orders</li> */}
