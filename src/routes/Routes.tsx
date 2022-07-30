@@ -1,20 +1,40 @@
+import { Console } from 'console';
+import React, { useState } from 'react';
 import {
     BrowserRouter as Router,
     Routes as Switch,
     Route,
 } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
-import { Dashboard, Login, ViewCloths, AddCloth, UpdateCloth, ViewJewellerys, AddJewellery,UpdateJewellery , Categories} from "../Pages";
+import { Dashboard, ViewCloths, AddCloth, UpdateCloth, ViewJewellerys, AddJewellery,UpdateJewellery , Categories, Login} from "../Pages";
+
+function setToken(userToken) {
+    sessionStorage.setItem('token', JSON.stringify(userToken));
+}
+
+function getToken() {
+    const tokenString: any = sessionStorage.getItem('token');
+    const userToken = JSON.parse(tokenString);
+    
+    if(userToken){
+        return userToken
+    }
+    
+    return userToken?.token
+
+}
+
 
 function Routes() {
-    const loggedIn = true;
+    const token = getToken();
 
-    const layouts = () => {
+        const layouts = () => {
         return (
             <Router>
                 <Layout>
                     <Switch>
-                        <Route path="/" element={<Dashboard />} />
+                        {/* <Route path="/login" element={<Login />} /> */}
+                        <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/viewCloths" element={<ViewCloths />} />
                         <Route path="/addCloth" element={<AddCloth />} />
                         <Route path="/updateCloth" element={<UpdateCloth/>}/>
@@ -32,7 +52,7 @@ function Routes() {
         return(
         <Router>
             <Switch>
-                <Route path="/login" element={<Login />} />
+                <Route path="/login" element={<Login setToken={setToken}/>} />
             </Switch>
         </Router>
         );
@@ -41,7 +61,7 @@ function Routes() {
     return (
         <>
             {
-                loggedIn ? layouts() : authLayout()
+                token ? layouts() : authLayout()
             }
         </>
     );

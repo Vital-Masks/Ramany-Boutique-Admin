@@ -1,0 +1,62 @@
+import React from 'react';
+import 'react-dropzone-uploader/dist/styles.css'
+import Dropzone from 'react-dropzone-uploader'
+import { getDroppedOrSelectedFiles } from 'html5-file-selector'
+
+const FileUploadComponent = (setsubImage) => {
+    const fileParams = ({ meta }) => {
+        return { url: 'https://httpbin.org/post' }
+    }
+    const onFileChange = ({ meta, file }, status) => { 
+        console.log("onFIle change", status, meta, file) 
+    }
+    const onSubmit = (files, allFiles) => {
+        setsubImage(allFiles)
+        console.log("allfiles", allFiles)
+        allFiles.forEach(f => {f.remove()
+            console.log("allfiles", f)})
+    }
+    const getFilesFromEvent = (e) => {
+        // return new Promise(resolve => {
+           return getDroppedOrSelectedFiles(e).then(chosenFiles => {
+                // resolve(chosenFiles.map(f => f.fileObject))
+                return chosenFiles.map(f => f.fileObject)
+            // })
+        })
+    }
+    const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
+        const textMsg = files.length > 0 ? 'Upload Again' : 'Select Files'
+        return (
+            <label className="btn btn-danger mt-4">
+                {textMsg}
+                <input
+                    style={{ display: 'none' }}
+                    type="file"
+                    accept={accept}
+                    onChange={e => {
+                        getFilesFromEvent(e).then(chosenFiles => {
+                            onFiles(chosenFiles)
+                        })
+                    }}
+                />
+            </label>
+        )
+    }
+    return (
+        <Dropzone
+            onSubmit={onSubmit}
+            onChangeStatus={onFileChange}
+            InputComponent={selectFileInput}
+            getUploadParams={fileParams}
+            getFilesFromEvent={getFilesFromEvent}
+            accept="image/*,audio/*,video/*"
+            maxFiles={5}
+            inputContent="Drop A File"
+            styles={{
+                dropzone: { width: 600, height: 400 },
+                dropzoneActive: { borderColor: 'green' },
+            }}            
+        />
+    );
+};
+export default FileUploadComponent;

@@ -3,12 +3,17 @@ import styles from './Cloth.module.css'
 import { Link } from 'react-router-dom'
 import ClothService from '../../Services/ClothService'
 import Swal from 'sweetalert2'
+import 'react-dropzone-uploader/dist/styles.css'
+import Dropzone from 'react-dropzone-uploader'
+import { getDroppedOrSelectedFiles } from 'html5-file-selector'
 
 
 
 let AddCloth = () => {
     let occasionsTemp: string[] = [];
     let categoriesTemp: string[] = [];
+    let subImageTemp: any[] = []
+
     let sizeAndCount;
 
     const [occasions, setoccasions] = useState([{}]);
@@ -22,7 +27,7 @@ let AddCloth = () => {
     const [price, setprice] = useState("");
     const [discount, setdiscount] = useState("");
     const [mainImage, setmainImage] = useState("");
-    const [subImage, setsubImage] = useState("");
+    let   [subImage, setsubImage] = useState([{}]);
     const [xsCount, setxsCount] = useState("");
     const [sCount, setsCount] = useState("");
     const [mCount, setmCount] = useState("");
@@ -82,11 +87,75 @@ let AddCloth = () => {
         })
     }
 
+    const fileParams = ({ meta }) => {
+        return { url: 'https://httpbin.org/post' }
+    }
+    const onFileChange =  ({ meta, file }, status) => {
+        console.log("onFIle change", status, meta, file) 
+
+        if(status === 'done'){
+            subImageTemp.push(meta)
+            console.log("subImageFinal",subImageTemp)
+        }
+       setsubImage(subImageTemp)
+        
+
+
+    }
+    const onSubmit = async (files, allFiles) => {
+        // setsubImage(files)
+        subImage.length = 0
+        console.log("allfiles2", files)
+        if(files){
+            return setsubImage(files)
+        }
+        
+        // console.log("subImageFinal",subImage)
+        // files.foreach(element => {
+        //     subImageTemp.push(element)
+        //     // setsubImage(subImageTemp)
+            
+        // });
+        // setsubImage(subImageTemp)
+
+        // allFiles.forEach(f => {
+        //     f.remove()
+        // })
+        
+        
+    }
+    
+    const getFilesFromEvent = (e) => {
+        // return new Promise(resolve => {
+           return getDroppedOrSelectedFiles(e).then(chosenFiles => {
+                // resolve(chosenFiles.map(f => f.fileObject))
+                return chosenFiles.map(f => f.fileObject)
+            // })
+        })
+    }
+    const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
+        const textMsg = files.length > 0 ? 'Upload Again' : 'Select Files'
+        return (
+            <label className="btn btn-danger mt-4">
+                {textMsg}
+                <input
+                    style={{ display: 'none' }}
+                    type="file"
+                    accept={accept}
+                    onChange={e => {
+                        getFilesFromEvent(e).then(chosenFiles => {
+                            onFiles(chosenFiles)
+                        })
+                    }}
+                />
+            </label>
+        )
+    }
+
 
     const saveCloth = async (e) => {
         e.preventDefault();
         setmainImage("Url")
-        setsubImage("url")
         let cloth = {
             clothName: clothName,
             clothCode: clothCode,
@@ -107,8 +176,7 @@ let AddCloth = () => {
             subImage: subImage
 
         }
-        console.log("size", sizeAndCount)
-        console.log("cloth", cloth)
+        console.log("subImage", subImage)
         ClothService.saveCloths(cloth).then(response => {
             if(response['status'] === 200){
                 Swal.fire({
@@ -295,7 +363,25 @@ let AddCloth = () => {
                                         <div className="col-md-6">
                                             <div className="form-group row">
                                                 <label htmlFor="file">Main Image</label>
+                                                {/* <FileUploadComponent multiple= {false}></FileUploadComponent> */}
                                                 <input className={` ${styles.marginCheckRadio}`} type="file" id="file" name="file" multiple></input>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label htmlFor="file">Sub Image</label>
+                                                <Dropzone
+                                                    onSubmit={onSubmit}
+                                                    onChangeStatus={onFileChange}
+                                                    InputComponent={selectFileInput}
+                                                    // getUploadParams={fileParams}
+                                                    getFilesFromEvent={getFilesFromEvent}
+                                                    accept="image/*,audio/*,video/*"
+                                                    maxFiles={5}
+                                                    inputContent="Drop A File"
+                                                    styles={{
+                                                        dropzone: { width: 600, height: 400 },
+                                                        dropzoneActive: { borderColor: 'green' },
+                                                    }}
+                                                />
                                             </div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Description</label>
