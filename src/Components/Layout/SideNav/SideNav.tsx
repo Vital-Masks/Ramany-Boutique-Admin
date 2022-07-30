@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 let SideNav = ()=>{
     return(
@@ -27,13 +27,13 @@ let SideNav = ()=>{
           {/* Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library */}
          
-          <li className="nav-item">
-            <a href="pages/widgets.html" className="nav-link">
+          <li className="nav-item ">
+            <Link to="/" className="nav-link">
               <i className="nav-icon fas fa-th" />
               <p>
-                Main Dashboard                
+              Main Dashboard   
               </p>
-            </a>
+            </Link>
           </li>
           <li className="nav-item has-treeview">
             <a href="index3.html" className="nav-link">
@@ -47,34 +47,59 @@ let SideNav = ()=>{
             </a>
             <ul className="nav nav-treeview">
               <li className="nav-item">
-                <a href="pages/layout/top-nav.html" className="nav-link">
+                <Link to="/viewCloths" className="nav-link">
                   <i className="far fa-circle nav-icon" />
-                  <p><Link to="/product">View Products</Link></p>
-                </a>
+                  <p>View Products</p>
+                </Link>
               </li>
               <li className="nav-item">
-                <a href="pages/layout/boxed.html" className="nav-link">
+              <Link to="/addCloth" className="nav-link">
                   <i className="far fa-circle nav-icon" />
                   <p>Add Product</p>
-                </a>
+                </Link>
+              </li>        
+            </ul>
+          </li>
+          <li className="nav-item has-treeview">
+            <a href="index3.html" className="nav-link">
+            
+              <i className="nav-icon fas fa-copy" />
+              <p>
+              Jewellery
+                <i className="fas fa-angle-left right" />
+                
+              </p>
+            </a>
+            <ul className="nav nav-treeview">
+              <li className="nav-item">
+                <Link to="/viewJewellerys" className="nav-link">
+                  <i className="far fa-circle nav-icon" />
+                  <p>View Jewelleries</p>
+                </Link>
+              </li>
+              <li className="nav-item">
+              <Link to="/addJewellery" className="nav-link">
+                  <i className="far fa-circle nav-icon" />
+                  <p>Add Jewellery</p>
+                </Link>
               </li>        
             </ul>
           </li>
          
           {/* <li className="nav-header">Category</li> */}
           <li className="nav-item">
-            <a href="pages/calendar.html" className="nav-link">
+            <Link to="/categories"className="nav-link">
               <i className="nav-icon far fa-calendar-alt" />
               <p>
                 Manage Categories
                 {/* <span className="badge badge-info right">2</span> */}
               </p>
-            </a>
+              </Link>
           </li>
          
           {/* <li className="nav-header">Manage Orders</li> */}
           <li className="nav-item">
-            <a href="https://adminlte.io/docs/3.0" className="nav-link">
+            <a className="nav-link">
               <i className="nav-icon fas fa-file" />
               <p>Manage Orders</p>
             </a>
