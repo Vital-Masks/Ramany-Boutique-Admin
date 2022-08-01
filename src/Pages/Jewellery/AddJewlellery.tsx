@@ -3,6 +3,11 @@ import styles from './Jewellery.module.css'
 import { Link } from 'react-router-dom'
 import JewelleryService from '../../Services/JewelleryService'
 import Swal from 'sweetalert2'
+import "react-dropzone-uploader/dist/styles.css";
+import Dropzone from "react-dropzone-uploader";
+import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import { json } from "stream/consumers";
+import { any, string } from "prop-types";
 
 
 
@@ -21,8 +26,11 @@ let AddJewellery = () => {
     const [jewelleryingCategoryId, setjewelleryingCategoryId] = useState("");
     const [price, setprice] = useState("");
     const [discount, setdiscount] = useState("");
-    const [mainImage, setmainImage] = useState("");
-    const [subImage, setsubImage] = useState("");
+    const [mainImage, setMainImage] = useState<any>({
+        file: null,
+        base64URL: any
+    })
+    const [subImage, setSubImage] = useState<any[]>([]);
     const [xsCount, setxsCount] = useState("");
     const [sCount, setsCount] = useState("");
     const [mCount, setmCount] = useState("");
@@ -82,11 +90,110 @@ let AddJewellery = () => {
         })
     }
 
+    const getBase64 = file => {
+        return new Promise(resolve => {
+          let fileInfo;
+          let baseURL: any
+          // Make new FileReader
+          let reader = new FileReader();
+    
+          // Convert the file to base64 text
+          reader.readAsDataURL(file);
+    
+          // on reader load somthing...
+          reader.onload = () => {
+            // Make a fileInfo Object
+            // console.log("Called", reader);
+            baseURL = reader.result;
+            // console.log(baseURL);
+            resolve(baseURL);
+          };
+        //   console.log(fileInfo);
+        });
+      };
+
+      const onMainImageChange = ({ meta, file }, status) => {
+        if (status === "done") {
+            console.log("fileParams", file, meta)
+
+            // setMainImage([...mainImage, file]);
+            // body.append('mainImage', file)
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    // console.log("File Is", typeof(result) );
+                    setMainImage({
+                        base64URL: result ,
+                        file: meta
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // setMainImage(file);
+        }
+
+        if (status === "removed") {
+            // setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
+            setMainImage([])
+        }
+    };
+
+    const onSubImageChange = ({ meta, file }, status) => {
+		if (status === "done") {
+			// setSubImage([...subImage, file]);
+            // setSubImage(file);
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    // console.log("File Is", typeof(result) );
+                    setSubImage([...subImage,{
+                        base64URL: result ,
+                        file: meta
+                    }]);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // body.append('mainImage', file)
+		}
+
+		if (status === "removed") {
+			setSubImage(subImage.filter((x) => x.file.id !== meta.id));
+		}
+	};
+
+    const getFilesFromEvent = (e) => {
+		// return new Promise(resolve => {
+		return getDroppedOrSelectedFiles(e).then((chosenFiles) => {
+			// resolve(chosenFiles.map(f => f.fileObject))
+			return chosenFiles.map((f) => f.fileObject);
+			// })
+		});
+	};
+
+    const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
+		const textMsg = files.length > 0 ? "Upload Again" : "Select Files";
+		return (
+			<label className="btn btn-danger mt-4">
+				{textMsg}
+				<input
+					style={{ display: "none" }}
+					type="file"
+					accept={accept}
+					onChange={(e) => {
+						getFilesFromEvent(e).then((chosenFiles) => {
+							onFiles(chosenFiles);
+						});
+					}}
+				/>
+			</label>
+		);
+	};
+
 
     const saveJewellery = async (e) => {
         e.preventDefault();
-        setmainImage("Url")
-        setsubImage("url")
         let jewellery = {
             jewelleryName: jewelleryName,
             jewelleryCode: jewelleryCode,
@@ -294,9 +401,46 @@ let AddJewellery = () => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group row">
-                                                <label htmlFor="file">Main Image</label>
-                                                <input className={` ${styles.marginCheckRadio}`} type="file" id="file" name="file" multiple></input>
-                                            </div>
+                                            <label htmlFor="file">Main Image</label>
+												{/* <FileUploadComponent multiple= {false}></FileUploadComponent> */}
+												{/* <input
+													className={` ${styles.marginCheckRadio}`}
+													type="file"
+													id="file"
+													name="file"
+                                                    accept="image/*,audio/*,video/*"
+                                                    onChange={mainImageHandler}
+												></input> */}
+                                                <Dropzone
+													onChangeStatus={onMainImageChange}
+													InputComponent={selectFileInput}
+													// getUploadParams={fileParams}
+													getFilesFromEvent={getFilesFromEvent}
+													accept="image/*,audio/*,video/*"
+													maxFiles={1}
+													inputContent="Drop A File"
+													styles={{
+														dropzone: { width: 600, height: 100 },
+														dropzoneActive: { borderColor: "green" },
+													}}
+												/>
+											</div>
+                                            <div className="form-group row">
+												<label htmlFor="file">Sub Image</label>
+												<Dropzone
+													onChangeStatus={onSubImageChange}
+													InputComponent={selectFileInput}
+													// getUploadParams={fileParams}
+													getFilesFromEvent={getFilesFromEvent}
+													accept="image/*,audio/*,video/*"
+													maxFiles={5}
+													inputContent="Drop A File"
+													styles={{
+														dropzone: { width: 600, height: 400 },
+														dropzoneActive: { borderColor: "green" },
+													}}
+												/>
+											</div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Description</label>
                                                 <div className="col-sm-10">

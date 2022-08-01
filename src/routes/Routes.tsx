@@ -1,3 +1,5 @@
+import path from "path";
+import { element } from "prop-types";
 import { useEffect } from "react";
 import { Routes as Switch, Route, Navigate, useNavigate } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
@@ -34,7 +36,12 @@ function Routes() {
 
 	useEffect(() => {
 		if (!token) {
-			navigate("/login");
+			// navigate("/login");
+            // return (
+                <Switch>
+                    <Route path="/login" element={<Login setToken={setToken} />} />
+                 </Switch>
+            // );
 		}
 	}, []);
 
@@ -50,7 +57,7 @@ function Routes() {
 					<Route path="/addJewellery" element={<AddJewellery />} />
 					<Route path="/updateJewellery" element={<UpdateJewellery />} />
 					<Route path="/categories" element={<Categories />} />
-					<Route path="/login" element={<Login setToken={setToken} />} />
+					{/* <Route path="/login" element={<Login setToken={setToken} />} /> */}
 				</Switch>
 			</Layout>
 		);

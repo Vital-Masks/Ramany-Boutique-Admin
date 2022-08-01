@@ -6,6 +6,8 @@ import Swal from "sweetalert2";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import { json } from "stream/consumers";
+import { any, string } from "prop-types";
 
 const AddCloth = () => {
 	const [occasions, setOccasions] = useState<any[]>([]);
@@ -17,12 +19,15 @@ const AddCloth = () => {
 	const [occasionTypeId, setOccasionTypeId] = useState<string[]>([]);
 	const [clothingCategoryId, setClothingCategoryId] = useState("");
 	const [price, setPrice] = useState("");
-	const [discount, setDiscount] = useState("");
-	const [mainImage, setMainImage] = useState("");
-	const [subImage, setSubImage] = useState<any[]>([]);
-	const [xsCount, setxsCount] = useState("");
-	const [sCount, setsCount] = useState("");
-	const [mCount, setmCount] = useState("");
+    const [discount, setDiscount] = useState("");
+    const [mainImage, setMainImage] = useState<any>({
+        file: null,
+        base64URL: any
+    })
+    const [subImage, setSubImage] = useState<any[]>([]);
+    const [xsCount, setxsCount] = useState("");
+    const [sCount, setsCount] = useState("");
+    const [mCount, setmCount] = useState("");
 	const [lCount, setlCount] = useState("");
 	const [xlCount, setxlCount] = useState("");
 	const [xxlCount, setxxlCount] = useState("");
@@ -35,6 +40,7 @@ const AddCloth = () => {
 	const [customAlterations, setCustomAlterations] = useState("");
 
 	const [alertOpen, setAlertOpen] = useState(false);
+    const body = new FormData()
 
 	let sizeAndCount = [
 		{
@@ -83,17 +89,82 @@ const AddCloth = () => {
 		});
 	};
 
-	const fileParams = ({ meta }) => {
-		return { url: "https://httpbin.org/post" };
-	};
+    // const fileParams = ({ file,meta }) => {
+    //     // console.log("fileParams", file, meta )
+    //     const body = new FormData()
+    //     body.append('fileField', file)
+	// 	return { url: "https://httpbin.org/post" , body};
+	// };
+    const getBase64 = file => {
+        return new Promise(resolve => {
+          let fileInfo;
+          let baseURL: any
+          // Make new FileReader
+          let reader = new FileReader();
+    
+          // Convert the file to base64 text
+          reader.readAsDataURL(file);
+    
+          // on reader load somthing...
+          reader.onload = () => {
+            // Make a fileInfo Object
+            // console.log("Called", reader);
+            baseURL = reader.result;
+            // console.log(baseURL);
+            resolve(baseURL);
+          };
+        //   console.log(fileInfo);
+        });
+      };
 
-	const onFileChange = ({ meta, file }, status) => {
+    const onMainImageChange = ({ meta, file }, status) => {
+        if (status === "done") {
+            console.log("fileParams", file, meta)
+
+            // setMainImage([...mainImage, file]);
+            // body.append('mainImage', file)
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    // console.log("File Is", typeof(result) );
+                    setMainImage({
+                        base64URL: result ,
+                        file: meta
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // setMainImage(file);
+        }
+
+        if (status === "removed") {
+            // setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
+            setMainImage([])
+        }
+    };
+
+	const onSubImageChange = ({ meta, file }, status) => {
 		if (status === "done") {
-			setSubImage([...subImage, meta]);
+			// setSubImage([...subImage, file]);
+            // setSubImage(file);
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    // console.log("File Is", typeof(result) );
+                    setSubImage([...subImage,{
+                        base64URL: result ,
+                        file: meta
+                    }]);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // body.append('mainImage', file)
 		}
 
 		if (status === "removed") {
-			setSubImage(subImage.filter((x) => x.id !== meta.id));
+			setSubImage(subImage.filter((x) => x.file.id !== meta.id));
 		}
 	};
 
@@ -125,8 +196,20 @@ const AddCloth = () => {
 		);
 	};
 
+//    const mainImageHandler = (event) =>{
+//     const formData = new FormData(); 
+//     //FILE INFO NAME WILL BE "my-image-file"
+//     if( event.target.files[0]!=null){
+//         // formData.append('my-image-file', event.target.files[0], event.target.files[0].name);
+//         setMainImage([...mainImage,event.target.files[0]])
+//     }
+    
+//         // setMainImage(event.target.files[0])
+//     }
+
 	const saveCloth = async (e) => {
 		e.preventDefault();
+        
 		// setmainImage("Url");
 		let cloth = {
 			clothName: clothName,
@@ -147,26 +230,44 @@ const AddCloth = () => {
 			mainImage: mainImage,
 			subImage: subImage,
 		};
-		console.log("subImage", cloth);
-		// ClothService.saveCloths(cloth)
-		// 	.then((response) => {
-		// 		if (response["status"] === 200) {
-		// 			Swal.fire({
-		// 				title: "Success",
-		// 				text: "Cloth saved successfully",
-		// 				icon: "success",
-		// 				confirmButtonText: "OK",
-		// 			});
-		// 		}
-		// 	})
-		// 	.catch((err) => {
-		// 		Swal.fire({
-		// 			title: "Oops!",
-		// 			text: "Something Went Wrong",
-		// 			icon: "warning",
-		// 			confirmButtonText: "OK",
-		// 		});
-		// 	});
+        body.append("clothName", clothName)
+        body.append("clothCode", clothCode)
+        body.append("gender", gender)
+        body.append("occasionTypeId", JSON.stringify(occasionTypeId))
+        body.append("clothingCategoryId", clothingCategoryId)
+        body.append("sizeAndCount", JSON.stringify(sizeAndCount))
+        body.append("price", price)
+        body.append("discount", discount)
+        body.append("description", description)
+        body.append("fabric", fabric)
+        body.append("features", features)
+        body.append("measurements", measurements)
+        body.append("style", style)
+        body.append("washInstructions", washInstructions)
+        body.append("customAlterations", customAlterations)
+        body.append("mainImage",  JSON.stringify(mainImage))
+        body.append("subImage", JSON.stringify(subImage))
+        
+		console.log("subImage", body.getAll('mainImage'));
+		ClothService.saveCloths(cloth)
+			.then((response) => {
+				if (response["status"] === 200) {
+					Swal.fire({
+						title: "Success",
+						text: "Cloth saved successfully",
+						icon: "success",
+						confirmButtonText: "OK",
+					});
+				}
+			})
+			.catch((err) => {
+				Swal.fire({
+					title: "Oops!",
+					text: "Something Went Wrong",
+					icon: "warning",
+					confirmButtonText: "OK",
+				});
+			});
 	};
 
 	let handleCheckboxChange = (event) => {
@@ -501,18 +602,32 @@ const AddCloth = () => {
 											<div className="form-group row">
 												<label htmlFor="file">Main Image</label>
 												{/* <FileUploadComponent multiple= {false}></FileUploadComponent> */}
-												<input
+												{/* <input
 													className={` ${styles.marginCheckRadio}`}
 													type="file"
 													id="file"
 													name="file"
-													multiple
-												></input>
+                                                    accept="image/*,audio/*,video/*"
+                                                    onChange={mainImageHandler}
+												></input> */}
+                                                <Dropzone
+													onChangeStatus={onMainImageChange}
+													InputComponent={selectFileInput}
+													// getUploadParams={fileParams}
+													getFilesFromEvent={getFilesFromEvent}
+													accept="image/*,audio/*,video/*"
+													maxFiles={1}
+													inputContent="Drop A File"
+													styles={{
+														dropzone: { width: 600, height: 100 },
+														dropzoneActive: { borderColor: "green" },
+													}}
+												/>
 											</div>
 											<div className="form-group row">
 												<label htmlFor="file">Sub Image</label>
 												<Dropzone
-													onChangeStatus={onFileChange}
+													onChangeStatus={onSubImageChange}
 													InputComponent={selectFileInput}
 													// getUploadParams={fileParams}
 													getFilesFromEvent={getFilesFromEvent}
