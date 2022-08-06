@@ -6,6 +6,7 @@ import Swal from 'sweetalert2'
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import { FormValidator } from '@syncfusion/ej2-inputs';
 
 
 

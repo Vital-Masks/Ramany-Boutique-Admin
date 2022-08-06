@@ -115,19 +115,19 @@ let UpdateCloth = () => {
                         setxsCount(sizeObj.count)
                         break;
                     case 'S':
-                        setxsCount(sizeObj.count)
+                        setsCount(sizeObj.count)
                         break;
                     case 'M':
-                        setxsCount(sizeObj.count)
+                        setmCount(sizeObj.count)
                         break;
                     case 'L':
-                        setxsCount(sizeObj.count)
+                        setlCount(sizeObj.count)
                         break;
                     case 'XL':
-                        setxsCount(sizeObj.count)
+                        setxlCount(sizeObj.count)
                         break;
                     case 'XXL':
-                        setxsCount(sizeObj.count)
+                        setxxlCount(sizeObj.count)
                         break;
                     default:
                         break;

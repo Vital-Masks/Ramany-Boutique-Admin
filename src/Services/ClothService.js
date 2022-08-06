@@ -21,12 +21,7 @@ class ClothService {
   static saveCloths(cloth) {
     console.log("clotyh", cloth);
     let url = "cloths";
-    return api.post(url, cloth ,
-        {
-        // headers: {
-        //   'Content-Type': 'multipart/form-data'
-        // }
-      });
+    return api.post(url, cloth);
   }
 
   static getClothById(id) {

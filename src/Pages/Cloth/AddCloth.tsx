@@ -6,9 +6,11 @@ import Swal from "sweetalert2";
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import { FormValidator } from "@syncfusion/ej2-inputs";
 import { json } from "stream/consumers";
 import { any, string } from "prop-types";
 
+let formObject;
 const AddCloth = () => {
 	const [occasions, setOccasions] = useState<any[]>([]);
 	const [clothingCategories, setClothingCategories] = useState<any[]>([]);
@@ -19,15 +21,15 @@ const AddCloth = () => {
 	const [occasionTypeId, setOccasionTypeId] = useState<string[]>([]);
 	const [clothingCategoryId, setClothingCategoryId] = useState("");
 	const [price, setPrice] = useState("");
-    const [discount, setDiscount] = useState("");
-    const [mainImage, setMainImage] = useState<any>({
-        file: null,
-        base64URL: any
-    })
-    const [subImage, setSubImage] = useState<any[]>([]);
-    const [xsCount, setxsCount] = useState("");
-    const [sCount, setsCount] = useState("");
-    const [mCount, setmCount] = useState("");
+	const [discount, setDiscount] = useState("");
+	const [mainImage, setMainImage] = useState<any>({
+		file: null,
+		base64URL: any,
+	});
+	const [subImage, setSubImage] = useState<any[]>([]);
+	const [xsCount, setxsCount] = useState("");
+	const [sCount, setsCount] = useState("");
+	const [mCount, setmCount] = useState("");
 	const [lCount, setlCount] = useState("");
 	const [xlCount, setxlCount] = useState("");
 	const [xxlCount, setxxlCount] = useState("");
@@ -38,9 +40,6 @@ const AddCloth = () => {
 	const [style, setStyle] = useState("");
 	const [washInstructions, setWashInstructions] = useState("");
 	const [customAlterations, setCustomAlterations] = useState("");
-
-	const [alertOpen, setAlertOpen] = useState(false);
-    const body = new FormData()
 
 	let sizeAndCount = [
 		{
@@ -89,78 +88,81 @@ const AddCloth = () => {
 		});
 	};
 
-    // const fileParams = ({ file,meta }) => {
-    //     // console.log("fileParams", file, meta )
-    //     const body = new FormData()
-    //     body.append('fileField', file)
+	// const fileParams = ({ file,meta }) => {
+	//     // console.log("fileParams", file, meta )
+	//     const body = new FormData()
+	//     body.append('fileField', file)
 	// 	return { url: "https://httpbin.org/post" , body};
 	// };
-    const getBase64 = file => {
-        return new Promise(resolve => {
-          let fileInfo;
-          let baseURL: any
-          // Make new FileReader
-          let reader = new FileReader();
-    
-          // Convert the file to base64 text
-          reader.readAsDataURL(file);
-    
-          // on reader load somthing...
-          reader.onload = () => {
-            // Make a fileInfo Object
-            // console.log("Called", reader);
-            baseURL = reader.result;
-            // console.log(baseURL);
-            resolve(baseURL);
-          };
-        //   console.log(fileInfo);
-        });
-      };
+	const getBase64 = (file) => {
+		return new Promise((resolve) => {
+			let fileInfo;
+			let baseURL: any;
+			// Make new FileReader
+			let reader = new FileReader();
 
-    const onMainImageChange = ({ meta, file }, status) => {
-        if (status === "done") {
-            console.log("fileParams", file, meta)
+			// Convert the file to base64 text
+			reader.readAsDataURL(file);
 
-            // setMainImage([...mainImage, file]);
-            // body.append('mainImage', file)
-            getBase64(file)
-                .then(result => {
-                    file["base64"] = result;
-                    // console.log("File Is", typeof(result) );
-                    setMainImage({
-                        base64URL: result ,
-                        file: meta
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-            // setMainImage(file);
-        }
+			// on reader load somthing...
+			reader.onload = () => {
+				// Make a fileInfo Object
+				// console.log("Called", reader);
+				baseURL = reader.result;
+				// console.log(baseURL);
+				resolve(baseURL);
+			};
+			//   console.log(fileInfo);
+		});
+	};
 
-        if (status === "removed") {
-            // setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
-            setMainImage([])
-        }
-    };
+	const onMainImageChange = ({ meta, file }, status) => {
+		if (status === "done") {
+			console.log("fileParams", file, meta);
+
+			// setMainImage([...mainImage, file]);
+			// body.append('mainImage', file)
+			getBase64(file)
+				.then((result) => {
+					file["base64"] = result;
+					// console.log("File Is", typeof(result) );
+					setMainImage({
+						base64URL: result,
+						file: meta,
+					});
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+			// setMainImage(file);
+		}
+
+		if (status === "removed") {
+			// setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
+			setMainImage([]);
+		}
+	};
 
 	const onSubImageChange = ({ meta, file }, status) => {
 		if (status === "done") {
 			// setSubImage([...subImage, file]);
-            // setSubImage(file);
-            getBase64(file)
-                .then(result => {
-                    file["base64"] = result;
-                    // console.log("File Is", typeof(result) );
-                    setSubImage([...subImage,{
-                        base64URL: result ,
-                        file: meta
-                    }]);
-                })
-                .catch(err => {
-                    console.log(err);
-                });
-            // body.append('mainImage', file)
+			// setSubImage(file);
+			getBase64(file)
+				.then((result) => {
+					file["base64"] = result;
+					// console.log("File Is", typeof(result) );
+					setSubImage([
+						...subImage,
+						{
+							base64URL: result,
+							file: meta,
+						},
+					]);
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+			// body.append('mainImage', file)
 		}
 
 		if (status === "removed") {
@@ -196,20 +198,20 @@ const AddCloth = () => {
 		);
 	};
 
-//    const mainImageHandler = (event) =>{
-//     const formData = new FormData(); 
-//     //FILE INFO NAME WILL BE "my-image-file"
-//     if( event.target.files[0]!=null){
-//         // formData.append('my-image-file', event.target.files[0], event.target.files[0].name);
-//         setMainImage([...mainImage,event.target.files[0]])
-//     }
-    
-//         // setMainImage(event.target.files[0])
-//     }
+	//    const mainImageHandler = (event) =>{
+	//     const formData = new FormData();
+	//     //FILE INFO NAME WILL BE "my-image-file"
+	//     if( event.target.files[0]!=null){
+	//         // formData.append('my-image-file', event.target.files[0], event.target.files[0].name);
+	//         setMainImage([...mainImage,event.target.files[0]])
+	//     }
+
+	//         // setMainImage(event.target.files[0])
+	//     }
 
 	const saveCloth = async (e) => {
 		e.preventDefault();
-        
+
 		// setmainImage("Url");
 		let cloth = {
 			clothName: clothName,
@@ -230,44 +232,39 @@ const AddCloth = () => {
 			mainImage: mainImage,
 			subImage: subImage,
 		};
-        body.append("clothName", clothName)
-        body.append("clothCode", clothCode)
-        body.append("gender", gender)
-        body.append("occasionTypeId", JSON.stringify(occasionTypeId))
-        body.append("clothingCategoryId", clothingCategoryId)
-        body.append("sizeAndCount", JSON.stringify(sizeAndCount))
-        body.append("price", price)
-        body.append("discount", discount)
-        body.append("description", description)
-        body.append("fabric", fabric)
-        body.append("features", features)
-        body.append("measurements", measurements)
-        body.append("style", style)
-        body.append("washInstructions", washInstructions)
-        body.append("customAlterations", customAlterations)
-        body.append("mainImage",  JSON.stringify(mainImage))
-        body.append("subImage", JSON.stringify(subImage))
-        
-		console.log("subImage", body.getAll('mainImage'));
-		ClothService.saveCloths(cloth)
-			.then((response) => {
-				if (response["status"] === 200) {
-					Swal.fire({
-						title: "Success",
-						text: "Cloth saved successfully",
-						icon: "success",
-						confirmButtonText: "OK",
-					});
-				}
-			})
-			.catch((err) => {
+
+		formObject.validate();
+		if (formObject.validate()) {
+			if (cloth.mainImage.file === null ||!cloth.occasionTypeId ||!cloth.clothingCategoryId
+			) {
 				Swal.fire({
-					title: "Oops!",
-					text: "Something Went Wrong",
+					title: "Warning",
+					text: "Mandatory data missing",
 					icon: "warning",
 					confirmButtonText: "OK",
 				});
-			});
+			} else {
+				ClothService.saveCloths(cloth)
+					.then((response) => {
+						if (response["status"] === 200) {
+							Swal.fire({
+								title: "Success",
+								text: "Cloth saved successfully",
+								icon: "success",
+								confirmButtonText: "OK",
+							});
+						}
+					})
+					.catch((err) => {
+						Swal.fire({
+							title: "Oops!",
+							text: "Something Went Wrong",
+							icon: "warning",
+							confirmButtonText: "OK",
+						});
+					});
+			}
+		}
 	};
 
 	let handleCheckboxChange = (event) => {
@@ -282,6 +279,54 @@ const AddCloth = () => {
 
 	useEffect(() => {
 		getAllCategories();
+	}, []);
+
+	useEffect(() => {
+		const options = {
+			// validation rules
+			rules: {
+				clothName: {
+					required: [true, "* Please enter the Cloth Name"],
+				},
+				clothCode: {
+					required: [true, "* Please enter your Cloth Code"],
+				},
+				gender: {
+					required: [true, "* Please select atleast one gender"],
+				},
+				// occasionTypeId: {
+				//     required: [true, '* Please select atleast one Occasion'],
+				// },
+				categoryName: {
+					required: [true, "* Please select atleast one Cloth category"],
+				},
+				xsCount: {
+					number: [true, "Please enter valid count"],
+				},
+				sCount: {
+					number: [true, "Please enter valid count"],
+				},
+				mCount: {
+					number: [true, "Please enter valid count"],
+				},
+				lCount: {
+					number: [true, "Please enter valid count"],
+				},
+				xlCount: {
+					number: [true, "Please enter valid count"],
+				},
+				xxlCount: {
+					number: [true, "Please enter valid count"],
+				},
+				price: {
+					number: [true, "Please enter valid price"],
+				},
+				discount: {
+					number: [true, "Please enter valid discount"],
+				},
+			},
+		};
+		formObject = new FormValidator("#form1", options);
 	}, []);
 
 	return (
@@ -299,7 +344,7 @@ const AddCloth = () => {
 								<h3 className="card-title">Fill the cloth details</h3>
 							</div>
 
-							<form className="form-horizontal">
+							<form id="form1" className="form-horizontal">
 								<div className="card-body">
 									<div className="row">
 										<div className="col-md-6">
@@ -311,13 +356,14 @@ const AddCloth = () => {
 													<input
 														type="text"
 														className="form-control"
+														name="clothName"
 														id="clothName"
 														placeholder="Cloth Name"
-														onChange={(e) =>
-															setClothName(e.target.value)
-														}
+														onChange={(e) => setClothName(e.target.value)}
 														value={clothName}
+														data-msg-containerid="errroForclothName"
 													></input>
+													 <div id="errroForclothName" />
 												</div>
 											</div>
 											<div className="form-group row">
@@ -328,13 +374,14 @@ const AddCloth = () => {
 													<input
 														type="text"
 														className="form-control"
+														name="clothCode"
 														id="clothCode"
 														placeholder="Cloth Code"
-														onChange={(e) =>
-															setClothCode(e.target.value)
-														}
+														onChange={(e) => setClothCode(e.target.value)}
 														value={clothCode}
+														// data-msg-containerid="errroForclothCode"
 													></input>
+													{/* <div id="errroForclothCode" /> */}
 												</div>
 											</div>
 											<div className="form-group row">
@@ -348,8 +395,9 @@ const AddCloth = () => {
 														className="custom-control-input"
 														type="radio"
 														id="menCollections"
-														name="radio1"
+														name="gender"
 														onChange={(e) => setGender("Men")}
+														data-msg-containerid="errroForgender"
 													></input>
 													<label
 														className="custom-control-label"
@@ -365,8 +413,9 @@ const AddCloth = () => {
 														className="custom-control-input"
 														type="radio"
 														id="womenCollections"
-														name="radio1"
+														name="gender"
 														onChange={(e) => setGender("Women")}
+														data-msg-containerid="errroForgender"
 													></input>
 													<label
 														className="custom-control-label"
@@ -375,6 +424,7 @@ const AddCloth = () => {
 														Women Colections
 													</label>
 												</div>
+												<div style={{marginLeft: 30, marginTop: 10}} id="errroForgender" />
 											</div>
 											<div className="form-group row">
 												<label className="col-sm-2 col-form-label">
@@ -384,39 +434,22 @@ const AddCloth = () => {
 													{occasions.length > 0 &&
 														occasions.map((occasion, index) => {
 															return (
-																<div
-																	className="row"
-																	key={occasion["_id"]}
-																>
+																<div className="row" key={occasion["_id"]}>
 																	<div
 																		className={`custom-control custom-checkbox ${styles.marginCheckRadio}`}
 																	>
 																		<input
 																			className="custom-control-input"
 																			type="checkbox"
-																			id={
-																				occasion[
-																					"categoryName"
-																				]
-																			}
+																			id={occasion["categoryName"]}
 																			value={occasion["_id"]}
-																			onChange={
-																				handleCheckboxChange
-																			}
+																			onChange={handleCheckboxChange}
 																		></input>
 																		<label
 																			className="custom-control-label"
-																			htmlFor={
-																				occasion[
-																					"categoryName"
-																				]
-																			}
+																			htmlFor={occasion["categoryName"]}
 																		>
-																			{
-																				occasion[
-																					"categoryName"
-																				]
-																			}
+																			{occasion["categoryName"]}
 																		</label>
 																	</div>
 																</div>
@@ -432,6 +465,7 @@ const AddCloth = () => {
 													<select
 														className="custom-select"
 														defaultValue={"default"}
+														name= "categoryName"
 														onChange={(e) =>
 															setClothingCategoryId(e.target.value)
 														}
@@ -467,12 +501,12 @@ const AddCloth = () => {
 																type="text"
 																className="col-sm-6 form-control form-control-sm"
 																placeholder="Count"
-																onChange={(e) =>
-																	setxsCount(e.target.value)
-																}
+																onChange={(e) => setxsCount(e.target.value)}
 																value={xsCount}
 																name="xsCount"
+																data-msg-containerid="errroForxsCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroForxsCount"/>
 														</div>
 
 														<div className="col-sm-10 row">
@@ -484,12 +518,12 @@ const AddCloth = () => {
 																className="col-sm-6 form-control form-control-sm"
 																id="inputPassword2"
 																placeholder="Count"
-																onChange={(e) =>
-																	setsCount(e.target.value)
-																}
+																onChange={(e) => setsCount(e.target.value)}
 																name="sCount"
 																value={sCount}
+																data-msg-containerid="errroForsCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroForsCount"/>
 														</div>
 
 														<div className="col-sm-10 row">
@@ -500,12 +534,13 @@ const AddCloth = () => {
 																type="text"
 																className="col-sm-6 form-control form-control-sm"
 																id="inputPassword3"
+																name="mCount"
 																placeholder="Count"
-																onChange={(e) =>
-																	setmCount(e.target.value)
-																}
+																onChange={(e) => setmCount(e.target.value)}
 																value={mCount}
+																data-msg-containerid="errroFormCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroFormCount"/>
 														</div>
 
 														<div className="col-sm-10 row">
@@ -516,12 +551,13 @@ const AddCloth = () => {
 																type="text"
 																className="col-sm-6 form-control form-control-sm"
 																id="inputPassword4"
+																name="lCount"
 																placeholder="Count"
-																onChange={(e) =>
-																	setlCount(e.target.value)
-																}
+																onChange={(e) => setlCount(e.target.value)}
 																value={lCount}
+																data-msg-containerid="errroForlCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroForlCount"/>
 														</div>
 
 														<div className="col-sm-10 row">
@@ -532,12 +568,13 @@ const AddCloth = () => {
 																type="text"
 																className="col-sm-6 form-control form-control-sm"
 																id="inputPassword5"
+																name="xlCount"
 																placeholder="Count"
-																onChange={(e) =>
-																	setxlCount(e.target.value)
-																}
+																onChange={(e) => setxlCount(e.target.value)}
 																value={xlCount}
+																data-msg-containerid="errroForxlCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroForxlCount"/>
 														</div>
 
 														<div className="col-sm-10 row">
@@ -548,35 +585,35 @@ const AddCloth = () => {
 																type="text"
 																className="col-sm-6 form-control form-control-sm"
 																id="inputPassword6"
+																name="xxlCount"
 																placeholder="Count"
-																onChange={(e) =>
-																	setxxlCount(e.target.value)
-																}
+																onChange={(e) => setxxlCount(e.target.value)}
 																value={xxlCount}
+																data-msg-containerid="errroForxxlCount"
 															></input>
+															<div style={{marginLeft: '155px', color: 'red'}} id="errroForxxlCount"/>
 														</div>
 													</div>
 												</div>
 											</div>
 											<div className="form-group row">
-												<label className="col-sm-2 col-form-label">
-													Price
-												</label>
+												<label className="col-sm-2 col-form-label">Price</label>
 												<div className="col-sm-10">
 													<div className="input-group">
 														<input
 															type="text"
 															className="form-control"
+															name="price"
 															id="price"
-															onChange={(e) =>
-																setPrice(e.target.value)
-															}
+															onChange={(e) => setPrice(e.target.value)}
 															value={price}
+															data-msg-containerid="errroForprice"
 														></input>
 														<div className="input-group-append">
 															<span className="input-group-text"></span>
 														</div>
 													</div>
+													<div id="errroForprice" />
 												</div>
 											</div>
 											<div className="form-group row">
@@ -588,13 +625,14 @@ const AddCloth = () => {
 														<input
 															type="text"
 															className="form-control"
+															name="discount"
 															id="discount"
-															onChange={(e) =>
-																setDiscount(e.target.value)
-															}
+															onChange={(e) => setDiscount(e.target.value)}
 															value={discount}
+															data-msg-containerid="errroFordiscount"
 														></input>
 													</div>
+													<div id="errroFordiscount" />
 												</div>
 											</div>
 										</div>
@@ -610,7 +648,7 @@ const AddCloth = () => {
                                                     accept="image/*,audio/*,video/*"
                                                     onChange={mainImageHandler}
 												></input> */}
-                                                <Dropzone
+												<Dropzone
 													onChangeStatus={onMainImageChange}
 													InputComponent={selectFileInput}
 													// getUploadParams={fileParams}
@@ -650,9 +688,7 @@ const AddCloth = () => {
 														className="form-control"
 														id="description"
 														placeholder="Description"
-														onChange={(e) =>
-															setDescription(e.target.value)
-														}
+														onChange={(e) => setDescription(e.target.value)}
 														value={description}
 													></input>
 												</div>
@@ -682,9 +718,7 @@ const AddCloth = () => {
 														className="form-control"
 														id="features"
 														placeholder="Features"
-														onChange={(e) =>
-															setFeatures(e.target.value)
-														}
+														onChange={(e) => setFeatures(e.target.value)}
 														value={features}
 													></input>
 												</div>
@@ -699,17 +733,13 @@ const AddCloth = () => {
 														className="form-control"
 														id="measurements"
 														placeholder="Measurements"
-														onChange={(e) =>
-															setMeasurements(e.target.value)
-														}
+														onChange={(e) => setMeasurements(e.target.value)}
 														value={measurements}
 													></input>
 												</div>
 											</div>
 											<div className="form-group row">
-												<label className="col-sm-2 col-form-label">
-													Style
-												</label>
+												<label className="col-sm-2 col-form-label">Style</label>
 												<div className="col-sm-10">
 													<input
 														type="text"
