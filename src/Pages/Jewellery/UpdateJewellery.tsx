@@ -26,6 +26,7 @@ let UpdateJewellery = () => {
     const [gender, setGender] = useState("");
     const [occasionTypeId, setoccasionTypeId] = useState<string[]>([]);
     const [jewelleryingCategoryId, setjewelleryingCategoryId] = useState("");
+    const [quantity, setQuantity] = useState("");
     const [price, setprice] = useState("");
     const [discount, setdiscount] = useState("");
     const [mainImage, setMainImage] = useState<any>({
@@ -33,12 +34,7 @@ let UpdateJewellery = () => {
         base64URL: null
     })
     const [subImage, setSubImage] = useState<any[]>([]);
-    const [xsCount, setxsCount] = useState("");
-    const [sCount, setsCount] = useState("");
-    const [mCount, setmCount] = useState("");
-    const [lCount, setlCount] = useState("");
-    const [xlCount, setxlCount] = useState("");
-    const [xxlCount, setxxlCount] = useState("");
+    
     const [description, setdescription] = useState("");
     const [inclusions, setinclusions] = useState("");
     const [gemStones, setgemStones] = useState("");
@@ -49,33 +45,6 @@ let UpdateJewellery = () => {
 
     const [checkedItems, setCheckedItems] = React.useState(false);
 
-
-    const [alertOpen, setAlertOpen] = useState(false);
-
-    sizeAndCount = [{
-        "size": "XS",
-        "count": xsCount
-    },
-    {
-        "size": "S",
-        "count": sCount
-    },
-    {
-        "size": "M",
-        "count": mCount
-    },
-    {
-        "size": "L",
-        "count": lCount
-    },
-    {
-        "size": "XL",
-        "count": xlCount
-    },
-    {
-        "size": "XXL",
-        "count": xxlCount
-    }]
 
     const getAllCategories = async () => {
         JewelleryService.getAllCategories().then((response) => {
@@ -113,31 +82,7 @@ let UpdateJewellery = () => {
             setcustomization(obj.customization)
             setMainImage(obj.mainImage)
             setSubImage(obj.subImage)
-            obj.sizeAndCount.map(sizeObj => {
-                switch (sizeObj.size) {
-                    case 'XS':
-                        setxsCount(sizeObj.count)
-                        break;
-                    case 'S':
-                        setxsCount(sizeObj.count)
-                        break;
-                    case 'M':
-                        setxsCount(sizeObj.count)
-                        break;
-                    case 'L':
-                        setxsCount(sizeObj.count)
-                        break;
-                    case 'XL':
-                        setxsCount(sizeObj.count)
-                        break;
-                    case 'XXL':
-                        setxsCount(sizeObj.count)
-                        break;
-                    default:
-                        break;
-                }
-
-            })
+            setQuantity(obj.quantity)
 
         })
 
@@ -257,7 +202,7 @@ let UpdateJewellery = () => {
             gender: gender,
             occasionTypeId: occasionTypeId,
             jewelleryingCategoryId: jewelleryingCategoryId,
-            sizeAndCount: sizeAndCount,
+            quantity: quantity,
             price: price,
             discount: discount,
             description: description,
@@ -497,39 +442,13 @@ let UpdateJewellery = () => {
                                             </div>
                                             <div className="form-group row">
 
-                                                <label className="col-sm-2 col-form-label">Size And Count</label>
-                                                <div className="col-md-6">
-                                                    <div className='row'>
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XS</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" placeholder="Count" onChange={(e) => setxsCount(e.target.value)} value={xsCount} name="xsCount"></input>
+                                            <label className="col-sm-2 col-form-label">Quantity</label>
+                                                <div className="col-sm-10">
+                                                    <div className="input-group">
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" placeholder="Quantity" onChange={(e) => setQuantity(e.target.value)} value={quantity} name="quantity"></input>
                                                         </div>
 
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">S</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword2" placeholder="Count" onChange={(e) => setsCount(e.target.value)} name="sCount" value={sCount}></input>
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">M</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword3" placeholder="Count" onChange={(e) => setmCount(e.target.value)} value={mCount}></input>
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">L</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword4" placeholder="Count" onChange={(e) => setlCount(e.target.value)} value={lCount}></input>
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword5" placeholder="Count" onChange={(e) => setxlCount(e.target.value)} value={xlCount}></input>
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XXL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword6" placeholder="Count" onChange={(e) => setxxlCount(e.target.value)} value={xxlCount}></input>
-                                                        </div>
-                                                    </div>
+                                                       
                                                 </div>
 
                                             </div>
