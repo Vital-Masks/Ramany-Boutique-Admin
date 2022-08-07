@@ -94,8 +94,8 @@ let ViewCloths = () => {
                                 <th>Cloth Category </th>
                                 <th>Price</th>
                                 <th>Discount</th>
-                                <th>Main Image</th>
-                                <th>Sub Image</th>
+                                {/* <th>Main Image</th>
+                                <th>Sub Image</th> */}
                             </tr>                           
                         </thead>
                         <tbody>
@@ -106,11 +106,11 @@ let ViewCloths = () => {
                                             <td>{cloth['clothName']}</td>
                                             <td>{cloth['clothCode']}</td>
                                             <td>{cloth['gender']}</td>
-                                            <td>{cloth['clothingCategoryId']['categoryName']}</td>
+                                            <td>{cloth['clothingCategoryId']? cloth['clothingCategoryId']['categoryName'] : null}</td>
                                             <td>{cloth['price']}</td>
                                             <td>{cloth['discount']}</td>
-                                            <td>{cloth['mainImage']}</td>
-                                            <td>{cloth['subImage']}</td>
+                                            {/* <td>{cloth['mainImage']}</td>
+                                            <td>{cloth['subImage']}</td> */}
                                             <td><Link to={{pathname:'/updateCloth', search:`?id=${cloth['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
                                             <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteCloth(cloth['_id'])} >Delete</button></td>
                                         </tr>                                        

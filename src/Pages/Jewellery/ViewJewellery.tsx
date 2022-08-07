@@ -94,8 +94,8 @@ let ViewJewellerys = () => {
                                 <th>Jewellery Category </th>
                                 <th>Price</th>
                                 <th>Discount</th>
-                                <th>Main Image</th>
-                                <th>Sub Image</th>
+                                {/* <th>Main Image</th>
+                                <th>Sub Image</th> */}
                             </tr>                           
                         </thead>
                         <tbody>
@@ -109,8 +109,8 @@ let ViewJewellerys = () => {
                                             <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
                                             <td>{jewellery['price']}</td>
                                             <td>{jewellery['discount']}</td>
-                                            <td>{jewellery['mainImage']}</td>
-                                            <td>{jewellery['subImage']}</td>
+                                            {/* <td>{jewellery['mainImage']}</td>
+                                            <td>{jewellery['subImage']}</td> */}
                                             <td><Link to={{pathname:'/updateJewellery', search:`?id=${jewellery['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
                                             <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteJewellery(jewellery['_id'])} >Delete</button></td>
                                         </tr>                                        

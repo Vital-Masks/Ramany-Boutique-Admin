@@ -3,7 +3,9 @@ import styles from './Cloth.module.css'
 import { Link, useLocation } from 'react-router-dom'
 import ClothService from '../../Services/ClothService'
 import Swal from 'sweetalert2'
-
+import "react-dropzone-uploader/dist/styles.css";
+import Dropzone from "react-dropzone-uploader";
+import { getDroppedOrSelectedFiles } from "html5-file-selector";
 
 
 let UpdateCloth = () => {
@@ -24,8 +26,11 @@ let UpdateCloth = () => {
     const [clothingCategoryId, setclothingCategoryId] = useState("");
     const [price, setprice] = useState("");
     const [discount, setdiscount] = useState("");
-    const [mainImage, setmainImage] = useState("");
-    const [subImage, setsubImage] = useState("");
+    const [mainImage, setMainImage] = useState<any>({
+        file: null,
+        base64URL: null
+    })
+    const [subImage, setSubImage] = useState<any[]>([]);
     const [xsCount, setxsCount] = useState("");
     const [sCount, setsCount] = useState("");
     const [mCount, setmCount] = useState("");
@@ -42,8 +47,6 @@ let UpdateCloth = () => {
     
     const [checkedItems, setCheckedItems] = React.useState(false);
 
-
-    const [alertOpen, setAlertOpen] = useState(false);
 
     sizeAndCount = [{
         "size": "XS",
@@ -104,25 +107,27 @@ let UpdateCloth = () => {
             setstyle(obj.style)
             setwashInstructions(obj.washInstructions)
             setcustomAltrations(obj.customAltrations)
+            setMainImage(obj.mainImage)
+            setSubImage(obj.subImage)
             obj.sizeAndCount.map(sizeObj => {
                 switch (sizeObj.size) {
                     case 'XS':
                         setxsCount(sizeObj.count)
                         break;
                     case 'S':
-                        setxsCount(sizeObj.count)
+                        setsCount(sizeObj.count)
                         break;
                     case 'M':
-                        setxsCount(sizeObj.count)
+                        setmCount(sizeObj.count)
                         break;
                     case 'L':
-                        setxsCount(sizeObj.count)
+                        setlCount(sizeObj.count)
                         break;
                     case 'XL':
-                        setxsCount(sizeObj.count)
+                        setxlCount(sizeObj.count)
                         break;
                     case 'XXL':
-                        setxsCount(sizeObj.count)
+                        setxxlCount(sizeObj.count)
                         break;
                     default:
                         break;
@@ -134,11 +139,116 @@ let UpdateCloth = () => {
         
     }
 
+    const fileParams = ({ meta }) => {
+		return { url: "https://httpbin.org/post" };
+	};
+
+    const getBase64 = file => {
+        return new Promise(resolve => {
+          let fileInfo;
+          let baseURL: any
+          // Make new FileReader
+          let reader = new FileReader();
+    
+          // Convert the file to base64 text
+          reader.readAsDataURL(file);
+    
+          // on reader load somthing...
+          reader.onload = () => {
+            // Make a fileInfo Object
+            // console.log("Called", reader);
+            baseURL = reader.result;
+            // console.log(baseURL);
+            resolve(baseURL);
+          };
+        //   console.log(fileInfo);
+        });
+      };
+
+    const onMainImageChange = ({ meta, file }, status) => {
+        if (status === "done") {
+            console.log("fileParams", file, meta)
+
+            // setMainImage([...mainImage, file]);
+            // body.append('mainImage', file)
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    // console.log("File Is", typeof(result) );
+                    setMainImage({
+                        base64URL: result ,
+                        file: meta
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+            // setMainImage(file);
+        }
+
+        if (status === "removed") {
+            // setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
+            setMainImage([])
+        }
+    };
+
+	const onSubImageChange = ({ meta, file }, status) => {
+		if (status === "done") {
+            getBase64(file)
+                .then(result => {
+                    file["base64"] = result;
+                    setSubImage([...subImage,{
+                        base64URL: result ,
+                        file: meta
+                    }]);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+		}
+
+		if (status === "removed") {
+			setSubImage(subImage.filter((x) => x.file.id !== meta.id));
+		}
+	};
+
+
+	const getFilesFromEvent = (e) => {
+		// return new Promise(resolve => {
+		return getDroppedOrSelectedFiles(e).then((chosenFiles) => {
+			// resolve(chosenFiles.map(f => f.fileObject))
+			return chosenFiles.map((f) => f.fileObject);
+			// })
+		});
+	};
+
+	const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
+		const textMsg = files.length > 0 ? "Upload Again" : "Select Files";
+		return (   
+			<label className="btn btn-danger mt-4">
+				{textMsg}
+				<input
+					style={{ display: "none" }}
+					type="file"
+					accept={accept}
+                    
+					onChange={(e) => {
+						getFilesFromEvent(e).then((chosenFiles) => {
+							onFiles(chosenFiles);
+						});
+					}}
+				/>
+			</label>
+		);
+	};
+
+   
+
 
     const saveCloth = async (e) => {
         e.preventDefault();
-        setmainImage("Url")
-        setsubImage("url")
+        // setmainImage("Url")
+        // setsubImage("url")
         let cloth = {
             _id: clothId,
             clothName: clothName,
@@ -187,8 +297,6 @@ let UpdateCloth = () => {
         var target
         var value 
     let handleCheckboxChange = (event) =>{
-        
-        
         target = event.target;
         value = target.value;
         
@@ -198,6 +306,88 @@ let UpdateCloth = () => {
 
         }else{
             occasionTypeId.splice(value, 1);
+        }
+    }
+    const removeMainImage = (id) => {
+        setMainImage({
+            file: null,
+            base64URL: null
+        })
+      };
+
+      const removeSubImage = (id) => {
+        setSubImage(subImage.filter((x) => x.file.id !== id));
+      };
+
+      
+    let handleMainImageDisplay = () => {
+        if (mainImage.base64URL) {
+            return (
+                <div style={{ border: '2px solid #d9d9d9' , marginLeft : 10 , marginTop: 8 ,padding: 10, borderRadius: 4, height: `150px` }}>
+                    <img
+                        src={mainImage.base64URL}
+                        width="100px"
+                        height="120px"
+                        alt="placeholder grey 100px"
+                    />
+                    <button onClick={() => removeMainImage(mainImage.file.id)}>X</button>
+                </div>
+            )
+        }
+        else{
+            return(
+            <div className={`form-group row` } style={{marginLeft : '10px' }}>
+            <Dropzone
+                onChangeStatus={onMainImageChange}
+                InputComponent={selectFileInput}
+                // getUploadParams={fileParams}
+                getFilesFromEvent={getFilesFromEvent}
+                accept="image/*,audio/*,video/*"
+                maxFiles={1}
+                inputContent="Drop A File"
+                styles={{
+                    dropzone: { width: 600, height: 100 },
+                    dropzoneActive: { borderColor: "green" },
+                }}
+            />
+            </div>)
+        }
+    }
+
+    let handleSubImageDisplay = () => {
+        let subImageLength = subImage.length 
+        if (subImage) {
+            return subImage.map((img, index) => {
+                return (
+                    <div key={img.file.id} style={{ border: '2px solid #d9d9d9', marginLeft: 10, marginTop: 8, padding: 10, borderRadius: 4, height: `150px` }}>
+                            <img
+                                key={img.file.id}
+                                src={img.base64URL}
+                                width="100px"
+                                height="120px"
+                                alt="placeholder grey 100px"
+                            />
+                            <button onClick={() => removeSubImage(img.file.id)}>X</button>
+                    </div>
+
+                )
+            })
+            
+        }
+        if(subImageLength < 4){
+            return(<Dropzone
+                onChangeStatus={onSubImageChange}
+                InputComponent={selectFileInput}
+                // getUploadParams={fileParams}
+                getFilesFromEvent={getFilesFromEvent}
+                accept="image/*,audio/*,video/*"
+                maxFiles={3}
+                inputContent="Drop A File"
+                styles={{
+                    dropzone: { width: 600, height: 100 },
+                    dropzoneActive: { borderColor: "green" },
+                }}
+            />)
         }
     }
     // let chechdiff = ()=>{
@@ -362,8 +552,36 @@ let UpdateCloth = () => {
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group row">
-                                                <label htmlFor="file">Main Image</label>
-                                                <input className={` ${styles.marginCheckRadio}`} type="file" id="file" name="file" multiple></input>
+                                                <label className="col-sm-2 col-form-label">Main Image</label>
+                                                {
+                                                    handleMainImageDisplay()
+                                                }
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-2 col-form-label">Sub Image</label>
+                                                {
+                                                    handleSubImageDisplay()
+                                                }
+                                                
+                                            </div>
+                                            <div className={`form-group row` } style={{marginLeft : '75px' }} >
+                                            {
+                                                    subImage.length < 3 && 
+                                                    <Dropzone
+                                                    onChangeStatus={onSubImageChange}
+                                                    InputComponent={selectFileInput}
+                                                    // getUploadParams={fileParams}
+                                                    getFilesFromEvent={getFilesFromEvent}
+                                                    accept="image/*,audio/*,video/*"
+                                                    maxFiles={3}
+                                                    inputContent="Drop A File"
+                                                    styles={{
+                                                        dropzone: { width: 600, height: 300 },
+                                                        dropzoneActive: { borderColor: "green" },
+                                                    }}
+                                                />
+                                                }
+
                                             </div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Description</label>
