@@ -18,7 +18,7 @@ let SideNav = ()=>{
           <img src="../dist/img/user2-160x160.jpg" className="img-circle elevation-2" alt="ramany" />
         </div>
         <div className="info">
-          <a href="index3.html" className="d-block">Yathushan</a>
+          <a href="" className="d-block">Yathushan</a>
         </div>
       </div>
       {/* Sidebar Menu */}
@@ -36,7 +36,7 @@ let SideNav = ()=>{
             </Link>
           </li>
           <li className="nav-item has-treeview">
-            <a href="index3.html" className="nav-link">
+            <a href="" className="nav-link">
             
               <i className="nav-icon fas fa-copy" />
               <p>
