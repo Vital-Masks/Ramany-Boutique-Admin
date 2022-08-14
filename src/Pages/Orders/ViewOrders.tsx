@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Jewellery.module.css'
 import { Link } from 'react-router-dom'
-import JewelleryService from '../../Services/JewelleryService'
+import OrdersService from '../../Services/OrdersService'
 import Swal from 'sweetalert2'
 
-let ViewJewellerys = () => {
+let ViewOrders = () => {
 
-    const [jewelleryData, setJewelleryData] = useState({
-        jewellerys: []
+    const [ordersData, setOrdersData] = useState({
+        orders: []
     });
   
 
     useEffect(() => {
-        JewelleryService.getAllJewellerys().then((response) => {
+        OrdersService.getAllOrders().then((response) => {
             console.log(response)
-            setJewelleryData(() => ({
-                jewellerys: response.data
+            setOrdersData(() => ({
+                orders: response.data
             }))
 
         }).catch((err) => {
@@ -24,7 +24,7 @@ let ViewJewellerys = () => {
         
     }, []);
 
-    const deleteJewellery = (jewelleryId) => {
+    const deleteOrder = (orderId) => {
       Swal.fire({
         title: "Are you sure?",
         text: "You won't be able to revert this!",
@@ -35,11 +35,11 @@ let ViewJewellerys = () => {
         confirmButtonText: "Yes, delete it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          JewelleryService.deleteJewellery(jewelleryId).then((response) => {
+          OrdersService.deleteOrder(orderId).then((response) => {
             if (response["status"] === 200) {
               Swal.fire({
                 title: "Deleted",
-                text: "Jewellery Deleted Successfully",
+                text: "Order Deleted Successfully",
                 icon: "success",
                 confirmButtonText: "OK",
               }).then((result)=>{
@@ -64,7 +64,7 @@ let ViewJewellerys = () => {
     
 
 
-    let { jewellerys } = jewelleryData
+    let { orders } = ordersData
 
 
     return (
@@ -74,13 +74,13 @@ let ViewJewellerys = () => {
                     <br></br>
                     <div className="row">
                         <div className="col ">
-                            <h3>Jewellery List</h3>
+                            <h3>Orders List</h3>
                         </div>
-                        <div className="col col-lg-2">
+                        {/* <div className="col col-lg-2">
                         <Link to='/addJewellery'>
                             <button type="button" className="btn btn-block btn-success"><i className="fa fa-home" ></i>Add Jewellery</button>
                             </Link>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -88,31 +88,31 @@ let ViewJewellerys = () => {
                     <table id="example1" className="table table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Jewellery Name</th>
-                                <th>Jewellery Code</th>
-                                <th>Gender</th>
-                                <th>Jewellery Category </th>
-                                <th>Price</th>
-                                <th>Discount</th>
-                                <th>Main Image</th>
-                                <th>Sub Image</th>
+                                <th>Order ID</th>
+                                <th>Customer Name</th>
+                                <th>Total Cost </th>
+                                <th>Status</th>
+                                {/* <th>Discount</th> */}
+                                {/* <th>Main Image</th>
+                                <th>Sub Image</th> */}
                             </tr>                           
                         </thead>
                         <tbody>
                             {
-                                jewellerys.length > 0 && jewellerys.map(jewellery => {
+                                orders.length > 0 && orders.map(order => {
                                     return (
-                                        <tr key={jewellery['_id']}>
-                                            <td>{jewellery['jewelleryName']}</td>
-                                            <td>{jewellery['jewelleryCode']}</td>
-                                            <td>{jewellery['gender']}</td>
-                                            <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
+                                        <tr key={order['_id']}>
+                                            <td>{order['_id']}</td>
+                                            <td>{order['customerId']['firstName']}</td>
+                                            <td>{order['totalCost']}</td>
+                                            <td>{order['status']}</td>
+                                            {/* <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
                                             <td>{jewellery['price']}</td>
-                                            <td>{jewellery['discount']}</td>
-                                            <td>{jewellery['mainImage']}</td>
-                                            <td>{jewellery['subImage']}</td>
-                                            <td><Link to={{pathname:'/updateJewellery', search:`?id=${jewellery['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
-                                            <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteJewellery(jewellery['_id'])} >Delete</button></td>
+                                            <td>{jewellery['discount']}</td> */}
+                                            {/* <td>{jewellery['mainImage']}</td>
+                                            <td>{jewellery['subImage']}</td> */}
+                                            <td><Link to={{pathname:'/approveOrder', search:`?id=${order['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
+                                            <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteOrder(order['_id'])} >Delete</button></td>
                                         </tr>                                        
                                     );
                                 })
@@ -125,4 +125,4 @@ let ViewJewellerys = () => {
     );
 }
 
-export default ViewJewellerys;
+export default ViewOrders;

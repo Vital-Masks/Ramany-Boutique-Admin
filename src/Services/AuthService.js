@@ -3,8 +3,10 @@ import api from "./api";
 class AuthService{
 
     static AutheticateUser(credentials){
-        let url = 'login'
-        return api.post(url,credentials)
+        let username = credentials.username
+        let password = credentials.password
+        let url = 'login/admin/'+ username
+        return api.post(url,{ query: { password: password} })
     }
 
 }

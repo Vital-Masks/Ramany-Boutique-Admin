@@ -99,10 +99,10 @@ let SideNav = ()=>{
          
           {/* <li className="nav-header">Manage Orders</li> */}
           <li className="nav-item">
-            <a className="nav-link">
+          <Link to="/viewOrders"className="nav-link">
               <i className="nav-icon fas fa-file" />
               <p>Manage Orders</p>
-            </a>
+           </Link>
           </li>
           <li className="nav-header">Multi Level Analytics</li>
           <li className="nav-item">

@@ -13,6 +13,8 @@ import {
 	UpdateJewellery,
 	Categories,
 	Login,
+	ViewOrders,
+	ApproveOrder
 } from "../Pages";
 
 function setToken(userToken) {
@@ -57,6 +59,8 @@ function Routes() {
 					<Route path="/addJewellery" element={<AddJewellery />} />
 					<Route path="/updateJewellery" element={<UpdateJewellery />} />
 					<Route path="/categories" element={<Categories />} />
+					<Route path="/viewOrders" element={<ViewOrders />} />
+					<Route path="/approveOrder" element={<ApproveOrder />} />
 					{/* <Route path="/login" element={<Login setToken={setToken} />} /> */}
 				</Switch>
 			</Layout>
