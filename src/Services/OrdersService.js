@@ -18,6 +18,11 @@ class OrdersService {
         return api.get(url)
     }
 
+    static changeOrderStatus(orderId, status){
+        let url = 'orders/updateStatus/'+orderId
+        return api.put(url,{ query: { status: status} })
+    }
+
     // static getAllOccasionTypes(categoryType){
     //     let url = 'category'
     //     return api.get(url,{ params: { categoryType } })

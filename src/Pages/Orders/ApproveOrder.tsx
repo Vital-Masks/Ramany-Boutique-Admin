@@ -28,16 +28,7 @@ let ApproveOrder = () => {
     const [clothDetail, setClothDetail] = useState<string[]>([]);
     const [jewelleryDetails, setJewelleryDetails] = useState<string[]>([]);
 
-
-    // const [customerName, setCustomerName] = useState("");
-    // const [customerEmail, setcustomerEmail] = useState("");
-    // const [totalCost, setTotalCost] = useState("");
-    // const [productName, setproductName] = useState("");
-    // const [sizeAndCount, setSizeAndCount] = useState({});
-    // const [totalCost, setTotalCost] = useState("");
-    // const [totalCost, setTotalCost] = useState("");
-    // const [totalCost, setTotalCost] = useState("");
-   
+    const [buttonStatus, setButtonStatus] = useState("")
 
 
    
@@ -51,11 +42,94 @@ let ApproveOrder = () => {
             setCustomerDetail(obj.customerId)
             setClothDetail(obj.clothDetails)
             setJewelleryDetails(obj.jewelleryDetails)
-            // setjewelleryName(obj.jewelleryName)
-            // setjewelleryCode(obj.jewelleryCode)
            
+            if(obj.status === "Pending"){
+                setButtonStatus("Change to In progress")
+            }
+            if(obj.status === "InProgress"){
+                setButtonStatus("Close the Order")
+            }
+            if(obj.status === "Closed"){
+                setButtonStatus("Order already closed successfully.")
+            }
 
         })
+    }
+
+    const changeOrderStatus = () => {
+        if (orderId && order['status'] === "Pending" && buttonStatus === "Change to In progress") {
+            Swal.fire({
+                title: "Are you sure ypu want to"+ buttonStatus + "?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, change it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    OrdersService.changeOrderStatus(orderId, "InProgress").then(response=>{
+                        if (response["status"] === 200) {
+                            Swal.fire({
+                              title: "Success",
+                              text: "The Order has take to In Progress",
+                              icon: "success",
+                              confirmButtonText: "OK",
+                            }).then((result)=>{
+                              if(result.isConfirmed){ 
+                                  window.location.reload()
+                              }
+                            });                          
+                          }
+                          else {
+                            Swal.fire({
+                              title: "Oops!",
+                              text: "Something Went Wrong",
+                              icon: "warning",
+                              confirmButtonText: "OK",
+                            });
+                          }
+                    })
+                }
+            })
+        }
+
+        if (orderId && order['status'] === "InProgress" && buttonStatus === "Close the Order") {
+            Swal.fire({
+                title: "Are you sure you want to "+ buttonStatus + "?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, change it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    OrdersService.changeOrderStatus(orderId, "Closed").then(response=>{
+                        if (response["status"] === 200) {
+                            Swal.fire({
+                              title: "Success",
+                              text: "The Order has been closed Successfully",
+                              icon: "success",
+                              confirmButtonText: "OK",
+                            }).then((result)=>{
+                              if(result.isConfirmed){ 
+                                  window.location.reload()
+                              }
+                            });                          
+                          }
+                          else {
+                            Swal.fire({
+                              title: "Oops!",
+                              text: "Something Went Wrong",
+                              icon: "warning",
+                              confirmButtonText: "OK",
+                            });
+                          }
+                    })
+                }
+            })
+        }
 
     }
 
@@ -146,7 +220,7 @@ let ApproveOrder = () => {
                                         <br />
                                         <b>Order ID:</b> {order['_id']}
                                         <br />
-                                        <b>Status:</b> { order['status'] === 'Pending'? <strong style={{color: 'red'}} > {order['status']} </strong>: <strong style={{color: 'green'}} > order['status'] </strong> }
+                                        <b>Status:</b> { order['status'] === 'Pending'? <strong style={{color: 'red'}} > {order['status']} </strong>: order['status'] === 'InProgress'? <strong style={{color: 'blue'}} > {order['status']} </strong>:<strong style={{color: 'green'}} > {order['status']} </strong> }
                                         <br />
                                         <b>Account:</b> 968-34567
                                     </div>
@@ -299,10 +373,16 @@ let ApproveOrder = () => {
                                 </div>
                                 <div className="row no-print">
                                     <div className="col-12">
-
-                                        <button type="button" className="btn btn-success ">
-                                            <i className="far fa-credit-card" /> Approve Order
+                                        {
+                                            order['status'] !== 'Closed' ?
+                                                <button type="button" onClick={changeOrderStatus} className="btn btn-success">
+                                                    <i className="far fa-credit-card" /> {buttonStatus}
+                                                </button> : 
+                                                <button disabled type="button" className="btn btn-danger">
+                                                     {buttonStatus}
                                         </button>
+                                        }
+
 
 
                                         <button
