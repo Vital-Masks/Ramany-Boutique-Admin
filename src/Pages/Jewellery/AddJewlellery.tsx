@@ -14,9 +14,6 @@ let formObject;
 let AddJewellery = () => {
     let occasionsTemp: string[] = [];
     let categoriesTemp: string[] = [];
-    let sizeAndCount;
-
-    const jewelleryNameRef = useRef(null);
 
     const [occasions, setoccasions] = useState([{}]);
     const [jewelleryingCategories, setJewelleryingCategories] = useState([{}]);
@@ -26,6 +23,7 @@ let AddJewellery = () => {
     const [gender, setGender] = useState("");
     const [occasionTypeId, setoccasionTypeId] = useState<string[]>([]);
     const [jewelleryingCategoryId, setjewelleryingCategoryId] = useState("");
+    const [quantity, setQuantity] = useState("");
     const [price, setprice] = useState("");
     const [discount, setdiscount] = useState("");
     const [mainImage, setMainImage] = useState<any>({
@@ -33,12 +31,6 @@ let AddJewellery = () => {
         base64URL: any
     })
     const [subImage, setSubImage] = useState<any[]>([]);
-    const [xsCount, setxsCount] = useState("");
-    const [sCount, setsCount] = useState("");
-    const [mCount, setmCount] = useState("");
-    const [lCount, setlCount] = useState("");
-    const [xlCount, setxlCount] = useState("");
-    const [xxlCount, setxxlCount] = useState("");
     const [description, setdescription] = useState("");
     const [inclusions, setinclusions] = useState("");
     const [gemStones, setgemStones] = useState("");
@@ -46,34 +38,6 @@ let AddJewellery = () => {
     const [style, setstyle] = useState("");
     const [detailing, setdetailing] = useState("");
     const [customization, setcustomization] = useState("");
-
-
-    const [alertOpen, setAlertOpen] = useState(false);
-
-    sizeAndCount = [{
-        "size": "XS",
-        "count": xsCount
-    },
-    {
-        "size": "S",
-        "count": sCount
-    },
-    {
-        "size": "M",
-        "count": mCount
-    },
-    {
-        "size": "L",
-        "count": lCount
-    },
-    {
-        "size": "XL",
-        "count": xlCount
-    },
-    {
-        "size": "XXL",
-        "count": xxlCount
-    }]
 
     const getAllCategories = async () => {
         JewelleryService.getAllCategories().then((response) => {
@@ -203,7 +167,7 @@ let AddJewellery = () => {
             gender: gender,
             occasionTypeId: occasionTypeId,
             jewelleryingCategoryId: jewelleryingCategoryId,
-            sizeAndCount: sizeAndCount,
+            quantity: quantity,
             price: price,
             discount: discount,
             description: description,
@@ -289,25 +253,13 @@ let AddJewellery = () => {
                 categoryName:{
                     required: [true, '* Please select atleast one Jewellery category'],
                 },
-                xsCount:{
-                    number: [true, 'Please enter valid count'],
-                },
-                sCount:{
-                    number: [true, 'Please enter valid count'],
-                },
-                mCount:{
-                    number: [true, 'Please enter valid count'],
-                },
-                lCount:{
-                    number: [true, 'Please enter valid count'],
-                },
-                xlCount:{
-                    number: [true, 'Please enter valid count'],
-                },
-                xxlCount:{
-                    number: [true, 'Please enter valid count'],
+                quantity:{
+                    required: [true, '* Please enter Quantity'],
+                    number: [true, 'Please enter valid quantity'],
+                    
                 },
                 price:{
+                    required: [true, '* Please enter Price'],
                     number: [true, 'Please enter valid price'],
                 },
                 discount:{
@@ -347,7 +299,7 @@ let AddJewellery = () => {
                                                     <input type="text" className="form-control" name="jewelleryName" id="jewelleryName" placeholder="Jewellery Name"
                                                         onChange={(e) => { setjewelleryName(e.target.value) }}
                                                         value={jewelleryName} data-msg-containerid="errroForjewelleryName"></input>
-                                                    <div id="errroForjewelleryName" />
+                                                    <div style={{color: 'red'}} id="errroForjewelleryName" />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -355,7 +307,8 @@ let AddJewellery = () => {
                                                 <div className="col-sm-10">
                                                     <input type="text" className="form-control" name="jewelleryCode" id="jewelleryCode" placeholder="Jewellery Code"
                                                         onChange={(e) => setjewelleryCode(e.target.value)}
-                                                        value={jewelleryCode}></input>
+                                                        value={jewelleryCode} data-msg-containerid="errroForjewelleryCode"></input>
+                                                     <div style={{color: 'red'}} id="errroForjewelleryCode" />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -372,7 +325,7 @@ let AddJewellery = () => {
                                                     <label className="custom-control-label" htmlFor="womenCollections">Women Colections</label>
                                                    
                                                 </div>
-                                               <div style={{marginLeft: 30, marginTop: 10}} id="errroForgender" />
+                                               <div style={{marginLeft: 30, marginTop: 10, color:'red'}} id="errroForgender" />
                                             </div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Occasion Type</label>
@@ -416,46 +369,16 @@ let AddJewellery = () => {
                                             </div>
                                             <div className="form-group row">
 
-                                                <label className="col-sm-2 col-form-label">Size And Count</label>
-                                                <div className="col-md-6">
-                                                    <div className='row'>
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XS</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="xsCount" id="xsCount" data-msg-containerid="errroForxsCount" placeholder="Count" onChange={(e) => setxsCount(e.target.value)} value={xsCount}></input>
-                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxsCount"/>
-                                                        </div>
+                                                <label className="col-sm-2 col-form-label">Quantity</label>
+                                                <div className="col-sm-10">
+                                                    <div className="input-group">
+                                                        <input type="text" className="form-control" name="quantity" id="quantity" data-msg-containerid="errroForQuantity" placeholder="Quantity" onChange={(e) => setQuantity(e.target.value)} value={quantity}></input>
 
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">S</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="sCount" id="sCount" data-msg-containerid="errroForsCount" placeholder="Count" onChange={(e) => setsCount(e.target.value)}  value={sCount}></input>
-                                                            <div  style={{marginLeft: '155px', color: 'red'}} id="errroForsCount" />
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">M</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="mCount" id="mCount" data-msg-containerid="errroFormCount" placeholder="Count" onChange={(e) => setmCount(e.target.value)} value={mCount}></input>
-                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroFormCount" />
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">L</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="lCount" id="lCount" data-msg-containerid="errroForlCount" placeholder="Count" onChange={(e) => setlCount(e.target.value)} value={lCount}></input>
-                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForlCount" />
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="xlCount" id="xlCount" data-msg-containerid="errroForxlCount" placeholder="Count" onChange={(e) => setxlCount(e.target.value)} value={xlCount}></input>
-                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxlCount" />
-                                                        </div>
-
-                                                        <div className="col-sm-10 row">
-                                                            <label className="col-sm-4 col-form-label">XXL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" name="xxlCount" id="xxlCount" data-msg-containerid="errroForxxlCount" placeholder="Count" onChange={(e) => setxxlCount(e.target.value)} value={xxlCount}></input>
-                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxxlCount" />
-                                                        </div>
                                                     </div>
+                                                    <div style={{ color: 'red' }} id="errroForQuantity" />
+
                                                 </div>
+
 
                                             </div>
                                             <div className="form-group row">
@@ -469,7 +392,7 @@ let AddJewellery = () => {
                                                         </div>
                                                         
                                                     </div>
-                                                    <div id="errroForprice" />
+                                                    <div style={{color: 'red'}} id="errroForprice" />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -479,7 +402,7 @@ let AddJewellery = () => {
                                                         <input type="text" className="form-control" name="discount" data-msg-containerid="errroFordiscount" id="discount" onChange={(e) => setdiscount(e.target.value)}
                                                             value={discount}></input>
                                                     </div>
-                                                    <div id="errroFordiscount" />
+                                                    <div style={{color: 'red'}} id="errroFordiscount" />
                                                 </div>
                                                 
                                             </div>

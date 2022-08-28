@@ -7,3 +7,5 @@ export { default as ViewJewellerys } from './Jewellery/ViewJewellery';
 export { default as AddJewellery} from './Jewellery/AddJewlellery'
 export { default as UpdateJewellery} from './Jewellery/UpdateJewellery'
 export { default as Categories} from './Categories/Categories'
+export { default as ViewOrders} from './Orders/ViewOrders'
+export { default as ApproveOrder} from './Orders/ApproveOrder'

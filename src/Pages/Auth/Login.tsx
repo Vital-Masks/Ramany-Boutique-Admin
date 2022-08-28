@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useContext } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
-import PropTypes from "prop-types";
+import PropTypes, { element } from "prop-types";
 import AuthService from "../../Services/AuthService";
 import AuthContext from "../../Context/AuthProvider";
 
@@ -36,7 +36,7 @@ let Login = ({ setToken }) => {
 				// setloggedInUser(response)
 				setToken(response.data.token);
 				// setAuth({ username });
-				navigate("/");
+				navigate("/dashboard");
 			} else {
 			}
 		});

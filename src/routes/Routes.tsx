@@ -1,6 +1,7 @@
 import path from "path";
 import { element } from "prop-types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { render } from "react-dom";
 import { Routes as Switch, Route, Navigate, useNavigate } from "react-router-dom";
 import Layout from "../Components/Layout/Layout";
 import {
@@ -13,35 +14,33 @@ import {
 	UpdateJewellery,
 	Categories,
 	Login,
+	ViewOrders,
+	ApproveOrder
 } from "../Pages";
 
-function setToken(userToken) {
-	sessionStorage.setItem("token", JSON.stringify(userToken));
-}
 
-function getToken() {
-	const tokenString: any = sessionStorage.getItem("token");
-	const userToken = JSON.parse(tokenString);
-
-	if (userToken) {
-		return userToken;
-	}
-
-	return userToken?.token;
-}
 
 function Routes() {
-	const token = getToken();
-	const navigate = useNavigate();
+	const [authToken, setAuthToken] = useState("");
+	function setToken(userToken) {
+		sessionStorage.setItem("token", JSON.stringify(userToken));
+	}
+
+	function getToken() {
+		const tokenString: any = sessionStorage.getItem("token");
+		setAuthToken(JSON.parse(tokenString));
+	}
+	// const token = getToken();
+	// const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!token) {
-			// navigate("/login");
-            // return (
-                <Switch>
-                    <Route path="/login" element={<Login setToken={setToken} />} />
-                 </Switch>
-            // );
+		getToken()
+		if(!authToken){
+			authLayout()
+
+		}
+		else{
+			<Navigate to="/login" />
 		}
 	}, []);
 
@@ -49,7 +48,7 @@ function Routes() {
 		return (
 			<Layout>
 				<Switch>
-					<Route path="/" element={<Dashboard />} />
+					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/viewCloths" element={<ViewCloths />} />
 					<Route path="/addCloth" element={<AddCloth />} />
 					<Route path="/updateCloth" element={<UpdateCloth />} />
@@ -57,6 +56,8 @@ function Routes() {
 					<Route path="/addJewellery" element={<AddJewellery />} />
 					<Route path="/updateJewellery" element={<UpdateJewellery />} />
 					<Route path="/categories" element={<Categories />} />
+					<Route path="/viewOrders" element={<ViewOrders />} />
+					<Route path="/approveOrder" element={<ApproveOrder />} />
 					{/* <Route path="/login" element={<Login setToken={setToken} />} /> */}
 				</Switch>
 			</Layout>
@@ -66,12 +67,12 @@ function Routes() {
 	const authLayout = () => {
 		return (
 			<Switch>
-				<Route path="/login" element={<Login setToken={setToken} />} />
+				<Route path="/" element={<Login setToken={setToken} />} />
 			</Switch>
 		);
 	};
 
-	return <>{token ? layouts() : authLayout()}</>;
+	return <>{authToken ?  layouts() : authLayout()}</>  ;
 }
 
 export default Routes;
