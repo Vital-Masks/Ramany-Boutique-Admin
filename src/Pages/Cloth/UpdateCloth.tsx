@@ -6,8 +6,9 @@ import Swal from 'sweetalert2'
 import "react-dropzone-uploader/dist/styles.css";
 import Dropzone from "react-dropzone-uploader";
 import { getDroppedOrSelectedFiles } from "html5-file-selector";
+import { FormValidator } from "@syncfusion/ej2-inputs";
 
-
+let formObject;
 let UpdateCloth = () => {
     let occasionsTemp: string[] = [];
     let categoriesTemp: string[] = [];
@@ -404,6 +405,54 @@ let UpdateCloth = () => {
         getClothById()
     },[]);
 
+    useEffect(() => {
+		const options = {
+			// validation rules
+			rules: {
+				clothName: {
+					required: [true, "* Please enter the Cloth Name"],
+				},
+				clothCode: {
+					required: [true, "* Please enter your Cloth Code"],
+				},
+				gender: {
+					required: [true, "* Please select atleast one gender"],
+				},
+				// occasionTypeId: {
+				//     required: [true, '* Please select atleast one Occasion'],
+				// },
+				categoryName: {
+					required: [true, "* Please select atleast one Cloth category"],
+				},
+				xsCount: {
+					number: [true, "Please enter valid count"],
+				},
+				sCount: {
+					number: [true, "Please enter valid count"],
+				},
+				mCount: {
+					number: [true, "Please enter valid count"],
+				},
+				lCount: {
+					number: [true, "Please enter valid count"],
+				},
+				xlCount: {
+					number: [true, "Please enter valid count"],
+				},
+				xxlCount: {
+					number: [true, "Please enter valid count"],
+				},
+				price: {
+					number: [true, "Please enter valid price"],
+				},
+				discount: {
+					number: [true, "Please enter valid discount"],
+				},
+			},
+		};
+		formObject = new FormValidator("#form1", options);
+	}, []);
+
     return (
         <div>
             <div className="content-wrapper">
@@ -430,7 +479,9 @@ let UpdateCloth = () => {
                                                 <div className="col-sm-10">
                                                     <input type="text" className="form-control" id="clothName" placeholder="Cloth Name"
                                                         onChange={(e) => setclothName(e.target.value)}
-                                                        value={clothName}></input>
+                                                        value={clothName}
+                                                        data-msg-containerid="errroForclothName"></input>
+                                                         <div id="errroForclothName" />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -446,13 +497,15 @@ let UpdateCloth = () => {
                                                 <div className={`custom-control custom-radio ${styles.marginCheckRadio}`} >
                                                     <input className="custom-control-input" type="radio" id="menCollections" name="radio1"
                                                    onChange={(e) => setGender("Men")} value={gender}
-                                                   checked={gender === "Men"}></input>
+                                                   checked={gender === "Men"}
+                                                   data-msg-containerid="errroForgender"></input>
                                                     <label className="custom-control-label" htmlFor="menCollections">Men Colections</label>
                                                 </div>
                                                 <div className={`custom-control custom-radio ${styles.marginCheckRadio}`}>
                                                     <input className="custom-control-input" type="radio" id="womenCollections" name="radio1"
                                                     onChange={(e) => setGender("Women")} value={gender}
-                                                    checked={gender === "Women"}></input>
+                                                    checked={gender === "Women"}
+                                                    data-msg-containerid="errroForgender"></input>
                                                     <label className="custom-control-label" htmlFor="womenCollections">Women Colections</label>
                                                 </div>
                                             </div>
@@ -497,32 +550,38 @@ let UpdateCloth = () => {
                                                     <div className='row'>
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">XS</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" placeholder="Count" onChange={(e) => setxsCount(e.target.value)} value={xsCount} name ="xsCount"></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroForxsCount" placeholder="Count" onChange={(e) => setxsCount(e.target.value)} value={xsCount} name ="xsCount"></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxsCount"/>
                                                         </div>
 
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">S</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword2" placeholder="Count" onChange={(e) => setsCount(e.target.value)} name ="sCount" value={sCount}></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroForsCount" id="inputPassword2" placeholder="Count" onChange={(e) => setsCount(e.target.value)} name ="sCount" value={sCount}></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForsCount"/>
                                                         </div>
 
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">M</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword3" placeholder="Count" onChange={(e) => setmCount(e.target.value)} value={mCount}></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroFormCount" id="inputPassword3" placeholder="Count" onChange={(e) => setmCount(e.target.value)} value={mCount}></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroFormCount"/>
                                                         </div>
 
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">L</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword4" placeholder="Count" onChange={(e) => setlCount(e.target.value)} value={lCount}></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroForlCount" id="inputPassword4" placeholder="Count" onChange={(e) => setlCount(e.target.value)} value={lCount}></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForlCount"/>
                                                         </div>
 
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">XL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword5" placeholder="Count" onChange={(e) => setxlCount(e.target.value)} value={xlCount}></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroForxlCount" id="inputPassword5" placeholder="Count" onChange={(e) => setxlCount(e.target.value)} value={xlCount}></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxlCount"/>
                                                         </div>
 
                                                         <div className="col-sm-10 row">
                                                             <label className="col-sm-4 col-form-label">XXL</label>
-                                                            <input type="text" className="col-sm-6 form-control form-control-sm" id="inputPassword6" placeholder="Count" onChange={(e) => setxxlCount(e.target.value)} value={xxlCount}></input>
+                                                            <input type="text" className="col-sm-6 form-control form-control-sm" data-msg-containerid="errroForxxlCount" id="inputPassword6" placeholder="Count" onChange={(e) => setxxlCount(e.target.value)} value={xxlCount}></input>
+                                                            <div style={{marginLeft: '155px', color: 'red'}} id="errroForxxlCount"/>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -533,11 +592,13 @@ let UpdateCloth = () => {
                                                 <div className="col-sm-10">
                                                     <div className="input-group">
                                                         <input type="text" className="form-control" id="price" onChange={(e) => setprice(e.target.value)}
-                                                        value={price}></input>
+                                                        value={price}
+                                                        data-msg-containerid="errroForprice"></input>
                                                         <div className="input-group-append">
                                                             <span className="input-group-text"></span>
                                                         </div>
                                                     </div>
+                                                    <div id="errroForprice" />
                                                 </div>
                                             </div>
                                             <div className="form-group row">
@@ -545,8 +606,10 @@ let UpdateCloth = () => {
                                                 <div className="col-sm-10">
                                                     <div className="input-group">
                                                         <input type="text" className="form-control" id="discount" onChange={(e) => setdiscount(e.target.value)}
-                                                        value={discount}></input>
+                                                        value={discount}
+                                                        data-msg-containerid="errroFordiscount"></input>
                                                     </div>
+                                                    <div id="errroFordiscount" />
                                                 </div>
                                             </div>
                                         </div>
@@ -646,7 +709,9 @@ let UpdateCloth = () => {
 
                                 <div className="card-footer">
                                     <button type="submit" className="btn btn-info" onClick={saveCloth} >Update</button>
+                                    <Link to="/viewCloths" className="nav-link">
                                     <button type="submit" className="btn btn-default float-right">Cancel</button>
+                                    </Link>
                                 </div>
 
                             </form>
