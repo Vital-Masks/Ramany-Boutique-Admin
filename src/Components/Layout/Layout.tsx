@@ -1,15 +1,21 @@
-import React from "react";
-import Footer from "./Footer/Footer";
-import SideNav from "./SideNav/SideNav";
-import Header from "./Header/Header";
+import React from 'react';
+import Footer from './Footer/Footer';
+import SideNav from './SideNav/SideNav';
+import Header from './Header/Header';
 
-let Layout = ({ children }: { children: any }) => {
+let Layout = ({ children, auth }: { children: any; auth: boolean }) => {
   return (
     <div className="wrapper">
-      <Header />
-      <SideNav />
-      {children}
-      <Footer />
+      {auth ? (
+        <>
+          <Header />
+          <SideNav />
+          {children}
+          <Footer />
+        </>
+      ) : (
+        <>{children}</>
+      )}
     </div>
   );
 };
