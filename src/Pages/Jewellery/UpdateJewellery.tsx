@@ -23,6 +23,7 @@ let UpdateJewellery = () => {
 
     const [jewelleryName, setjewelleryName] = useState("");
     const [jewelleryCode, setjewelleryCode] = useState("");
+    const [jewelleryType, setJewelleryType] = useState("");
     const [gender, setGender] = useState("");
     const [occasionTypeId, setoccasionTypeId] = useState<string[]>([]);
     const [jewelleryingCategoryId, setjewelleryingCategoryId] = useState("");
@@ -68,6 +69,7 @@ let UpdateJewellery = () => {
             console.log("res", response)
             setjewelleryName(obj.jewelleryName)
             setjewelleryCode(obj.jewelleryCode)
+            setJewelleryType(obj.jewelleryType)
             setGender(obj.gender)
             setoccasionTypeId(obj.occasionTypeId)
             setjewelleryingCategoryId(obj.jewelleryingCategoryId)
@@ -199,6 +201,7 @@ let UpdateJewellery = () => {
             _id: jewelleryId,
             jewelleryName: jewelleryName,
             jewelleryCode: jewelleryCode,
+            jewelleryType: jewelleryType,
             gender: gender,
             occasionTypeId: occasionTypeId,
             jewelleryingCategoryId: jewelleryingCategoryId,
@@ -390,6 +393,24 @@ let UpdateJewellery = () => {
                                                         onChange={(e) => setjewelleryCode(e.target.value)}
                                                         value={jewelleryCode}></input>
                                                 </div>
+                                            </div>
+                                            <div className="form-group row">
+                                                <label className="col-sm-2 col-form-label">Jewellery Type</label>
+                                                <div className={`custom-control custom-radio ${styles.marginCheckRadio}`} >
+                                                    <input className="custom-control-input" type="radio" id="sellingJewelleries" name="jewelleryType"
+                                                        onChange={(e) => setJewelleryType("Sell")} 
+                                                        value={jewelleryType} checked={jewelleryType === "Sell"} data-msg-containerid="errroForjewelleryType"></input>
+                                                    <label className="custom-control-label" htmlFor="sellingJewelleries">Sell</label>
+                                                    
+                                                </div>
+                                                <div className={`custom-control custom-radio ${styles.marginCheckRadio}`}>
+                                                    <input className="custom-control-input" type="radio" id="rentalJewelleries" name="jewelleryType"
+                                                        onChange={(e) => setJewelleryType("Rental")} 
+                                                        value={jewelleryType} checked={jewelleryType === "Rental"} data-msg-containerid="errroForjewelleryType"></input>
+                                                    <label className="custom-control-label" htmlFor="rentalJewelleries">Rental</label>
+                                                   
+                                                </div>
+                                               <div style={{marginLeft: 30, marginTop: 10, color:'red'}} id="errroForjewelleryType" />
                                             </div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Gender</label>

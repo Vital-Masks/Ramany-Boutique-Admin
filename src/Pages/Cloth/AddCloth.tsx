@@ -17,6 +17,7 @@ const AddCloth = () => {
 
 	const [clothName, setClothName] = useState("");
 	const [clothCode, setClothCode] = useState("");
+	const [clothType, setClothType] = useState("");
 	const [gender, setGender] = useState("");
 	const [occasionTypeId, setOccasionTypeId] = useState<string[]>([]);
 	const [clothingCategoryId, setClothingCategoryId] = useState("");
@@ -216,6 +217,7 @@ const AddCloth = () => {
 		let cloth = {
 			clothName: clothName,
 			clothCode: clothCode,
+			clothType: clothType,
 			gender: gender,
 			occasionTypeId: occasionTypeId,
 			clothingCategoryId: clothingCategoryId,
@@ -290,6 +292,9 @@ const AddCloth = () => {
 				},
 				clothCode: {
 					required: [true, "* Please enter your Cloth Code"],
+				},
+				clothType: {
+					required: [true, "* Please select atleast one Cloth type"],
 				},
 				gender: {
 					required: [true, "* Please select atleast one gender"],
@@ -383,6 +388,48 @@ const AddCloth = () => {
 													></input>
 													{/* <div id="errroForclothCode" /> */}
 												</div>
+											</div>
+											<div className="form-group row">
+												<label className="col-sm-2 col-form-label">
+													Cloth Type
+												</label>
+												<div
+													className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+												>
+													<input
+														className="custom-control-input"
+														type="radio"
+														id="sellingCloths"
+														name="clothType"
+														onChange={(e) => setClothType("Sell")}
+														data-msg-containerid="errroForgender"
+													></input>
+													<label
+														className="custom-control-label"
+														htmlFor="sellingCloths"
+													>
+														Sell
+													</label>
+												</div>
+												<div
+													className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+												>
+													<input
+														className="custom-control-input"
+														type="radio"
+														id="rentalCloths"
+														name="clothType"
+														onChange={(e) => setClothType("Rental")}
+														data-msg-containerid="errroForgender"
+													></input>
+													<label
+														className="custom-control-label"
+														htmlFor="rentalCloths"
+													>
+														Rental
+													</label>
+												</div>
+												<div style={{marginLeft: 30, marginTop: 10}} id="errroForgender" />
 											</div>
 											<div className="form-group row">
 												<label className="col-sm-2 col-form-label">

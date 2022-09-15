@@ -90,6 +90,7 @@ let ViewJewellerys = () => {
                             <tr>
                                 <th>Jewellery Name</th>
                                 <th>Jewellery Code</th>
+                                <th>Jewellery Type</th>
                                 <th>Gender</th>
                                 <th>Jewellery Category </th>
                                 <th>Price</th>
@@ -105,6 +106,7 @@ let ViewJewellerys = () => {
                                         <tr key={jewellery['_id']}>
                                             <td>{jewellery['jewelleryName']}</td>
                                             <td>{jewellery['jewelleryCode']}</td>
+                                            <td>{jewellery['jewelleryType']}</td>
                                             <td>{jewellery['gender']}</td>
                                             <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
                                             <td>{jewellery['price']}</td>

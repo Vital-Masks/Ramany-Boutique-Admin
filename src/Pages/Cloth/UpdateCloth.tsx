@@ -22,6 +22,7 @@ let UpdateCloth = () => {
 
     const [clothName, setclothName] = useState("");
     const [clothCode, setclothCode] = useState("");
+    const [clothType, setClothType] = useState("");
     const [gender, setGender] = useState("");
     const [occasionTypeId, setoccasionTypeId] = useState([{}]);
     const [clothingCategoryId, setclothingCategoryId] = useState("");
@@ -96,6 +97,7 @@ let UpdateCloth = () => {
             console.log("res",response)
             setclothName(obj.clothName)
             setclothCode(obj.clothCode)
+            setClothType(obj.clothType)
             setGender(obj.gender)
             setoccasionTypeId(obj.occasionTypeId)
             setclothingCategoryId(obj.clothingCategoryId)
@@ -254,6 +256,7 @@ let UpdateCloth = () => {
             _id: clothId,
             clothName: clothName,
             clothCode: clothCode,
+            clothType:clothType,
             gender: gender,
             occasionTypeId: occasionTypeId,
             clothingCategoryId: clothingCategoryId,
@@ -418,6 +421,9 @@ let UpdateCloth = () => {
 				gender: {
 					required: [true, "* Please select atleast one gender"],
 				},
+                clothType: {
+					required: [true, "* Please select atleast one Cloth type"],
+				},
 				// occasionTypeId: {
 				//     required: [true, '* Please select atleast one Occasion'],
 				// },
@@ -492,6 +498,52 @@ let UpdateCloth = () => {
                                                     value={clothCode}></input>
                                                 </div>
                                             </div>
+                                            <div className="form-group row">
+												<label className="col-sm-2 col-form-label">
+													Cloth Type
+												</label>
+												<div
+													className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+												>
+													<input
+														className="custom-control-input"
+														type="radio"
+														id="sellingCloths"
+														name="clothType"
+														onChange={(e) => setClothType("Sell")}
+                                                        value={clothType}
+                                                        checked={clothType === "Sell"}
+														data-msg-containerid="errroForgender"
+													></input>
+													<label
+														className="custom-control-label"
+														htmlFor="sellingCloths"
+													>
+														Sell
+													</label>
+												</div>
+												<div
+													className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+												>
+													<input
+														className="custom-control-input"
+														type="radio"
+														id="rentalCloths"
+														name="clothType"
+														onChange={(e) => setClothType("Rental")}
+                                                        value={clothType}
+                                                        checked={clothType === "Rental"}
+														data-msg-containerid="errroForgender"
+													></input>
+													<label
+														className="custom-control-label"
+														htmlFor="rentalCloths"
+													>
+														Rental
+													</label>
+												</div>
+												<div style={{marginLeft: 30, marginTop: 10}} id="errroForgender" />
+											</div>
                                             <div className="form-group row">
                                                 <label className="col-sm-2 col-form-label">Gender</label>
                                                 <div className={`custom-control custom-radio ${styles.marginCheckRadio}`} >

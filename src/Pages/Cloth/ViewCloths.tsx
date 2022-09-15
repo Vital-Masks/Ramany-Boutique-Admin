@@ -90,6 +90,7 @@ let ViewCloths = () => {
                             <tr>
                                 <th>Cloth Name</th>
                                 <th>Cloth Code</th>
+                                <th>Cloth Type</th>
                                 <th>Gender</th>
                                 <th>Cloth Category </th>
                                 <th>Price</th>
@@ -105,6 +106,7 @@ let ViewCloths = () => {
                                         <tr key={cloth['_id']}>
                                             <td>{cloth['clothName']}</td>
                                             <td>{cloth['clothCode']}</td>
+                                            <td>{cloth['clothType']}</td>
                                             <td>{cloth['gender']}</td>
                                             <td>{cloth['clothingCategoryId']? cloth['clothingCategoryId']['categoryName'] : null}</td>
                                             <td>{cloth['price']}</td>
