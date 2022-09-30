@@ -1,44 +1,44 @@
 import React, { useRef, useState, useEffect, useContext } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import PropTypes, { element } from 'prop-types';
+import Swal from 'sweetalert2'
 import AuthService from '../../Services/AuthService';
 
 let Login = ({ setToken }) => {
   const navigate = useNavigate();
-  // const { setAuth } : any = useContext(AuthContext);
-  // const userRef = useRef();
-  // const errRef = useRef();
 
   const [username, setUserName] = useState('');
   const [password, setPassword] = useState('');
 
-  const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
-
-  // useEffect(() => {
-  //     userRef.current.focus();
-  // }, [])
-
-  // useEffect(() => {
-  //     setErrMsg('');
-  // }, [username, password])
-
-  // const [loggedInUser, setloggedInUser] = useState({});
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    AuthService.AutheticateUser({
-      username,
-      password,
-    }).then((response) => {
-      if (response.data.token) {
-        // setloggedInUser(response)
-        setToken(response.data.token);
-        // setAuth({ username });
-        navigate('/dashboard');
-      } else {
-      }
-    });
+    if (username && password) {
+      AuthService.AutheticateUser({
+        username,
+        password,
+      }).then((response) => {
+        console.log(response.data)
+        if (response.data.token) {
+          setToken(response.data.token);
+          navigate("/dashboard");
+        } else{
+          Swal.fire({
+            title: "Error",
+            text: "Incorrect Username or Password",
+            icon: "warning",
+            confirmButtonText: "OK",
+          });
+        }
+      });
+    }
+    else{
+      Swal.fire({
+        title: "Something wrong",
+        text: "Mandatory fields are missing",
+        icon: "warning",
+        confirmButtonText: "OK",
+      });
+    }
   };
 
   return (

@@ -66,7 +66,6 @@ let SideNav = ()=>{
               <i className="nav-icon fas fa-copy" />
               <p>
               Jewellery
-                <i className="fas fa-angle-left right" />
                 
               </p>
             </a>
@@ -104,90 +103,7 @@ let SideNav = ()=>{
               <p>Manage Orders</p>
            </Link>
           </li>
-          <li className="nav-header">Multi Level Analytics</li>
-          <li className="nav-item">
-            <a href="index3.html" className="nav-link">
-              <i className="fas fa-circle nav-icon" />
-              <p>Level 1</p>
-            </a>
-          </li>
-          <li className="nav-item has-treeview">
-            <a href="index3.html" className="nav-link">
-              <i className="nav-icon fas fa-circle" />
-              <p>
-                Level 1
-                <i className="right fas fa-angle-left" />
-              </p>
-            </a>
-            <ul className="nav nav-treeview">
-              <li className="nav-item">
-                <a href="index3.html" className="nav-link">
-                  <i className="far fa-circle nav-icon" />
-                  <p>Level 2</p>
-                </a>
-              </li>
-              <li className="nav-item has-treeview">
-                <a href="index3.html" className="nav-link">
-                  <i className="far fa-circle nav-icon" />
-                  <p>
-                    Level 2
-                    <i className="right fas fa-angle-left" />
-                  </p>
-                </a>
-                <ul className="nav nav-treeview">
-                  <li className="nav-item">
-                    <a href="index3.html" className="nav-link">
-                      <i className="far fa-dot-circle nav-icon" />
-                      <p>Level 3</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="index3.html" className="nav-link">
-                      <i className="far fa-dot-circle nav-icon" />
-                      <p>Level 3</p>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a href="index3.html" className="nav-link">
-                      <i className="far fa-dot-circle nav-icon" />
-                      <p>Level 3</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li className="nav-item">
-                <a href="index3.html" className="nav-link">
-                  <i className="far fa-circle nav-icon" />
-                  <p>Level 2</p>
-                </a>
-              </li>
-            </ul>
-          </li>
-          <li className="nav-item">
-            <a href="index3.html" className="nav-link">
-              <i className="fas fa-circle nav-icon" />
-              <p>Level 1</p>
-            </a>
-          </li>
-          <li className="nav-header">LABELS</li>
-          <li className="nav-item">
-            <a href="index3.html" className="nav-link">
-              <i className="nav-icon far fa-circle text-danger" />
-              <p className="text">Important</p>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="index3.html" className="nav-link">
-              <i className="nav-icon far fa-circle text-warning" />
-              <p>Warning</p>
-            </a>
-          </li>
-          <li className="nav-item">
-            <a href="index3.html" className="nav-link">
-              <i className="nav-icon far fa-circle text-info" />
-              <p>Informational</p>
-            </a>
-          </li>
+          
         </ul>
       </nav>
       {/* /.sidebar-menu */}

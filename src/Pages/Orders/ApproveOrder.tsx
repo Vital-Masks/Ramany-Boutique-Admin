@@ -42,15 +42,34 @@ let ApproveOrder = () => {
             setCustomerDetail(obj.customerId)
             setClothDetail(obj.clothDetails)
             setJewelleryDetails(obj.jewelleryDetails)
-           
-            if(obj.status === "Pending"){
-                setButtonStatus("Change to In progress")
+
+            if (obj.orderType === "Rent") {
+                if (obj.status === "Pending") {
+                    setButtonStatus("Change to In progress")
+                }
+                if (obj.status === "InProgress") {
+                    setButtonStatus("Deliver the Order")
+                }
+                if (obj.status === "Delivered") {
+                    setButtonStatus("Return Item")
+                }
+                if (obj.status === "Returned") {
+                    setButtonStatus("Order returned successfully.")
+                }
             }
-            if(obj.status === "InProgress"){
-                setButtonStatus("Close the Order")
-            }
-            if(obj.status === "Closed"){
-                setButtonStatus("Order already closed successfully.")
+            if (obj.orderType === "Retail") {
+                if (obj.status === "Pending") {
+                    setButtonStatus("Change to In progress")
+                }
+                if (obj.status === "InProgress") {
+                    setButtonStatus("Deliver the Order")
+                }
+                if (obj.status === "Delivered") {
+                    setButtonStatus("Close the Order")
+                }
+                if(obj.status === "Closed"){
+                    setButtonStatus("Order closed successfully.")
+                }
             }
 
         })
@@ -94,7 +113,79 @@ let ApproveOrder = () => {
             })
         }
 
-        if (orderId && order['status'] === "InProgress" && buttonStatus === "Close the Order") {
+        if (orderId && order['status'] === "InProgress" && buttonStatus === "Deliver the Order") {
+            Swal.fire({
+                title: "Are you sure you want to "+ buttonStatus + "?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, change it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    OrdersService.changeOrderStatus(orderId, "Delivered").then(response=>{
+                        if (response["status"] === 200) {
+                            Swal.fire({
+                              title: "Success",
+                              text: "The Order has been Delivered Successfully",
+                              icon: "success",
+                              confirmButtonText: "OK",
+                            }).then((result)=>{
+                              if(result.isConfirmed){ 
+                                  window.location.reload()
+                              }
+                            });                          
+                          }
+                          else {
+                            Swal.fire({
+                              title: "Oops!",
+                              text: "Something Went Wrong",
+                              icon: "warning",
+                              confirmButtonText: "OK",
+                            });
+                          }
+                    })
+                }
+            })
+        }
+        if (orderId && order['status'] === "Delivered" && order['orderType'] === "Rent" && buttonStatus === "Return Item") {
+            Swal.fire({
+                title: "Are you sure you want to "+ buttonStatus + "?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, change it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    OrdersService.changeOrderStatus(orderId, "Returned").then(response=>{
+                        if (response["status"] === 200) {
+                            Swal.fire({
+                              title: "Success",
+                              text: "The Order has been returned Successfully",
+                              icon: "success",
+                              confirmButtonText: "OK",
+                            }).then((result)=>{
+                              if(result.isConfirmed){ 
+                                  window.location.reload()
+                              }
+                            });                          
+                          }
+                          else {
+                            Swal.fire({
+                              title: "Oops!",
+                              text: "Something Went Wrong",
+                              icon: "warning",
+                              confirmButtonText: "OK",
+                            });
+                          }
+                    })
+                }
+            })
+        }
+        if (orderId && order['status'] === "Delivered" && order['orderType'] === "Retail" && buttonStatus === "Close the Order") {
             Swal.fire({
                 title: "Are you sure you want to "+ buttonStatus + "?",
                 text: "You won't be able to revert this!",
@@ -374,7 +465,7 @@ let ApproveOrder = () => {
                                 <div className="row no-print">
                                     <div className="col-12">
                                         {
-                                            order['status'] !== 'Closed' ?
+                                            order['status'] !== 'Returned' && order['status'] !== 'Closed' ?
                                                 <button type="button" onClick={changeOrderStatus} className="btn btn-success">
                                                     <i className="far fa-credit-card" /> {buttonStatus}
                                                 </button> : 
