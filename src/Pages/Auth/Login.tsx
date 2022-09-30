@@ -1,7 +1,6 @@
-import React, { useRef, useState, useEffect, useContext } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
-import PropTypes, { element } from 'prop-types';
-import Swal from 'sweetalert2'
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import AuthService from '../../Services/AuthService';
 
 let Login = ({ setToken }) => {
@@ -17,26 +16,25 @@ let Login = ({ setToken }) => {
         username,
         password,
       }).then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         if (response.data.token) {
           setToken(response.data.token);
-          navigate("/dashboard");
-        } else{
+          navigate('/dashboard');
+        } else {
           Swal.fire({
-            title: "Error",
-            text: "Incorrect Username or Password",
-            icon: "warning",
-            confirmButtonText: "OK",
+            title: 'Error',
+            text: 'Incorrect Username or Password',
+            icon: 'warning',
+            confirmButtonText: 'OK',
           });
         }
       });
-    }
-    else{
+    } else {
       Swal.fire({
-        title: "Something wrong",
-        text: "Mandatory fields are missing",
-        icon: "warning",
-        confirmButtonText: "OK",
+        title: 'Something wrong',
+        text: 'Mandatory fields are missing',
+        icon: 'warning',
+        confirmButtonText: 'OK',
       });
     }
   };
