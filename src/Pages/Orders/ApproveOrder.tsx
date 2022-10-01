@@ -44,7 +44,7 @@ let ApproveOrder = (props) => {
           setButtonStatus("Order returned successfully.");
         }
       }
-      if (obj.orderType === "Retail") {
+      if (obj.orderType === "Sale") {
         if (obj.status === "Pending") {
           setButtonStatus("Change to In progress");
         }
@@ -190,7 +190,7 @@ let ApproveOrder = (props) => {
     if (
       orderId &&
       order["status"] === "Delivered" &&
-      order["orderType"] === "Retail" &&
+      order["orderType"] === "Sale" &&
       buttonStatus === "Close the Order"
     ) {
       Swal.fire({

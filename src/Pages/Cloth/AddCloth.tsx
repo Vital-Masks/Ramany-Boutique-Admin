@@ -408,14 +408,14 @@ const AddCloth = () => {
                             type="radio"
                             id="sellingCloths"
                             name="clothType"
-                            onChange={(e) => setClothType('Sell')}
+                            onChange={(e) => setClothType('Sale')}
                             data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
                             htmlFor="sellingCloths"
                           >
-                            Sell
+                            Sale
                           </label>
                         </div>
                         <div
@@ -426,14 +426,14 @@ const AddCloth = () => {
                             type="radio"
                             id="rentalCloths"
                             name="clothType"
-                            onChange={(e) => setClothType('Rental')}
+                            onChange={(e) => setClothType('Rent')}
                             data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
                             htmlFor="rentalCloths"
                           >
-                            Rental
+                            Rent
                           </label>
                         </div>
                         <div

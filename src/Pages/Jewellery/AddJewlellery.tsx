@@ -354,14 +354,14 @@ let AddJewellery = () => {
                             type="radio"
                             id="sellingJewelleries"
                             name="jewelleryType"
-                            onChange={(e) => setJewelleryType('Sell')}
+                            onChange={(e) => setJewelleryType('Sale')}
                             data-msg-containerid="errroForjewelleryType"
                           ></input>
                           <label
                             className="custom-control-label"
                             htmlFor="sellingJewelleries"
                           >
-                            Sell
+                            Sale
                           </label>
                         </div>
                         <div
@@ -372,14 +372,14 @@ let AddJewellery = () => {
                             type="radio"
                             id="rentalJewelleries"
                             name="jewelleryType"
-                            onChange={(e) => setJewelleryType('Rental')}
+                            onChange={(e) => setJewelleryType('Rent')}
                             data-msg-containerid="errroForjewelleryType"
                           ></input>
                           <label
                             className="custom-control-label"
                             htmlFor="rentalJewelleries"
                           >
-                            Rental
+                            Rent
                           </label>
                         </div>
                         <div
