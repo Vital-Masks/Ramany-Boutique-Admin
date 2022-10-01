@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import OrdersService from '../../Services/OrdersService';
-import Swal from 'sweetalert2';
-import 'react-dropzone-uploader/dist/styles.css';
+import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
+import OrdersService from "../../Services/OrdersService";
+import Swal from "sweetalert2";
+import "react-dropzone-uploader/dist/styles.css";
+import ReactToPrint from "react-to-print";
 
-let ApproveOrder = () => {
+let ApproveOrder = (props) => {
   const search = useLocation().search;
-  const orderId = new URLSearchParams(search).get('id');
+  const componentRef = useRef(null);
+  const orderId = new URLSearchParams(search).get("id");
 
   const [orderDetail, setOrderDetail] = useState({
     order: {},
@@ -15,12 +17,12 @@ let ApproveOrder = () => {
   const [customerDetail, setCustomerDetail] = useState({});
   const [clothDetail, setClothDetail] = useState<string[]>([]);
   const [jewelleryDetails, setJewelleryDetails] = useState<string[]>([]);
-  const [buttonStatus, setButtonStatus] = useState('');
+  const [buttonStatus, setButtonStatus] = useState("");
 
   const getOrderById = () => {
     OrdersService.getOrderById(orderId).then((response) => {
       let obj = response.data;
-      console.log('res', obj);
+      console.log("res", obj);
       setOrderDetail(() => ({
         order: response.data,
       }));
@@ -28,32 +30,32 @@ let ApproveOrder = () => {
       setClothDetail(obj.clothDetails);
       setJewelleryDetails(obj.jewelleryDetails);
 
-      if (obj.orderType === 'Rent') {
-        if (obj.status === 'Pending') {
-          setButtonStatus('Change to In progress');
+      if (obj.orderType === "Rent") {
+        if (obj.status === "Pending") {
+          setButtonStatus("Change to In progress");
         }
-        if (obj.status === 'InProgress') {
-          setButtonStatus('Deliver the Order');
+        if (obj.status === "InProgress") {
+          setButtonStatus("Deliver the Order");
         }
-        if (obj.status === 'Delivered') {
-          setButtonStatus('Return Item');
+        if (obj.status === "Delivered") {
+          setButtonStatus("Return Item");
         }
-        if (obj.status === 'Returned') {
-          setButtonStatus('Order returned successfully.');
+        if (obj.status === "Returned") {
+          setButtonStatus("Order returned successfully.");
         }
       }
-      if (obj.orderType === 'Retail') {
-        if (obj.status === 'Pending') {
-          setButtonStatus('Change to In progress');
+      if (obj.orderType === "Retail") {
+        if (obj.status === "Pending") {
+          setButtonStatus("Change to In progress");
         }
-        if (obj.status === 'InProgress') {
-          setButtonStatus('Deliver the Order');
+        if (obj.status === "InProgress") {
+          setButtonStatus("Deliver the Order");
         }
-        if (obj.status === 'Delivered') {
-          setButtonStatus('Close the Order');
+        if (obj.status === "Delivered") {
+          setButtonStatus("Close the Order");
         }
-        if (obj.status === 'Closed') {
-          setButtonStatus('Order closed successfully.');
+        if (obj.status === "Closed") {
+          setButtonStatus("Order closed successfully.");
         }
       }
     });
@@ -62,27 +64,27 @@ let ApproveOrder = () => {
   const changeOrderStatus = () => {
     if (
       orderId &&
-      order['status'] === 'Pending' &&
-      buttonStatus === 'Change to In progress'
+      order["status"] === "Pending" &&
+      buttonStatus === "Change to In progress"
     ) {
       Swal.fire({
-        title: 'Are you sure ypu want to' + buttonStatus + '?',
+        title: "Are you sure ypu want to" + buttonStatus + "?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, change it!',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          OrdersService.changeOrderStatus(orderId, 'InProgress').then(
+          OrdersService.changeOrderStatus(orderId, "InProgress").then(
             (response) => {
-              if (response['status'] === 200) {
+              if (response["status"] === 200) {
                 Swal.fire({
-                  title: 'Success',
-                  text: 'The Order has take to In Progress',
-                  icon: 'success',
-                  confirmButtonText: 'OK',
+                  title: "Success",
+                  text: "The Order has take to In Progress",
+                  icon: "success",
+                  confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
                     window.location.reload();
@@ -90,10 +92,10 @@ let ApproveOrder = () => {
                 });
               } else {
                 Swal.fire({
-                  title: 'Oops!',
-                  text: 'Something Went Wrong',
-                  icon: 'warning',
-                  confirmButtonText: 'OK',
+                  title: "Oops!",
+                  text: "Something Went Wrong",
+                  icon: "warning",
+                  confirmButtonText: "OK",
                 });
               }
             }
@@ -104,27 +106,27 @@ let ApproveOrder = () => {
 
     if (
       orderId &&
-      order['status'] === 'InProgress' &&
-      buttonStatus === 'Deliver the Order'
+      order["status"] === "InProgress" &&
+      buttonStatus === "Deliver the Order"
     ) {
       Swal.fire({
-        title: 'Are you sure you want to ' + buttonStatus + '?',
+        title: "Are you sure you want to " + buttonStatus + "?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, change it!',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          OrdersService.changeOrderStatus(orderId, 'Delivered').then(
+          OrdersService.changeOrderStatus(orderId, "Delivered").then(
             (response) => {
-              if (response['status'] === 200) {
+              if (response["status"] === 200) {
                 Swal.fire({
-                  title: 'Success',
-                  text: 'The Order has been Delivered Successfully',
-                  icon: 'success',
-                  confirmButtonText: 'OK',
+                  title: "Success",
+                  text: "The Order has been Delivered Successfully",
+                  icon: "success",
+                  confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
                     window.location.reload();
@@ -132,10 +134,10 @@ let ApproveOrder = () => {
                 });
               } else {
                 Swal.fire({
-                  title: 'Oops!',
-                  text: 'Something Went Wrong',
-                  icon: 'warning',
-                  confirmButtonText: 'OK',
+                  title: "Oops!",
+                  text: "Something Went Wrong",
+                  icon: "warning",
+                  confirmButtonText: "OK",
                 });
               }
             }
@@ -145,28 +147,28 @@ let ApproveOrder = () => {
     }
     if (
       orderId &&
-      order['status'] === 'Delivered' &&
-      order['orderType'] === 'Rent' &&
-      buttonStatus === 'Return Item'
+      order["status"] === "Delivered" &&
+      order["orderType"] === "Rent" &&
+      buttonStatus === "Return Item"
     ) {
       Swal.fire({
-        title: 'Are you sure you want to ' + buttonStatus + '?',
+        title: "Are you sure you want to " + buttonStatus + "?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, change it!',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          OrdersService.changeOrderStatus(orderId, 'Returned').then(
+          OrdersService.changeOrderStatus(orderId, "Returned").then(
             (response) => {
-              if (response['status'] === 200) {
+              if (response["status"] === 200) {
                 Swal.fire({
-                  title: 'Success',
-                  text: 'The Order has been returned Successfully',
-                  icon: 'success',
-                  confirmButtonText: 'OK',
+                  title: "Success",
+                  text: "The Order has been returned Successfully",
+                  icon: "success",
+                  confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
                     window.location.reload();
@@ -174,10 +176,10 @@ let ApproveOrder = () => {
                 });
               } else {
                 Swal.fire({
-                  title: 'Oops!',
-                  text: 'Something Went Wrong',
-                  icon: 'warning',
-                  confirmButtonText: 'OK',
+                  title: "Oops!",
+                  text: "Something Went Wrong",
+                  icon: "warning",
+                  confirmButtonText: "OK",
                 });
               }
             }
@@ -187,28 +189,28 @@ let ApproveOrder = () => {
     }
     if (
       orderId &&
-      order['status'] === 'Delivered' &&
-      order['orderType'] === 'Retail' &&
-      buttonStatus === 'Close the Order'
+      order["status"] === "Delivered" &&
+      order["orderType"] === "Retail" &&
+      buttonStatus === "Close the Order"
     ) {
       Swal.fire({
-        title: 'Are you sure you want to ' + buttonStatus + '?',
+        title: "Are you sure you want to " + buttonStatus + "?",
         text: "You won't be able to revert this!",
-        icon: 'warning',
+        icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, change it!',
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, change it!",
       }).then((result) => {
         if (result.isConfirmed) {
-          OrdersService.changeOrderStatus(orderId, 'Closed').then(
+          OrdersService.changeOrderStatus(orderId, "Closed").then(
             (response) => {
-              if (response['status'] === 200) {
+              if (response["status"] === 200) {
                 Swal.fire({
-                  title: 'Success',
-                  text: 'The Order has been closed Successfully',
-                  icon: 'success',
-                  confirmButtonText: 'OK',
+                  title: "Success",
+                  text: "The Order has been closed Successfully",
+                  icon: "success",
+                  confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
                     getOrderById();
@@ -216,10 +218,10 @@ let ApproveOrder = () => {
                 });
               } else {
                 Swal.fire({
-                  title: 'Oops!',
-                  text: 'Something Went Wrong',
-                  icon: 'warning',
-                  confirmButtonText: 'OK',
+                  title: "Oops!",
+                  text: "Something Went Wrong",
+                  icon: "warning",
+                  confirmButtonText: "OK",
                 });
               }
             }
@@ -236,7 +238,7 @@ let ApproveOrder = () => {
   }, []);
 
   return (
-    <div className="content-wrapper">
+    <div className="content-wrapper" >
       <section className="content-header">
         <div className="container-fluid">
           <div className="row mb-2">
@@ -265,7 +267,7 @@ let ApproveOrder = () => {
                 This page has been enhanced for printing. Click the print button
                 at the bottom of the invoice in order to print the invoice.
               </div>
-              <div className="invoice p-3 mb-3">
+              <div className="invoice p-3 mb-3" ref={componentRef}>
                 <div className="row">
                   <div className="col-12">
                     <h4>
@@ -294,42 +296,42 @@ let ApproveOrder = () => {
                   <div className="col-sm-4 invoice-col">
                     To
                     <address>
-                      <strong style={{ textTransform: 'capitalize' }}>
-                        {customerDetail['firstName']}
+                      <strong style={{ textTransform: "capitalize" }}>
+                        {customerDetail["firstName"]}
                       </strong>
                       <br />
-                      {customerDetail['address']},
+                      {customerDetail["address"]},
                       <br />
-                      {customerDetail['city']},
+                      {customerDetail["city"]},
                       <br />
-                      {customerDetail['country']}.
+                      {customerDetail["country"]}.
                       <br />
-                      Phone: {customerDetail['phone']}
+                      Phone: {customerDetail["phone"]}
                       <br />
-                      Email: {customerDetail['email']}
+                      Email: {customerDetail["email"]}
                     </address>
                   </div>
                   <div className="col-sm-4 invoice-col">
-                    <b>Invoice: {order['_id']}</b>
+                    <b>Invoice: {order["_id"]}</b>
                     <br />
                     <br />
-                    <b>Order ID:</b> {order['_id']}
+                    <b>Order Type:</b> {order["orderType"]}
                     <br />
-                    <b>Status:</b>{' '}
-                    {order['status'] === 'Pending' ? (
-                      <strong style={{ color: 'red' }}>
-                        {' '}
-                        {order['status']}{' '}
+                    <b>Status:</b>{" "}
+                    {order["status"] === "Pending" ? (
+                      <strong style={{ color: "red" }}>
+                        {" "}
+                        {order["status"]}{" "}
                       </strong>
-                    ) : order['status'] === 'InProgress' ? (
-                      <strong style={{ color: 'blue' }}>
-                        {' '}
-                        {order['status']}{' '}
+                    ) : order["status"] === "InProgress" ? (
+                      <strong style={{ color: "blue" }}>
+                        {" "}
+                        {order["status"]}{" "}
                       </strong>
                     ) : (
-                      <strong style={{ color: 'green' }}>
-                        {' '}
-                        {order['status']}{' '}
+                      <strong style={{ color: "green" }}>
+                        {" "}
+                        {order["status"]}{" "}
                       </strong>
                     )}
                     <br />
@@ -355,9 +357,9 @@ let ApproveOrder = () => {
                             return (
                               <tr>
                                 <td>{index + 1}</td>
-                                <td>{ord['productName']}</td>
+                                <td>{ord["productName"]}</td>
                                 <td>
-                                  {ord['sizeAndCount'].map((or) => {
+                                  {ord["sizeAndCount"].map((or) => {
                                     return (
                                       <tr>
                                         <td>{or.size}</td>
@@ -366,7 +368,7 @@ let ApproveOrder = () => {
                                   })}
                                 </td>
                                 <td>
-                                  {ord['sizeAndCount'].map((or) => {
+                                  {ord["sizeAndCount"].map((or) => {
                                     return (
                                       <tr>
                                         <td>{or.quantity}</td>
@@ -375,7 +377,7 @@ let ApproveOrder = () => {
                                   })}
                                 </td>
                                 <td>
-                                  {ord['sizeAndCount'].map((or) => {
+                                  {ord["sizeAndCount"].map((or) => {
                                     return (
                                       <tr>
                                         <td>{or.subTotal}</td>
@@ -405,9 +407,9 @@ let ApproveOrder = () => {
                             return (
                               <tr>
                                 <td>{index + 1}</td>
-                                <td>{jewel['productName']}</td>
-                                <td>{jewel['quantity']}</td>
-                                <td>{jewel['netPrice']}</td>
+                                <td>{jewel["productName"]}</td>
+                                <td>{jewel["quantity"]}</td>
+                                <td>{jewel["netPrice"]}</td>
                               </tr>
                             );
                           })}
@@ -442,24 +444,24 @@ let ApproveOrder = () => {
                       <table className="table">
                         <tbody>
                           <tr>
-                            <th style={{ width: '50%' }}>Net Price:</th>
-                            <td>${order['totalCost']}</td>
+                            <th style={{ width: "50%" }}>Net Price:</th>
+                            <td>${order["totalCost"]}</td>
                           </tr>
                           <tr>
                             <th>Tax (10%)</th>
-                            <td>${order['totalCost'] / 10}</td>
+                            <td>${order["totalCost"] / 10}</td>
                           </tr>
                           <tr>
                             <th>Shipping:</th>
-                            <td>${order['totalCost'] / 500}</td>
+                            <td>${order["totalCost"] / 500}</td>
                           </tr>
                           <tr>
                             <th>Total:</th>
                             <td>
                               $
-                              {order['totalCost'] +
-                                order['totalCost'] / 10 +
-                                order['totalCost'] / 500}
+                              {order["totalCost"] +
+                                order["totalCost"] / 10 +
+                                order["totalCost"] / 500}
                             </td>
                           </tr>
                         </tbody>
@@ -469,8 +471,8 @@ let ApproveOrder = () => {
                 </div>
                 <div className="row no-print">
                   <div className="col-12">
-                    {order['status'] !== 'Returned' &&
-                    order['status'] !== 'Closed' ? (
+                    {order["status"] !== "Returned" &&
+                    order["status"] !== "Closed" ? (
                       <button
                         type="button"
                         onClick={changeOrderStatus}
@@ -483,14 +485,18 @@ let ApproveOrder = () => {
                         {buttonStatus}
                       </button>
                     )}
-
-                    <button
-                      type="button"
-                      className="btn btn-primary float-right"
-                      style={{ marginRight: 5 }}
-                    >
-                      <i className="fas fa-download" /> Generate PDF
-                    </button>
+                    <ReactToPrint
+                      content={() => componentRef.current}
+                      trigger={() => (
+                        <button
+                          type="button"
+                          className="btn btn-primary float-right"
+                          style={{ marginRight: 5 }}
+                        >
+                          <i className="fas fa-download" /> Generate PDF
+                        </button>
+                      )}
+                    />
                   </div>
                 </div>
               </div>

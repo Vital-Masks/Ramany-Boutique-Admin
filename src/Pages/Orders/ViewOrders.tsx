@@ -6,22 +6,32 @@ import Swal from 'sweetalert2'
 
 let ViewOrders = () => {
 
+    const [isLoading, setIsLoading] = useState(false);
     const [ordersData, setOrdersData] = useState({
         orders: []
     });
   
+    const fetchOrders= async () => {
+        setIsLoading(true);
+        try {
+            OrdersService.getAllOrders().then((response) => {
+                console.log(response)
+                if(response){
+                    setOrdersData(() => ({
+                        orders: response.data
+                    }))
+                    setIsLoading(false); 
+
+                }                                
+            })
+        } catch (err) {
+            console.log(err)
+        }
+        
+    }
 
     useEffect(() => {
-        OrdersService.getAllOrders().then((response) => {
-            console.log(response)
-            setOrdersData(() => ({
-                orders: response.data
-            }))
-
-        }).catch((err) => {
-            console.log(err)
-        })      
-        
+        fetchOrders()
     }, []);
 
     const deleteOrder = (orderId) => {
@@ -91,8 +101,9 @@ let ViewOrders = () => {
                                 <th>Order ID</th>
                                 <th>Customer Name</th>
                                 <th>Total Cost </th>
+                                <th>Order Type</th>
                                 <th>Status</th>
-                                {/* <th>Discount</th> */}
+                                
                                 {/* <th>Main Image</th>
                                 <th>Sub Image</th> */}
                             </tr>                           
@@ -105,6 +116,7 @@ let ViewOrders = () => {
                                             <td>{order['_id']}</td>
                                             <td>{order['customerId']['firstName']}</td>
                                             <td>{order['totalCost']}</td>
+                                            <td>{order['orderType']}</td>
                                             <td>{order['status']}</td>
                                             {/* <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
                                             <td>{jewellery['price']}</td>
@@ -117,6 +129,21 @@ let ViewOrders = () => {
                                     );
                                 })
                             }
+                            {isLoading ? (
+                                <tr>
+                                    <td className="text-center" colSpan={8}>
+                                        Loading...
+                                    </td>
+                                </tr>
+                            ) : (
+                                !ordersData.orders.length && (
+                                    <tr>
+                                        <td className="text-center" colSpan={8}>
+                                            No Data!
+                                        </td>
+                                    </tr>
+                                )
+                            )}
                         </tbody>
                     </table>
                 </div>

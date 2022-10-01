@@ -45,7 +45,7 @@ let Login = ({ setToken }) => {
         <div className="card card-outline card-primary">
           <div className="card-header text-center">
             <a className="h1">
-              <b>Ramany Boutique</b> ADMIN
+              <b>Ramya Boutique</b> ADMIN
             </a>
           </div>
           <div className="card-body">
@@ -97,10 +97,6 @@ let Login = ({ setToken }) => {
                 </button>
               </a>
             </div>
-
-            <p className="mb-1">
-              <a href="forgot-password.html">I forgot my password</a>
-            </p>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Jewellery.module.css';
-import { Link } from 'react-router-dom';
+import { Link ,useNavigate} from 'react-router-dom';
 import JewelleryService from '../../Services/JewelleryService';
 import Swal from 'sweetalert2';
 import 'react-dropzone-uploader/dist/styles.css';
@@ -12,6 +12,7 @@ import { any, string } from 'prop-types';
 let formObject;
 
 let AddJewellery = () => {
+  const navigate = useNavigate();
   let occasionsTemp: string[] = [];
   let categoriesTemp: string[] = [];
 
@@ -206,8 +207,12 @@ let AddJewellery = () => {
                 text: 'Jewellery saved successfully',
                 icon: 'success',
                 confirmButtonText: 'OK',
-              });
-              formObject.element.reset();
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  // formObject.element.reset();
+                  navigate("/viewJewellerys")
+                }
+              });;             
             }
           })
           .catch((err) => {
@@ -714,9 +719,11 @@ let AddJewellery = () => {
                   >
                     Submit
                   </button>
+                  <Link to="/viewJewellerys" className="nav-link">
                   <button type="submit" className="btn btn-default float-right">
                     Cancel
                   </button>
+                  </Link>
                 </div>
               </form>
             </div>

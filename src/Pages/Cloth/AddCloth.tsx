@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './Cloth.module.css';
 import ClothService from '../../Services/ClothService';
 import Swal from 'sweetalert2';
@@ -10,6 +11,7 @@ import { any } from 'prop-types';
 
 let formObject;
 const AddCloth = () => {
+  const navigate = useNavigate();
   const [occasions, setOccasions] = useState<any[]>([]);
   const [clothingCategories, setClothingCategories] = useState<any[]>([]);
 
@@ -255,7 +257,11 @@ const AddCloth = () => {
                 text: 'Cloth saved successfully',
                 icon: 'success',
                 confirmButtonText: 'OK',
-              });
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  navigate("/viewCloths")
+                }
+              });;
             }
           })
           .catch((err) => {
@@ -403,7 +409,7 @@ const AddCloth = () => {
                             id="sellingCloths"
                             name="clothType"
                             onChange={(e) => setClothType('Sell')}
-                            data-msg-containerid="errroForgender"
+                            data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
@@ -421,7 +427,7 @@ const AddCloth = () => {
                             id="rentalCloths"
                             name="clothType"
                             onChange={(e) => setClothType('Rental')}
-                            data-msg-containerid="errroForgender"
+                            data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
@@ -432,7 +438,7 @@ const AddCloth = () => {
                         </div>
                         <div
                           style={{ marginLeft: 30, marginTop: 10 }}
-                          id="errroForgender"
+                          id="errroForclothType"
                         />
                       </div>
                       <div className="form-group row">
@@ -869,9 +875,11 @@ const AddCloth = () => {
                   >
                     Submit
                   </button>
+                  <Link to="/viewCloths" className="nav-link">
                   <button type="submit" className="btn btn-default float-right">
                     Cancel
                   </button>
+                  </Link>
                 </div>
               </form>
             </div>

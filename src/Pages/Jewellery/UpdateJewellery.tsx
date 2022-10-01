@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Jewellery.module.css';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import JewelleryService from '../../Services/JewelleryService';
 import Swal from 'sweetalert2';
 import 'react-dropzone-uploader/dist/styles.css';
 import Dropzone from 'react-dropzone-uploader';
 import { getDroppedOrSelectedFiles } from 'html5-file-selector';
+import { FormValidator } from '@syncfusion/ej2-inputs';
 
+let formObject;
 let UpdateJewellery = () => {
+  const navigate = useNavigate();
   let occasionsTemp: string[] = [];
   let categoriesTemp: string[] = [];
   let sizeAndCount;
@@ -214,26 +217,46 @@ let UpdateJewellery = () => {
     };
     console.log('size', sizeAndCount);
     console.log('jewellery', jewellery);
-    JewelleryService.updateJewelleryById(jewelleryId, jewellery)
-      .then((response) => {
-        if (response['status'] === 200) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Jewellery updated successfully',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          });
-        }
-      })
-      .catch((err) => {
+    formObject.validate();
+    if (formObject.validate()) {
+      if (
+        jewellery.mainImage.file === null ||
+        !jewellery.occasionTypeId ||
+        !jewellery.jewelleryingCategoryId
+      ) {
         Swal.fire({
-          title: 'Oops!',
-          text: 'Something Went Wrong',
+          title: 'Warning',
+          text: 'Mandatory data missing',
           icon: 'warning',
           confirmButtonText: 'OK',
         });
-      });
-  };
+      } else {
+        JewelleryService.updateJewelleryById(jewelleryId, jewellery)
+          .then((response) => {
+            if (response['status'] === 200) {
+              Swal.fire({
+                title: 'Success',
+                text: 'Jewellery updated successfully',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  navigate("/viewCloths")
+                }
+              });
+            }
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: 'Oops!',
+              text: 'Something Went Wrong',
+              icon: 'warning',
+              confirmButtonText: 'OK',
+            });
+          });
+      };
+    }
+  }
   var target;
   var value;
   let handleCheckboxChange = (event) => {
@@ -363,6 +386,43 @@ let UpdateJewellery = () => {
     getJewelleryById();
   }, []);
 
+  useEffect(() => {
+    const options = {
+      // validation rules
+      rules: {
+        jewelleryName: {
+          required: [true, '* Please enter the Jewellery Name'],
+        },
+        jewelleryCode: {
+          required: [true, '* Please enter your Jewellery Code'],
+        },
+        jewelleryType: {
+          required: [true, '* Please select atleast one Jewellery Type'],
+        },
+        gender: {
+          required: [true, '* Please select atleast one gender'],
+        },
+        // occasionTypeId: {
+        //     required: [true, '* Please select atleast one Occasion'],
+        // },
+        categoryName: {
+          required: [true, '* Please select atleast one Jewellery category'],
+        },
+        quantity: {
+          required: [true, '* Please enter Quantity'],
+          number: [true, 'Please enter valid quantity'],
+        },
+        price: {
+          required: [true, '* Please enter Price'],
+          number: [true, 'Please enter valid price'],
+        },
+        discount: {
+          number: [true, 'Please enter valid discount'],
+        },
+      },
+    };
+    formObject = new FormValidator('#form2', options);
+  }, []);
   return (
     <div>
       <div className="content-wrapper">
@@ -378,7 +438,7 @@ let UpdateJewellery = () => {
                 <h3 className="card-title">Fill the jewellery details</h3>
               </div>
 
-              <form className="form-horizontal">
+              <form id="form2" className="form-horizontal">
                 <div className="card-body">
                   <div className="row">
                     <div className="col-md-6">
@@ -390,11 +450,17 @@ let UpdateJewellery = () => {
                           <input
                             type="text"
                             className="form-control"
+                            name="jewelleryName"
                             id="jewelleryName"
                             placeholder="Jewellery Name"
                             onChange={(e) => setjewelleryName(e.target.value)}
                             value={jewelleryName}
+                            data-msg-containerid="errroForjewelleryName"
                           ></input>
+                          <div
+                            style={{ color: 'red' }}
+                            id="errroForjewelleryName"
+                          />
                         </div>
                       </div>
                       <div className="form-group row">
@@ -405,11 +471,17 @@ let UpdateJewellery = () => {
                           <input
                             type="text"
                             className="form-control"
+                            name="jewelleryCode"
                             id="jewelleryCode"
                             placeholder="Jewellery Code"
                             onChange={(e) => setjewelleryCode(e.target.value)}
                             value={jewelleryCode}
-                          ></input>
+                            data-msg-containerid="errroForjewelleryCode"
+                            ></input>
+                            <div
+                              style={{ color: 'red' }}
+                              id="errroForjewelleryCode"
+                            />
                         </div>
                       </div>
                       <div className="form-group row">
@@ -476,8 +548,9 @@ let UpdateJewellery = () => {
                             className="custom-control-input"
                             type="radio"
                             id="menCollections"
-                            name="radio1"
+                            name="gender"
                             onChange={(e) => setGender('Men')}
+                            data-msg-containerid="errroForgender"
                             value={gender}
                             checked={gender === 'Men'}
                           ></input>
@@ -495,8 +568,9 @@ let UpdateJewellery = () => {
                             className="custom-control-input"
                             type="radio"
                             id="womenCollections"
-                            name="radio1"
+                            name="gender"
                             onChange={(e) => setGender('Women')}
+                            data-msg-containerid="errroForgender"
                             value={gender}
                             checked={gender === 'Women'}
                           ></input>
@@ -507,6 +581,14 @@ let UpdateJewellery = () => {
                             Women Colections
                           </label>
                         </div>
+                        <div
+                          style={{
+                            marginLeft: 30,
+                            marginTop: 10,
+                            color: 'red',
+                          }}
+                          id="errroForgender"
+                        />
                       </div>
                       <div className="form-group row">
                         <label className="col-sm-2 col-form-label">
@@ -526,6 +608,7 @@ let UpdateJewellery = () => {
                                       id={occasion['categoryName']}
                                       value={occasion['_id']}
                                       onChange={handleCheckboxChange}
+                                      data-msg-containerid="errroForoccasionTypeId"
                                     ></input>
                                     <label
                                       className="custom-control-label"
@@ -547,6 +630,7 @@ let UpdateJewellery = () => {
                           <select
                             className="custom-select"
                             defaultValue={'default'}
+                            name="categoryName"
                             onChange={(e) =>
                               setjewelleryingCategoryId(e.target.value)
                             }
@@ -578,11 +662,14 @@ let UpdateJewellery = () => {
                               type="text"
                               className="col-sm-6 form-control form-control-sm"
                               placeholder="Quantity"
+                              id="quantity"
                               onChange={(e) => setQuantity(e.target.value)}
+                              data-msg-containerid="errroForQuantity"
                               value={quantity}
                               name="quantity"
                             ></input>
                           </div>
+                          <div style={{ color: 'red' }} id="errroForQuantity" />
                         </div>
                       </div>
                       <div className="form-group row">
@@ -592,7 +679,9 @@ let UpdateJewellery = () => {
                             <input
                               type="text"
                               className="form-control"
+                              name="price"
                               id="price"
+                              data-msg-containerid="errroForprice"
                               onChange={(e) => setprice(e.target.value)}
                               value={price}
                             ></input>
@@ -600,6 +689,7 @@ let UpdateJewellery = () => {
                               <span className="input-group-text"></span>
                             </div>
                           </div>
+                          <div style={{ color: 'red' }} id="errroForprice" />
                         </div>
                       </div>
                       <div className="form-group row">
@@ -611,11 +701,14 @@ let UpdateJewellery = () => {
                             <input
                               type="text"
                               className="form-control"
+                              name="discount"
                               id="discount"
+                              data-msg-containerid="errroFordiscount"
                               onChange={(e) => setdiscount(e.target.value)}
                               value={discount}
                             ></input>
                           </div>
+                          <div style={{ color: 'red' }} id="errroFordiscount" />
                         </div>
                       </div>
                     </div>
@@ -767,9 +860,11 @@ let UpdateJewellery = () => {
                   >
                     Update
                   </button>
-                  <button type="submit" className="btn btn-default float-right">
-                    Cancel
-                  </button>
+                  <Link to="/viewCloths" className="nav-link">
+                    <button type="submit" className="btn btn-default float-right">
+                      Cancel
+                    </button>
+                  </Link>
                 </div>
               </form>
             </div>

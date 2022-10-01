@@ -42,7 +42,7 @@ let ViewCloths = () => {
               confirmButtonText: 'OK',
             }).then((result) => {
               if (result.isConfirmed) {
-                window.location.reload();
+                fetchCloths();
               }
             });
           } else {

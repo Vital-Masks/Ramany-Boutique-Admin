@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styles from './Cloth.module.css';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import ClothService from '../../Services/ClothService';
 import Swal from 'sweetalert2';
 import 'react-dropzone-uploader/dist/styles.css';
@@ -10,6 +10,7 @@ import { FormValidator } from '@syncfusion/ej2-inputs';
 
 let formObject;
 let UpdateCloth = () => {
+  const navigate = useNavigate();
   let occasionsTemp: string[] = [];
   let categoriesTemp: string[] = [];
   let sizeAndCount;
@@ -272,25 +273,45 @@ let UpdateCloth = () => {
     };
     console.log('size', sizeAndCount);
     console.log('cloth', cloth);
-    ClothService.updateClothById(clothId, cloth)
-      .then((response) => {
-        if (response['status'] === 200) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Cloth updated successfully',
-            icon: 'success',
-            confirmButtonText: 'OK',
-          });
-        }
-      })
-      .catch((err) => {
+    formObject.validate();
+    if (formObject.validate()) {
+      if (
+        cloth.mainImage.file === null ||
+        !cloth.occasionTypeId ||
+        !cloth.clothingCategoryId
+      ) {
         Swal.fire({
-          title: 'Oops!',
-          text: 'Something Went Wrong',
+          title: 'Warning',
+          text: 'Mandatory data missing',
           icon: 'warning',
           confirmButtonText: 'OK',
         });
-      });
+      } else {
+        ClothService.updateClothById(clothId, cloth)
+          .then((response) => {
+            if (response['status'] === 200) {
+              Swal.fire({
+                title: 'Success',
+                text: 'Cloth updated successfully',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  navigate("/viewCloths")
+                }
+              });
+            }
+          })
+          .catch((err) => {
+            Swal.fire({
+              title: 'Oops!',
+              text: 'Something Went Wrong',
+              icon: 'warning',
+              confirmButtonText: 'OK',
+            });
+          });
+      }
+    }
   };
   var target;
   var value;
@@ -494,7 +515,7 @@ let UpdateCloth = () => {
                 <h3 className="card-title">Fill the cloth details</h3>
               </div>
 
-              <form className="form-horizontal">
+              <form id="form1" className="form-horizontal">
                 <div className="card-body">
                   <div className="row">
                     <div className="col-md-6">
@@ -506,6 +527,7 @@ let UpdateCloth = () => {
                           <input
                             type="text"
                             className="form-control"
+                            name="clothName"
                             id="clothName"
                             placeholder="Cloth Name"
                             onChange={(e) => setclothName(e.target.value)}
@@ -523,6 +545,7 @@ let UpdateCloth = () => {
                           <input
                             type="text"
                             className="form-control"
+                            name="clothCode"
                             id="clothCode"
                             placeholder="Cloth Code"
                             onChange={(e) => setclothCode(e.target.value)}
@@ -545,7 +568,7 @@ let UpdateCloth = () => {
                             onChange={(e) => setClothType('Sell')}
                             value={clothType}
                             checked={clothType === 'Sell'}
-                            data-msg-containerid="errroForgender"
+                            data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
@@ -565,7 +588,7 @@ let UpdateCloth = () => {
                             onChange={(e) => setClothType('Rental')}
                             value={clothType}
                             checked={clothType === 'Rental'}
-                            data-msg-containerid="errroForgender"
+                            data-msg-containerid="errroForclothType"
                           ></input>
                           <label
                             className="custom-control-label"
@@ -576,7 +599,7 @@ let UpdateCloth = () => {
                         </div>
                         <div
                           style={{ marginLeft: 30, marginTop: 10 }}
-                          id="errroForgender"
+                          id="errroForclothType"
                         />
                       </div>
                       <div className="form-group row">
@@ -590,7 +613,7 @@ let UpdateCloth = () => {
                             className="custom-control-input"
                             type="radio"
                             id="menCollections"
-                            name="radio1"
+                            name="gender"
                             onChange={(e) => setGender('Men')}
                             value={gender}
                             checked={gender === 'Men'}
@@ -610,7 +633,7 @@ let UpdateCloth = () => {
                             className="custom-control-input"
                             type="radio"
                             id="womenCollections"
-                            name="radio1"
+                            name="gender"
                             onChange={(e) => setGender('Women')}
                             value={gender}
                             checked={gender === 'Women'}
@@ -663,6 +686,7 @@ let UpdateCloth = () => {
                           <select
                             className="custom-select"
                             defaultValue={'default'}
+                            name="categoryName"
                             onChange={(e) =>
                               setclothingCategoryId(e.target.value)
                             }
@@ -738,6 +762,7 @@ let UpdateCloth = () => {
                                 className="col-sm-6 form-control form-control-sm"
                                 data-msg-containerid="errroFormCount"
                                 id="inputPassword3"
+                                name="mCount"
                                 placeholder="Count"
                                 onChange={(e) => setmCount(e.target.value)}
                                 value={mCount}
@@ -757,6 +782,7 @@ let UpdateCloth = () => {
                                 className="col-sm-6 form-control form-control-sm"
                                 data-msg-containerid="errroForlCount"
                                 id="inputPassword4"
+                                name="lCount"
                                 placeholder="Count"
                                 onChange={(e) => setlCount(e.target.value)}
                                 value={lCount}
@@ -776,6 +802,7 @@ let UpdateCloth = () => {
                                 className="col-sm-6 form-control form-control-sm"
                                 data-msg-containerid="errroForxlCount"
                                 id="inputPassword5"
+                                name="xlCount"
                                 placeholder="Count"
                                 onChange={(e) => setxlCount(e.target.value)}
                                 value={xlCount}
@@ -795,6 +822,7 @@ let UpdateCloth = () => {
                                 className="col-sm-6 form-control form-control-sm"
                                 data-msg-containerid="errroForxxlCount"
                                 id="inputPassword6"
+                                name="xxlCount"
                                 placeholder="Count"
                                 onChange={(e) => setxxlCount(e.target.value)}
                                 value={xxlCount}
@@ -814,6 +842,7 @@ let UpdateCloth = () => {
                             <input
                               type="text"
                               className="form-control"
+                              name="price"
                               id="price"
                               onChange={(e) => setprice(e.target.value)}
                               value={price}
@@ -835,6 +864,7 @@ let UpdateCloth = () => {
                             <input
                               type="text"
                               className="form-control"
+                              name="discount"
                               id="discount"
                               onChange={(e) => setdiscount(e.target.value)}
                               value={discount}
