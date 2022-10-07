@@ -297,7 +297,7 @@ let UpdateCloth = () => {
                 confirmButtonText: 'OK',
               }).then((result) => {
                 if (result.isConfirmed) {
-                  navigate("/viewCloths")
+                  navigate('/viewCloths');
                 }
               });
             }
@@ -665,6 +665,9 @@ let UpdateCloth = () => {
                                       id={occasion['categoryName']}
                                       value={occasion['_id']}
                                       onChange={handleCheckboxChange}
+                                      // defaultChecked={occasionTypeId.some(
+                                      //   (x) => x['_id'] === occasion['_id']
+                                      // )}
                                     ></input>
                                     <label
                                       className="custom-control-label"

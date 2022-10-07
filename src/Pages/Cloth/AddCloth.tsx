@@ -1,132 +1,70 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './Cloth.module.css';
 import ClothService from '../../Services/ClothService';
 import Swal from 'sweetalert2';
 import 'react-dropzone-uploader/dist/styles.css';
 import Dropzone from 'react-dropzone-uploader';
 import { getDroppedOrSelectedFiles } from 'html5-file-selector';
-import { FormValidator } from '@syncfusion/ej2-inputs';
 import { any } from 'prop-types';
+import { Formik, Form, Field } from 'formik';
+import * as yup from 'yup';
 
-let formObject;
 const AddCloth = () => {
-  const navigate = useNavigate();
   const [occasions, setOccasions] = useState<any[]>([]);
   const [clothingCategories, setClothingCategories] = useState<any[]>([]);
-
-  const [clothName, setClothName] = useState('');
-  const [clothCode, setClothCode] = useState('');
-  const [clothType, setClothType] = useState('');
-  const [gender, setGender] = useState('');
-  const [occasionTypeId, setOccasionTypeId] = useState<string[]>([]);
-  const [clothingCategoryId, setClothingCategoryId] = useState('');
-  const [price, setPrice] = useState('');
-  const [discount, setDiscount] = useState('');
   const [mainImage, setMainImage] = useState<any>({
     file: null,
     base64URL: any,
   });
   const [subImage, setSubImage] = useState<any[]>([]);
-  const [xsCount, setxsCount] = useState('');
-  const [sCount, setsCount] = useState('');
-  const [mCount, setmCount] = useState('');
-  const [lCount, setlCount] = useState('');
-  const [xlCount, setxlCount] = useState('');
-  const [xxlCount, setxxlCount] = useState('');
-  const [description, setDescription] = useState('');
-  const [fabric, setFabric] = useState('');
-  const [features, setFeatures] = useState('');
-  const [measurements, setMeasurements] = useState('');
-  const [style, setStyle] = useState('');
-  const [washInstructions, setWashInstructions] = useState('');
-  const [customAlterations, setCustomAlterations] = useState('');
+  const [sizeAndCount, setSizeAndCount] = useState<any[]>([]);
 
-  let sizeAndCount = [
-    {
-      size: 'XS',
-      count: xsCount,
-    },
-    {
-      size: 'S',
-      count: sCount,
-    },
-    {
-      size: 'M',
-      count: mCount,
-    },
-    {
-      size: 'L',
-      count: lCount,
-    },
-    {
-      size: 'XL',
-      count: xlCount,
-    },
-    {
-      size: 'XXL',
-      count: xxlCount,
-    },
-  ];
+  const [initialValues, setInitialValues] = useState({});
 
-  const getAllCategories = async () => {
-    let occasionsTemp: any[] = [];
-    let categoriesTemp: any[] = [];
+  const navigate = useNavigate();
+  const search = useLocation().search;
+  const clothId = new URLSearchParams(search).get('id');
 
-    ClothService.getAllCategories().then((response) => {
-      let categoryResponse = response.data;
-      categoryResponse.length > 0 &&
-        categoryResponse.map((dd) => {
-          if (dd.categoryType === 'occasionType') {
-            occasionsTemp.push(dd);
-          }
-          if (dd.categoryType === 'clothingCategory') {
-            categoriesTemp.push(dd);
-          }
-        });
-      setOccasions(occasionsTemp);
-      setClothingCategories(categoriesTemp);
-    });
+  const handleSizeCountChange = (value) => {
+    const findSize = sizeAndCount.find((x) => x.size === value.size);
+    if (findSize) {
+      findSize['count'] = value.count;
+    } else {
+      setSizeAndCount([...sizeAndCount, value]);
+    }
   };
 
-  // const fileParams = ({ file,meta }) => {
-  //     // console.log("fileParams", file, meta )
-  //     const body = new FormData()
-  //     body.append('fileField', file)
-  // 	return { url: "https://httpbin.org/post" , body};
-  // };
   const getBase64 = (file) => {
     return new Promise((resolve) => {
-      let fileInfo;
       let baseURL: any;
       // Make new FileReader
       let reader = new FileReader();
 
       // Convert the file to base64 text
       reader.readAsDataURL(file);
-
+      baseURL = URL.createObjectURL(file);
+      resolve(baseURL);
       // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        // console.log("Called", reader);
-        baseURL = reader.result;
-        // console.log(baseURL);
-        resolve(baseURL);
-      };
+      // reader.onload = () => {
+      //   // Make a fileInfo Object
+      //   // console.log("Called", reader);
+      //   baseURL = reader.result;
+
+      //   // console.log(baseURL);
+      //   resolve(baseURL);
+      // };
       //   console.log(fileInfo);
     });
   };
 
   const onMainImageChange = ({ meta, file }, status) => {
     if (status === 'done') {
-      console.log('fileParams', file, meta);
-
-      // setMainImage([...mainImage, file]);
-      // body.append('mainImage', file)
+      // console.log('fileParams', file, meta);
       getBase64(file)
         .then((result) => {
           file['base64'] = result;
-          // console.log("File Is", typeof(result) );
+
           setMainImage({
             base64URL: result,
             file: meta,
@@ -135,11 +73,9 @@ const AddCloth = () => {
         .catch((err) => {
           console.log(err);
         });
-      // setMainImage(file);
     }
 
     if (status === 'removed') {
-      // setMainImage(mainImage.filter((x) => x.file.id !== meta.id));
       setMainImage([]);
     }
   };
@@ -171,6 +107,26 @@ const AddCloth = () => {
     }
   };
 
+  const getAllCategories = async () => {
+    let occasionsTemp: any[] = [];
+    let categoriesTemp: any[] = [];
+
+    ClothService.getAllCategories().then((response) => {
+      let categoryResponse = response.data;
+      categoryResponse.length > 0 &&
+        categoryResponse.map((dd) => {
+          if (dd.categoryType === 'occasionType') {
+            occasionsTemp.push(dd);
+          }
+          if (dd.categoryType === 'clothingCategory') {
+            categoriesTemp.push(dd);
+          }
+        });
+      setOccasions(occasionsTemp);
+      setClothingCategories(categoriesTemp);
+    });
+  };
+
   const getFilesFromEvent = (e) => {
     // return new Promise(resolve => {
     return getDroppedOrSelectedFiles(e).then((chosenFiles) => {
@@ -179,6 +135,174 @@ const AddCloth = () => {
       // })
     });
   };
+
+  const removeMainImage = (id) => {
+    setMainImage({
+      file: null,
+      base64URL: null,
+    });
+  };
+
+  const removeSubImage = (id) => {
+    setSubImage(subImage.filter((x) => x.file.id !== id));
+  };
+
+  let handleMainImageDisplay = () => {
+    if (mainImage.base64URL) {
+      return (
+        <div
+          className={styles.mainImage}
+          style={{
+            border: '2px solid #d9d9d9',
+            marginTop: 8,
+            marginBottom: '10px',
+            padding: 10,
+            borderRadius: 4,
+            height: `150px`,
+            width: '130px',
+          }}
+        >
+          <img
+            src={mainImage.base64URL}
+            width="100px"
+            height="120px"
+            alt="placeholder grey 100px"
+          />
+          <button
+            className={styles.xBtn}
+            onClick={() => removeMainImage(mainImage.file.id)}
+          >
+            X
+          </button>
+        </div>
+      );
+    } else {
+      return (
+        <div className={`form-group row`} style={{ marginLeft: '10px' }}>
+          <Dropzone
+            onChangeStatus={onMainImageChange}
+            InputComponent={selectFileInput}
+            // getUploadParams={fileParams}
+            getFilesFromEvent={getFilesFromEvent}
+            accept="image/*,audio/*,video/*"
+            maxFiles={1}
+            inputContent="Drop A File"
+            styles={{
+              dropzone: { width: 600, height: 100 },
+              dropzoneActive: { borderColor: 'green' },
+            }}
+          />
+        </div>
+      );
+    }
+  };
+
+  let handleSubImageDisplay = () => {
+    let subImageLength = subImage.length;
+    if (subImage) {
+      return subImage.map((img, index) => {
+        return (
+          <div
+            className={styles.mainImage}
+            key={img.file.id}
+            style={{
+              border: '2px solid #d9d9d9',
+              marginTop: 8,
+              marginBottom: '10px',
+              padding: 10,
+              borderRadius: 4,
+              height: `150px`,
+              width: '130px',
+            }}
+          >
+            <img
+              key={img.file.id}
+              src={img.base64URL}
+              width="100px"
+              height="120px"
+              alt="placeholder grey 100px"
+            />
+            <button
+              className={styles.xBtn}
+              onClick={() => removeSubImage(img.file.id)}
+            >
+              X
+            </button>
+          </div>
+        );
+      });
+    }
+    if (subImageLength < 4) {
+      return (
+        <Dropzone
+          onChangeStatus={onSubImageChange}
+          InputComponent={selectFileInput}
+          // getUploadParams={fileParams}
+          getFilesFromEvent={getFilesFromEvent}
+          accept="image/*,audio/*,video/*"
+          maxFiles={3}
+          inputContent="Drop A File"
+          styles={{
+            dropzone: { width: 600, height: 100 },
+            dropzoneActive: { borderColor: 'green' },
+          }}
+        />
+      );
+    }
+  };
+
+  const fetchCloth = async (id) => {
+    const { data } = await ClothService.getClothById(id);
+    console.log('res', data);
+    setInitialValues({
+      clothName: data.clothName,
+      clothCode: data.clothCode,
+      clothType: data.clothType,
+      gender: data.gender,
+      occasionTypeId: data.occasionTypeId.map((x) => x._id),
+      clothingCategoryId: data.clothingCategoryId._id,
+      price: data.price,
+      discount: data.discount,
+      // mainImage: '',
+      // subImage: [],
+      description: data.description,
+      fabric: data.fabric,
+      features: data.features,
+      measurements: data.measurements,
+      style: data.style,
+      washInstructions: data.washInstructions,
+      customAltrations: data.customAltrations,
+    });
+    setSizeAndCount(data.sizeAndCount);
+    setMainImage(data.mainImage);
+    setSubImage(data.subImage);
+  };
+
+  useEffect(() => {
+    if (clothId) {
+      fetchCloth(clothId);
+    } else {
+      setInitialValues({
+        clothName: '',
+        clothCode: '',
+        clothType: '',
+        gender: '',
+        occasionTypeId: [],
+        clothingCategoryId: '',
+        price: '',
+        discount: '',
+        // mainImage: '',
+        // subImage: [],
+        description: '',
+        fabric: '',
+        features: '',
+        measurements: '',
+        style: '',
+        washInstructions: '',
+        customAltrations: '',
+      });
+    }
+  }, [clothId]);
 
   const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
     const textMsg = files.length > 0 ? 'Upload Again' : 'Select Files';
@@ -199,146 +323,38 @@ const AddCloth = () => {
     );
   };
 
-  //    const mainImageHandler = (event) =>{
-  //     const formData = new FormData();
-  //     //FILE INFO NAME WILL BE "my-image-file"
-  //     if( event.target.files[0]!=null){
-  //         // formData.append('my-image-file', event.target.files[0], event.target.files[0].name);
-  //         setMainImage([...mainImage,event.target.files[0]])
-  //     }
-
-  //         // setMainImage(event.target.files[0])
-  //     }
-
-  const saveCloth = async (e) => {
-    e.preventDefault();
-
-    // setmainImage("Url");
-    let cloth = {
-      clothName: clothName,
-      clothCode: clothCode,
-      clothType: clothType,
-      gender: gender,
-      occasionTypeId: occasionTypeId,
-      clothingCategoryId: clothingCategoryId,
-      sizeAndCount: sizeAndCount,
-      price: price,
-      discount: discount,
-      description: description,
-      fabric: fabric,
-      features: features,
-      measurements: measurements,
-      style: style,
-      washInstructions: washInstructions,
-      customAltrations: customAlterations,
-      mainImage: mainImage,
-      subImage: subImage,
+  const handleSubmit = async (values) => {
+    const obj = {
+      ...values,
+      sizeAndCount,
+      mainImage,
+      subImage,
     };
 
-    formObject.validate();
-    if (formObject.validate()) {
-      if (
-        cloth.mainImage.file === null ||
-        !cloth.occasionTypeId ||
-        !cloth.clothingCategoryId
-      ) {
-        Swal.fire({
-          title: 'Warning',
-          text: 'Mandatory data missing',
-          icon: 'warning',
-          confirmButtonText: 'OK',
-        });
-      } else {
-        ClothService.saveCloths(cloth)
-          .then((response) => {
-            if (response['status'] === 200) {
-              Swal.fire({
-                title: 'Success',
-                text: 'Cloth saved successfully',
-                icon: 'success',
-                confirmButtonText: 'OK',
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  navigate("/viewCloths")
-                }
-              });;
-            }
-          })
-          .catch((err) => {
-            Swal.fire({
-              title: 'Oops!',
-              text: 'Something Went Wrong',
-              icon: 'warning',
-              confirmButtonText: 'OK',
-            });
-          });
-      }
-    }
-  };
-
-  let handleCheckboxChange = (event) => {
-    const target = event.target;
-    var value = target.value;
-    if (target.checked) {
-      setOccasionTypeId((preValues) => [...preValues, value]);
-    } else {
-      occasionTypeId.splice(value, 1);
+    try {
+      await ClothService.saveCloths(obj);
+      Swal.fire({
+        title: 'Success',
+        text: 'Cloth saved successfully',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/viewCloths');
+        }
+      });
+    } catch (error) {
+      Swal.fire({
+        title: 'Oops!',
+        text: 'Something Went Wrong',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
     }
   };
 
   useEffect(() => {
     getAllCategories();
-  }, []);
-
-  useEffect(() => {
-    const options = {
-      // validation rules
-      rules: {
-        clothName: {
-          required: [true, '* Please enter the Cloth Name'],
-        },
-        clothCode: {
-          required: [true, '* Please enter your Cloth Code'],
-        },
-        clothType: {
-          required: [true, '* Please select atleast one Cloth type'],
-        },
-        gender: {
-          required: [true, '* Please select atleast one gender'],
-        },
-        // occasionTypeId: {
-        //     required: [true, '* Please select atleast one Occasion'],
-        // },
-        categoryName: {
-          required: [true, '* Please select atleast one Cloth category'],
-        },
-        xsCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        sCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        mCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        lCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        xlCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        xxlCount: {
-          number: [true, 'Please enter valid count'],
-        },
-        price: {
-          number: [true, 'Please enter valid price'],
-        },
-        discount: {
-          number: [true, 'Please enter valid discount'],
-        },
-      },
-    };
-    formObject = new FormValidator('#form1', options);
   }, []);
 
   return (
@@ -356,532 +372,724 @@ const AddCloth = () => {
                 <h3 className="card-title">Fill the cloth details</h3>
               </div>
 
-              <form id="form1" className="form-horizontal">
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Cloth Name
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="clothName"
-                            id="clothName"
-                            placeholder="Cloth Name"
-                            onChange={(e) => setClothName(e.target.value)}
-                            value={clothName}
-                            data-msg-containerid="errroForclothName"
-                          ></input>
-                          <div id="errroForclothName" />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Cloth Code
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="clothCode"
-                            id="clothCode"
-                            placeholder="Cloth Code"
-                            onChange={(e) => setClothCode(e.target.value)}
-                            value={clothCode}
-                            // data-msg-containerid="errroForclothCode"
-                          ></input>
-                          {/* <div id="errroForclothCode" /> */}
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Cloth Type
-                        </label>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="sellingCloths"
-                            name="clothType"
-                            onChange={(e) => setClothType('Sale')}
-                            data-msg-containerid="errroForclothType"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="sellingCloths"
-                          >
-                            Sale
-                          </label>
-                        </div>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="rentalCloths"
-                            name="clothType"
-                            onChange={(e) => setClothType('Rent')}
-                            data-msg-containerid="errroForclothType"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="rentalCloths"
-                          >
-                            Rent
-                          </label>
-                        </div>
-                        <div
-                          style={{ marginLeft: 30, marginTop: 10 }}
-                          id="errroForclothType"
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Gender
-                        </label>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="menCollections"
-                            name="gender"
-                            onChange={(e) => setGender('Men')}
-                            data-msg-containerid="errroForgender"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="menCollections"
-                          >
-                            Men Colections
-                          </label>
-                        </div>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="womenCollections"
-                            name="gender"
-                            onChange={(e) => setGender('Women')}
-                            data-msg-containerid="errroForgender"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="womenCollections"
-                          >
-                            Women Colections
-                          </label>
-                        </div>
-                        <div
-                          style={{ marginLeft: 30, marginTop: 10 }}
-                          id="errroForgender"
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Occasion Type
-                        </label>
+              <Formik
+                initialValues={initialValues}
+                enableReinitialize
+                // validationSchema={schema}
+                onSubmit={(values, actions) => {
+                  handleSubmit(values).then(() => {
+                    actions.setSubmitting(false);
+                    actions.resetForm();
+                  });
+                }}
+              >
+                {({
+                  handleSubmit,
+                  errors,
+                  values,
+                  touched,
+                  isSubmitting,
+                  isValidating,
+                  setFieldValue,
+                }) => (
+                  <Form onSubmit={handleSubmit} className="form-horizontal">
+                    <div className="card-body">
+                      <div className="row">
                         <div className="col-md-6">
-                          {occasions.length > 0 &&
-                            occasions.map((occasion, index) => {
-                              return (
-                                <div className="row" key={occasion['_id']}>
-                                  <div
-                                    className={`custom-control custom-checkbox ${styles.marginCheckRadio}`}
-                                  >
-                                    <input
-                                      className="custom-control-input"
-                                      type="checkbox"
-                                      id={occasion['categoryName']}
-                                      value={occasion['_id']}
-                                      onChange={handleCheckboxChange}
-                                    ></input>
-                                    <label
-                                      className="custom-control-label"
-                                      htmlFor={occasion['categoryName']}
-                                    >
-                                      {occasion['categoryName']}
-                                    </label>
-                                  </div>
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Cloth Name
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                type="text"
+                                name="clothName"
+                                placeholder="Cloth name"
+                                className="form-control"
+                                value={values['clothName']}
+                              />
+                              {errors['clothName'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['clothName']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Cloth Code
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="clothCode"
+                                type="text"
+                                name="clothCode"
+                                placeholder="Cloth code"
+                                className="form-control"
+                              />
+                              {errors['clothCode'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['clothCode']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Cloth type
+                            </label>
+                            <div
+                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                            >
+                              <Field
+                                id="sellingCloths"
+                                type="radio"
+                                name="clothType"
+                                className="custom-control-input"
+                                value="Sale"
+                              />
+
+                              <label
+                                className="custom-control-label"
+                                htmlFor="sellingCloths"
+                              >
+                                Sale
+                              </label>
+                            </div>
+                            <div
+                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                            >
+                              <Field
+                                id="rentalCloths"
+                                type="radio"
+                                name="clothType"
+                                className="custom-control-input"
+                                value="Rent"
+                              />
+
+                              <label
+                                className="custom-control-label"
+                                htmlFor="rentalCloths"
+                              >
+                                Rent
+                              </label>
+                            </div>
+                            {errors['clothType'] && (
+                              <p
+                                className="mt-2 text-sm text-red-600"
+                                id="email-error"
+                              >
+                                {errors['clothType']}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Gender
+                            </label>
+                            <div
+                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                            >
+                              <Field
+                                id="womenCollections"
+                                type="radio"
+                                name="gender"
+                                className="custom-control-input"
+                                value="Women"
+                              />
+
+                              <label
+                                className="custom-control-label"
+                                htmlFor="womenCollections"
+                              >
+                                Women Collections
+                              </label>
+                            </div>
+                            <div
+                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                            >
+                              <Field
+                                id="menCollections"
+                                type="radio"
+                                name="gender"
+                                className="custom-control-input"
+                                value="Men"
+                              />
+
+                              <label
+                                className="custom-control-label"
+                                htmlFor="menCollections"
+                              >
+                                Men Colections
+                              </label>
+                            </div>
+                            {errors['gender'] && (
+                              <p
+                                className="mt-2 text-sm text-red-600"
+                                id="email-error"
+                              >
+                                {errors['gender']}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Occasion Type
+                            </label>
+                            <div className="col-md-6">
+                              {occasions.length > 0 &&
+                                occasions.map((occasion, index) => {
+                                  return (
+                                    <div className="row" key={index}>
+                                      <div
+                                        className={`custom-control custom-checkbox ${styles.marginCheckRadio}`}
+                                      >
+                                        <Field
+                                          id={occasion['categoryName']}
+                                          type="checkbox"
+                                          name="occasionTypeId"
+                                          className="custom-control-input"
+                                          value={occasion['_id']}
+                                        />
+
+                                        <label
+                                          className="custom-control-label"
+                                          htmlFor={occasion['categoryName']}
+                                        >
+                                          {occasion['categoryName']}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                            </div>
+
+                            {errors['occasionTypeId'] && (
+                              <p
+                                className="mt-2 text-sm text-red-600"
+                                id="email-error"
+                              >
+                                {errors['occasionTypeId']}
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Cloth Category
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                className="custom-select"
+                                as="select"
+                                name="clothingCategoryId"
+                              >
+                                <option value={'default'} disabled>
+                                  Choose an option
+                                </option>
+                                {clothingCategories.length > 0 &&
+                                  clothingCategories.map((category) => {
+                                    return (
+                                      <option
+                                        key={category['_id']}
+                                        value={category['_id']}
+                                      >
+                                        {category['categoryName']}
+                                      </option>
+                                    );
+                                  })}
+                              </Field>
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Size And Count
+                            </label>
+                            <div className="col-md-6">
+                              <div className="row">
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    XS
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'XS',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    defaultValue={
+                                      sizeAndCount?.find((x) => x.size === 'XS')
+                                        ?.count
+                                    }
+                                    name="xsCount"
+                                    data-msg-containerid="errroForxsCount"
+                                  ></input>
                                 </div>
-                              );
-                            })}
+
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    S
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    id="inputPassword2"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'S',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    name="sCount"
+                                    defaultValue={
+                                      sizeAndCount?.find((x) => x.size === 'S')
+                                        ?.count
+                                    }
+                                    data-msg-containerid="errroForsCount"
+                                  ></input>
+                                  <div
+                                    style={{
+                                      marginLeft: '155px',
+                                      color: 'red',
+                                    }}
+                                    id="errroForsCount"
+                                  />
+                                </div>
+
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    M
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    id="inputPassword3"
+                                    name="mCount"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'M',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    defaultValue={
+                                      sizeAndCount?.find((x) => x.size === 'M')
+                                        ?.count
+                                    }
+                                    data-msg-containerid="errroFormCount"
+                                  ></input>
+                                  <div
+                                    style={{
+                                      marginLeft: '155px',
+                                      color: 'red',
+                                    }}
+                                    id="errroFormCount"
+                                  />
+                                </div>
+
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    L
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    id="inputPassword4"
+                                    name="lCount"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'L',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    defaultValue={
+                                      sizeAndCount?.find((x) => x.size === 'L')
+                                        ?.count
+                                    }
+                                    data-msg-containerid="errroForlCount"
+                                  ></input>
+                                  <div
+                                    style={{
+                                      marginLeft: '155px',
+                                      color: 'red',
+                                    }}
+                                    id="errroForlCount"
+                                  />
+                                </div>
+
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    XL
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    id="inputPassword5"
+                                    name="xlCount"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'XL',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    defaultValue={
+                                      sizeAndCount?.find((x) => x.size === 'XL')
+                                        ?.count
+                                    }
+                                    data-msg-containerid="errroForxlCount"
+                                  ></input>
+                                  <div
+                                    style={{
+                                      marginLeft: '155px',
+                                      color: 'red',
+                                    }}
+                                    id="errroForxlCount"
+                                  />
+                                </div>
+
+                                <div className="col-sm-10 row">
+                                  <label className="col-sm-4 col-form-label">
+                                    XXL
+                                  </label>
+                                  <input
+                                    type="text"
+                                    className="col-sm-6 form-control form-control-sm"
+                                    id="inputPassword6"
+                                    name="xxlCount"
+                                    placeholder="Count"
+                                    onChange={(e) =>
+                                      handleSizeCountChange({
+                                        size: 'XXL',
+                                        count: e.target.value,
+                                      })
+                                    }
+                                    defaultValue={
+                                      sizeAndCount?.find(
+                                        (x) => x.size === 'XXL'
+                                      )?.count
+                                    }
+                                    data-msg-containerid="errroForxxlCount"
+                                  ></input>
+                                  <div
+                                    style={{
+                                      marginLeft: '155px',
+                                      color: 'red',
+                                    }}
+                                    id="errroForxxlCount"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Price
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="price"
+                                type="text"
+                                name="price"
+                                className="form-control"
+                              />
+                              {errors['price'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['price']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Discount
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="discount"
+                                type="text"
+                                name="discount"
+                                className="form-control"
+                              />
+                              {errors['discount'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['discount']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Cloth Category
-                        </label>
-                        <div className="col-sm-10">
-                          <select
-                            className="custom-select"
-                            defaultValue={'default'}
-                            name="categoryName"
-                            onChange={(e) =>
-                              setClothingCategoryId(e.target.value)
-                            }
-                          >
-                            <option value={'default'} disabled>
-                              Choose an option
-                            </option>
-                            {clothingCategories.length > 0 &&
-                              clothingCategories.map((category) => {
-                                return (
-                                  <option
-                                    key={category['_id']}
-                                    value={category['_id']}
-                                  >
-                                    {category['categoryName']}
-                                  </option>
-                                );
-                              })}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Size And Count
-                        </label>
+
                         <div className="col-md-6">
-                          <div className="row">
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                XS
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                placeholder="Count"
-                                onChange={(e) => setxsCount(e.target.value)}
-                                value={xsCount}
-                                name="xsCount"
-                                data-msg-containerid="errroForxsCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroForxsCount"
-                              />
-                            </div>
+                          <div className="form-group row">
+                            <label
+                              className="col-sm-2 col-form-label"
+                              htmlFor="file"
+                            >
+                              Main Image
+                            </label>
 
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                S
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                id="inputPassword2"
-                                placeholder="Count"
-                                onChange={(e) => setsCount(e.target.value)}
-                                name="sCount"
-                                value={sCount}
-                                data-msg-containerid="errroForsCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroForsCount"
-                              />
-                            </div>
+                            <div className="col-sm-10">
+                              {clothId && <div>{handleMainImageDisplay()}</div>}
 
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                M
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                id="inputPassword3"
-                                name="mCount"
-                                placeholder="Count"
-                                onChange={(e) => setmCount(e.target.value)}
-                                value={mCount}
-                                data-msg-containerid="errroFormCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroFormCount"
-                              />
-                            </div>
-
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                L
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                id="inputPassword4"
-                                name="lCount"
-                                placeholder="Count"
-                                onChange={(e) => setlCount(e.target.value)}
-                                value={lCount}
-                                data-msg-containerid="errroForlCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroForlCount"
-                              />
-                            </div>
-
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                XL
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                id="inputPassword5"
-                                name="xlCount"
-                                placeholder="Count"
-                                onChange={(e) => setxlCount(e.target.value)}
-                                value={xlCount}
-                                data-msg-containerid="errroForxlCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroForxlCount"
-                              />
-                            </div>
-
-                            <div className="col-sm-10 row">
-                              <label className="col-sm-4 col-form-label">
-                                XXL
-                              </label>
-                              <input
-                                type="text"
-                                className="col-sm-6 form-control form-control-sm"
-                                id="inputPassword6"
-                                name="xxlCount"
-                                placeholder="Count"
-                                onChange={(e) => setxxlCount(e.target.value)}
-                                value={xxlCount}
-                                data-msg-containerid="errroForxxlCount"
-                              ></input>
-                              <div
-                                style={{ marginLeft: '155px', color: 'red' }}
-                                id="errroForxxlCount"
+                              <Dropzone
+                                onChangeStatus={onMainImageChange}
+                                InputComponent={selectFileInput}
+                                getFilesFromEvent={getFilesFromEvent}
+                                accept="image/*"
+                                maxFiles={1}
+                                inputContent="Drop A File"
+                                styles={{
+                                  dropzone: {
+                                    overflow: 'hidden',
+                                    border: 'dashed 2px #dedede',
+                                  },
+                                }}
                               />
                             </div>
                           </div>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">Price</label>
-                        <div className="col-sm-10">
-                          <div className="input-group">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="price"
-                              id="price"
-                              onChange={(e) => setPrice(e.target.value)}
-                              value={price}
-                              data-msg-containerid="errroForprice"
-                            ></input>
-                            <div className="input-group-append">
-                              <span className="input-group-text"></span>
+
+                          <div className="form-group row">
+                            <label
+                              className="col-sm-2 col-form-label"
+                              htmlFor="file"
+                            >
+                              Sub Image
+                            </label>
+                            <div className="col-sm-10">
+                              {clothId && (
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '10px',
+                                  }}
+                                >
+                                  {handleSubImageDisplay()}
+                                </div>
+                              )}
+                              <Dropzone
+                                onChangeStatus={onSubImageChange}
+                                InputComponent={selectFileInput}
+                                getFilesFromEvent={getFilesFromEvent}
+                                accept="image/*"
+                                maxFiles={5}
+                                inputContent="Drop A File"
+                                styles={{
+                                  dropzone: {
+                                    height: 200,
+                                    overflow: 'auto',
+                                    border: 'dashed 2px #dedede',
+                                  },
+                                }}
+                              />
                             </div>
                           </div>
-                          <div id="errroForprice" />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Discount
-                        </label>
-                        <div className="col-sm-10">
-                          <div className="input-group">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="discount"
-                              id="discount"
-                              onChange={(e) => setDiscount(e.target.value)}
-                              value={discount}
-                              data-msg-containerid="errroFordiscount"
-                            ></input>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Description
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="description"
+                                type="text"
+                                name="description"
+                                placeholder="description"
+                                className="form-control"
+                              />
+                              {errors['description'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['description']}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div id="errroFordiscount" />
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Fabric
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="fabric"
+                                type="text"
+                                name="fabric"
+                                placeholder="fabric"
+                                className="form-control"
+                              />
+                              {errors['fabric'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['fabric']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Features
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="features"
+                                type="text"
+                                name="features"
+                                placeholder="features"
+                                className="form-control"
+                              />
+                              {errors['features'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['features']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Measurements
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="measurements"
+                                type="text"
+                                name="measurements"
+                                placeholder="measurements"
+                                className="form-control"
+                              />
+                              {errors['measurements'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['measurements']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              style
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="style"
+                                type="text"
+                                name="style"
+                                placeholder="style"
+                                className="form-control"
+                              />
+                              {errors['style'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['style']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Wash Instructions
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="washInstructions"
+                                type="text"
+                                name="washInstructions"
+                                placeholder="washInstructions"
+                                className="form-control"
+                              />
+                              {errors['washInstructions'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['washInstructions']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-2 col-form-label">
+                              Custom Alterations
+                            </label>
+                            <div className="col-sm-10">
+                              <Field
+                                id="customAltrations"
+                                type="text"
+                                name="customAltrations"
+                                placeholder="custom altrations"
+                                className="form-control"
+                              />
+                              {errors['customAltrations'] && (
+                                <p
+                                  className="mt-2 text-sm text-red-600"
+                                  id="email-error"
+                                >
+                                  {errors['customAltrations']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-6">
-                      <div className="form-group row">
-                        <label htmlFor="file">Main Image</label>
-                        {/* <FileUploadComponent multiple= {false}></FileUploadComponent> */}
-                        {/* <input
-													className={` ${styles.marginCheckRadio}`}
-													type="file"
-													id="file"
-													name="file"
-                                                    accept="image/*,audio/*,video/*"
-                                                    onChange={mainImageHandler}
-												></input> */}
-                        <Dropzone
-                          onChangeStatus={onMainImageChange}
-                          InputComponent={selectFileInput}
-                          // getUploadParams={fileParams}
-                          getFilesFromEvent={getFilesFromEvent}
-                          accept="image/*,audio/*,video/*"
-                          maxFiles={1}
-                          inputContent="Drop A File"
-                          styles={{
-                            dropzone: { width: 600, height: 100 },
-                            dropzoneActive: { borderColor: 'green' },
-                          }}
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label htmlFor="file">Sub Image</label>
-                        <Dropzone
-                          onChangeStatus={onSubImageChange}
-                          InputComponent={selectFileInput}
-                          // getUploadParams={fileParams}
-                          getFilesFromEvent={getFilesFromEvent}
-                          accept="image/*,audio/*,video/*"
-                          maxFiles={5}
-                          inputContent="Drop A File"
-                          styles={{
-                            dropzone: { width: 600, height: 400 },
-                            dropzoneActive: { borderColor: 'green' },
-                          }}
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Description
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="description"
-                            placeholder="Description"
-                            onChange={(e) => setDescription(e.target.value)}
-                            value={description}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Fabric
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="fabric"
-                            placeholder="Fabric"
-                            onChange={(e) => setFabric(e.target.value)}
-                            value={fabric}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Features
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="features"
-                            placeholder="Features"
-                            onChange={(e) => setFeatures(e.target.value)}
-                            value={features}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Measurements
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="measurements"
-                            placeholder="Measurements"
-                            onChange={(e) => setMeasurements(e.target.value)}
-                            value={measurements}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">Style</label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="style"
-                            placeholder="Style"
-                            onChange={(e) => setStyle(e.target.value)}
-                            value={style}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Wash Instructions
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="washInstructions"
-                            placeholder="Wash Instructions"
-                            onChange={(e) =>
-                              setWashInstructions(e.target.value)
-                            }
-                            value={washInstructions}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Custom Alterations
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            id="customAltrations"
-                            placeholder="Custom Alterations"
-                            onChange={(e) =>
-                              setCustomAlterations(e.target.value)
-                            }
-                            value={customAlterations}
-                          ></input>
-                        </div>
-                      </div>
+                    <div className="card-footer">
+                      <button type="submit" className="btn btn-info">
+                        Submit
+                      </button>
+                      <Link to="/viewCloths" className="nav-link">
+                        <button
+                          type="submit"
+                          className="btn btn-default float-right"
+                        >
+                          Cancel
+                        </button>
+                      </Link>
                     </div>
-                  </div>
-                </div>
-
-                <div className="card-footer">
-                  <button
-                    type="submit"
-                    className="btn btn-info"
-                    onClick={saveCloth}
-                  >
-                    Submit
-                  </button>
-                  <Link to="/viewCloths" className="nav-link">
-                  <button type="submit" className="btn btn-default float-right">
-                    Cancel
-                  </button>
-                  </Link>
-                </div>
-              </form>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </div>
         </section>

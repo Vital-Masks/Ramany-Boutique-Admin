@@ -70,7 +70,7 @@ let ViewCloths = () => {
             <div className="col col-lg-2">
               <Link to="/addCloth">
                 <button type="button" className="btn btn-block btn-success">
-                  <i className="fa fa-home"></i>Add Cloth
+                  <i className="fa fa-home"></i> Add Cloth
                 </button>
               </Link>
             </div>
@@ -111,7 +111,7 @@ let ViewCloths = () => {
                       <td>
                         <Link
                           to={{
-                            pathname: '/updateCloth',
+                            pathname: '/addCloth',
                             search: `?id=${cloth['_id']}`,
                           }}
                         >
