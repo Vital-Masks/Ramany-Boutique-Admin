@@ -1,47 +1,83 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './Jewellery.module.css';
-import { Link ,useNavigate} from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import JewelleryService from '../../Services/JewelleryService';
 import Swal from 'sweetalert2';
 import 'react-dropzone-uploader/dist/styles.css';
 import Dropzone from 'react-dropzone-uploader';
 import { getDroppedOrSelectedFiles } from 'html5-file-selector';
-import { FormValidator } from '@syncfusion/ej2-inputs';
-import { any, string } from 'prop-types';
+import { any } from 'prop-types';
+import { Field, Form, Formik } from 'formik';
+import Select from 'react-select';
+import * as Yup from 'yup';
 
-let formObject;
+const schema = Yup.object().shape({
+  jewelleryName: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  jewelleryCode: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  jewelleryType: Yup.string().required('Required'),
+  gender: Yup.string().required('Required'),
+  occasionTypeId: Yup.array().min(1, 'Required'),
+  jewelleryCategoryId: Yup.string().required('Required'),
+  quantity: Yup.string().required('Required'),
+  price: Yup.string().required('Required'),
+  discount: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  description: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  gemStones: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  metalAndFinish: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  measurements: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  style: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  detailing: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  customization: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+});
 
 let AddJewellery = () => {
   const navigate = useNavigate();
-  let occasionsTemp: string[] = [];
-  let categoriesTemp: string[] = [];
-
-  const [occasions, setoccasions] = useState([{}]);
-  const [jewelleryingCategories, setJewelleryingCategories] = useState([{}]);
-
-  const [jewelleryName, setjewelleryName] = useState('');
-  const [jewelleryCode, setjewelleryCode] = useState('');
-  const [jewelleryType, setJewelleryType] = useState('');
-  const [gender, setGender] = useState('');
-  const [occasionTypeId, setoccasionTypeId] = useState<string[]>([]);
-  const [jewelleryingCategoryId, setjewelleryingCategoryId] = useState('');
-  const [quantity, setQuantity] = useState('');
-  const [price, setprice] = useState('');
-  const [discount, setdiscount] = useState('');
+  const [initialValues, setInitialValues] = useState({});
+  const [occasions, setOccasions] = useState<any[]>([]);
+  const [jewelleryCategories, setJewelleryCategories] = useState<any[]>([]);
   const [mainImage, setMainImage] = useState<any>({
     file: null,
     base64URL: any,
   });
   const [subImage, setSubImage] = useState<any[]>([]);
-  const [description, setdescription] = useState('');
-  const [inclusions, setinclusions] = useState('');
-  const [gemStones, setgemStones] = useState('');
-  const [metalAndFinish, setmetalAndFinish] = useState('');
-  const [style, setstyle] = useState('');
-  const [detailing, setdetailing] = useState('');
-  const [customization, setcustomization] = useState('');
+
+  const search = useLocation().search;
+  const jewelleryId = new URLSearchParams(search).get('id');
 
   const getAllCategories = async () => {
+    let occasionsTemp: string[] = [];
+    let categoriesTemp: any[] = [];
+
     JewelleryService.getAllCategories().then((response) => {
       let categoryResponse = response.data;
       categoryResponse.length > 0 &&
@@ -50,40 +86,38 @@ let AddJewellery = () => {
             occasionsTemp.push(dd);
           }
           if (dd.categoryType === 'jewelleryCategory') {
-            categoriesTemp.push(dd);
+            categoriesTemp.push({ value: dd._id, label: dd.categoryName });
           }
         });
-      setoccasions(occasionsTemp);
-      setJewelleryingCategories(categoriesTemp);
+      setOccasions(occasionsTemp);
+      setJewelleryCategories(categoriesTemp);
     });
   };
 
   const getBase64 = (file) => {
     return new Promise((resolve) => {
-      let fileInfo;
       let baseURL: any;
       // Make new FileReader
       let reader = new FileReader();
 
       // Convert the file to base64 text
       reader.readAsDataURL(file);
-
+      baseURL = URL.createObjectURL(file);
+      resolve(baseURL);
       // on reader load somthing...
-      reader.onload = () => {
-        // Make a fileInfo Object
-        // console.log("Called", reader);
-        baseURL = reader.result;
-        // console.log(baseURL);
-        resolve(baseURL);
-      };
+      // reader.onload = () => {
+      //   // Make a fileInfo Object
+      //   // console.log("Called", reader);
+      //   baseURL = reader.result;
+      //   // console.log(baseURL);
+      //   resolve(baseURL);
+      // };
       //   console.log(fileInfo);
     });
   };
 
   const onMainImageChange = ({ meta, file }, status) => {
     if (status === 'done') {
-      console.log('fileParams', file, meta);
-
       // setMainImage([...mainImage, file]);
       // body.append('mainImage', file)
       getBase64(file)
@@ -162,121 +196,208 @@ let AddJewellery = () => {
     );
   };
 
-  const saveJewellery = async (e) => {
-    e.preventDefault();
-
-    let jewellery = {
-      jewelleryName: jewelleryName,
-      jewelleryCode: jewelleryCode,
-      jewelleryType: jewelleryType,
-      gender: gender,
-      occasionTypeId: occasionTypeId,
-      jewelleryingCategoryId: jewelleryingCategoryId,
-      quantity: quantity,
-      price: price,
-      discount: discount,
-      description: description,
-      inclusions: inclusions,
-      gemStones: gemStones,
-      metalAndFinish: metalAndFinish,
-      style: style,
-      detailing: detailing,
-      customization: customization,
-      mainImage: mainImage,
-      subImage: subImage,
-    };
-    formObject.validate();
-    if (formObject.validate()) {
-      if (
-        jewellery.mainImage.file === null ||
-        !jewellery.occasionTypeId ||
-        !jewellery.jewelleryingCategoryId
-      ) {
-        Swal.fire({
-          title: 'Warning',
-          text: 'Mandatory data missing',
-          icon: 'warning',
-          confirmButtonText: 'OK',
-        });
-      } else {
-        JewelleryService.saveJewellerys(jewellery)
-          .then((response) => {
-            if (response['status'] === 200) {
-              Swal.fire({
-                title: 'Success',
-                text: 'Jewellery saved successfully',
-                icon: 'success',
-                confirmButtonText: 'OK',
-              }).then((result) => {
-                if (result.isConfirmed) {
-                  // formObject.element.reset();
-                  navigate("/viewJewellerys")
-                }
-              });;             
-            }
-          })
-          .catch((err) => {
-            Swal.fire({
-              title: 'Oops!',
-              text: 'Something Went Wrong',
-              icon: 'warning',
-              confirmButtonText: 'OK',
-            });
-          });
-      }
-    }
+  const removeMainImage = (id) => {
+    setMainImage({
+      file: null,
+      base64URL: null,
+    });
   };
 
-  let handleCheckboxChange = (event) => {
-    const target = event.target;
-    var value = target.value;
-    if (target.checked) {
-      setoccasionTypeId((preValues) => [...preValues, value]);
+  const removeSubImage = (id) => {
+    setSubImage(subImage.filter((x) => x.file.id !== id));
+  };
+
+  let handleMainImageDisplay = () => {
+    if (mainImage.base64URL) {
+      return (
+        <div
+          className={styles.mainImage}
+          style={{
+            border: '2px solid #d9d9d9',
+            marginTop: 8,
+            marginBottom: '10px',
+            padding: 10,
+            borderRadius: 4,
+            height: `150px`,
+            width: '130px',
+          }}
+        >
+          <img
+            src={mainImage.base64URL}
+            width="100px"
+            height="120px"
+            alt="placeholder grey 100px"
+          />
+          <button
+            className={styles.xBtn}
+            onClick={() => removeMainImage(mainImage.file.id)}
+          >
+            X
+          </button>
+        </div>
+      );
     } else {
-      occasionTypeId.splice(value, 1);
+      return (
+        <div className={`form-group row`} style={{ marginLeft: '10px' }}>
+          <Dropzone
+            onChangeStatus={onMainImageChange}
+            InputComponent={selectFileInput}
+            // getUploadParams={fileParams}
+            getFilesFromEvent={getFilesFromEvent}
+            accept="image/*,audio/*,video/*"
+            maxFiles={1}
+            inputContent="Drop A File"
+            styles={{
+              dropzone: { width: 600, height: 100 },
+              dropzoneActive: { borderColor: 'green' },
+            }}
+          />
+        </div>
+      );
     }
   };
+
+  let handleSubImageDisplay = () => {
+    let subImageLength = subImage.length;
+    if (subImage) {
+      return subImage.map((img, index) => {
+        return (
+          <div
+            className={styles.mainImage}
+            key={img.file.id}
+            style={{
+              border: '2px solid #d9d9d9',
+              marginTop: 8,
+              marginBottom: '10px',
+              padding: 10,
+              borderRadius: 4,
+              height: `150px`,
+              width: '130px',
+            }}
+          >
+            <img
+              key={img.file.id}
+              src={img.base64URL}
+              width="100px"
+              height="120px"
+              alt="placeholder grey 100px"
+            />
+            <button
+              className={styles.xBtn}
+              onClick={() => removeSubImage(img.file.id)}
+            >
+              X
+            </button>
+          </div>
+        );
+      });
+    }
+    if (subImageLength < 4) {
+      return (
+        <Dropzone
+          onChangeStatus={onSubImageChange}
+          InputComponent={selectFileInput}
+          // getUploadParams={fileParams}
+          getFilesFromEvent={getFilesFromEvent}
+          accept="image/*,audio/*,video/*"
+          maxFiles={3}
+          inputContent="Drop A File"
+          styles={{
+            dropzone: { width: 600, height: 100 },
+            dropzoneActive: { borderColor: 'green' },
+          }}
+        />
+      );
+    }
+  };
+
+  const getJewelleryById = async (id) => {
+    const { data } = await JewelleryService.getJewelleryById(id);
+
+    setInitialValues({
+      jewelleryName: data.jewelleryName,
+      jewelleryCode: data.jewelleryCode,
+      jewelleryType: data.jewelleryType,
+      gender: data.gender,
+      occasionTypeId: data.occasionTypeId.map((x) => x._id),
+      jewelleryCategoryId: data.jewelleryingCategoryId._id,
+      quantity: data.quantity,
+      price: data.price,
+      discount: data.discount,
+      description: data.description,
+      gemStones: data.gemStones,
+      metalAndFinish: data.metalAndFinish,
+      measurements: data.measurements,
+      style: data.style,
+      detailing: data.detailing,
+      customization: data.customization,
+    });
+    setMainImage(data.mainImage);
+    setSubImage(data.subImage);
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      const obj = {
+        ...values,
+        jewelleryingCategoryId: values.jewelleryCategoryId,
+        mainImage,
+        subImage,
+      };
+
+      if (jewelleryId) {
+        await JewelleryService.updateJewelleryById(jewelleryId, obj);
+      } else {
+        await JewelleryService.saveJewellerys(obj);
+      }
+
+      Swal.fire({
+        title: 'Success',
+        text: 'Jewellery saved successfully',
+        icon: 'success',
+        confirmButtonText: 'OK',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          navigate('/viewJewellerys');
+        }
+      });
+    } catch (error) {
+      Swal.fire({
+        title: 'Oops!',
+        text: 'Something Went Wrong',
+        icon: 'warning',
+        confirmButtonText: 'OK',
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (jewelleryId) {
+      getJewelleryById(jewelleryId);
+    } else {
+      setInitialValues({
+        jewelleryName: '',
+        jewelleryCode: '',
+        jewelleryType: '',
+        gender: '',
+        occasionTypeId: [],
+        jewelleryCategoryId: '',
+        quantity: '',
+        price: '',
+        discount: '',
+        description: '',
+        gemStones: '',
+        metalAndFinish: '',
+        measurements: '',
+        style: '',
+        detailing: '',
+        customization: '',
+      });
+    }
+  }, [jewelleryId]);
 
   useEffect(() => {
     getAllCategories();
-  }, []);
-
-  useEffect(() => {
-    const options = {
-      // validation rules
-      rules: {
-        jewelleryName: {
-          required: [true, '* Please enter the Jewellery Name'],
-        },
-        jewelleryCode: {
-          required: [true, '* Please enter your Jewellery Code'],
-        },
-        jewelleryType: {
-          required: [true, '* Please select atleast one Jewellery Type'],
-        },
-        gender: {
-          required: [true, '* Please select atleast one gender'],
-        },
-        // occasionTypeId: {
-        //     required: [true, '* Please select atleast one Occasion'],
-        // },
-        categoryName: {
-          required: [true, '* Please select atleast one Jewellery category'],
-        },
-        quantity: {
-          required: [true, '* Please enter Quantity'],
-          number: [true, 'Please enter valid quantity'],
-        },
-        price: {
-          required: [true, '* Please enter Price'],
-          number: [true, 'Please enter valid price'],
-        },
-        discount: {
-          number: [true, 'Please enter valid discount'],
-        },
-      },
-    };
-    formObject = new FormValidator('#form1', options);
   }, []);
 
   return (
@@ -294,438 +415,511 @@ let AddJewellery = () => {
                 <h3 className="card-title">Fill the jewellery details</h3>
               </div>
 
-              <form id="form1" className="form-horizontal">
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Jewellery Name
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="jewelleryName"
-                            id="jewelleryName"
-                            placeholder="Jewellery Name"
-                            onChange={(e) => {
-                              setjewelleryName(e.target.value);
-                            }}
-                            value={jewelleryName}
-                            data-msg-containerid="errroForjewelleryName"
-                          ></input>
-                          <div
-                            style={{ color: 'red' }}
-                            id="errroForjewelleryName"
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Jewellery Code
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="jewelleryCode"
-                            id="jewelleryCode"
-                            placeholder="Jewellery Code"
-                            onChange={(e) => setjewelleryCode(e.target.value)}
-                            value={jewelleryCode}
-                            data-msg-containerid="errroForjewelleryCode"
-                          ></input>
-                          <div
-                            style={{ color: 'red' }}
-                            id="errroForjewelleryCode"
-                          />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Jewellery Type
-                        </label>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="sellingJewelleries"
-                            name="jewelleryType"
-                            onChange={(e) => setJewelleryType('Sale')}
-                            data-msg-containerid="errroForjewelleryType"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="sellingJewelleries"
-                          >
-                            Sale
-                          </label>
-                        </div>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="rentalJewelleries"
-                            name="jewelleryType"
-                            onChange={(e) => setJewelleryType('Rent')}
-                            data-msg-containerid="errroForjewelleryType"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="rentalJewelleries"
-                          >
-                            Rent
-                          </label>
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: 30,
-                            marginTop: 10,
-                            color: 'red',
-                          }}
-                          id="errroForjewelleryType"
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Gender
-                        </label>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="menCollections"
-                            name="gender"
-                            onChange={(e) => setGender('Men')}
-                            data-msg-containerid="errroForgender"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="menCollections"
-                          >
-                            Men Colections
-                          </label>
-                        </div>
-                        <div
-                          className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                        >
-                          <input
-                            className="custom-control-input"
-                            type="radio"
-                            id="womenCollections"
-                            name="gender"
-                            onChange={(e) => setGender('Women')}
-                            data-msg-containerid="errroForgender"
-                          ></input>
-                          <label
-                            className="custom-control-label"
-                            htmlFor="womenCollections"
-                          >
-                            Women Colections
-                          </label>
-                        </div>
-                        <div
-                          style={{
-                            marginLeft: 30,
-                            marginTop: 10,
-                            color: 'red',
-                          }}
-                          id="errroForgender"
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Occasion Type
-                        </label>
+              <Formik
+                initialValues={initialValues}
+                enableReinitialize
+                validationSchema={schema}
+                onSubmit={(values, actions) => {
+                  handleSubmit(values).then(() => {
+                    actions.setSubmitting(false);
+                    actions.resetForm();
+                  });
+                }}
+              >
+                {({
+                  handleSubmit,
+                  errors,
+                  values,
+                  touched,
+                  isSubmitting,
+                  isValidating,
+                  setFieldValue,
+                }) => (
+                  <Form onSubmit={handleSubmit} className="form-horizontal">
+                    <div className="card-body">
+                      <div className="row">
                         <div className="col-md-6">
-                          {occasions.length > 0 &&
-                            occasions.map((occasion, index) => {
-                              return (
-                                <div className="row" key={occasion['_id']}>
-                                  <div
-                                    className={`custom-control custom-checkbox ${styles.marginCheckRadio}`}
-                                  >
-                                    <input
-                                      className="custom-control-input"
-                                      type="checkbox"
-                                      name="occasionTypeId"
-                                      id={occasion['categoryName']}
-                                      value={occasion['_id']}
-                                      onChange={handleCheckboxChange}
-                                      data-msg-containerid="errroForoccasionTypeId"
-                                    ></input>
-                                    <label
-                                      className="custom-control-label"
-                                      htmlFor={occasion['categoryName']}
-                                    >
-                                      {occasion['categoryName']}
-                                    </label>
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          {/* <div id="errroForoccasionTypeId" /> */}
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Jewellery Category
-                        </label>
-                        <div className="col-sm-10">
-                          <select
-                            className="custom-select"
-                            defaultValue={'default'}
-                            name="categoryName"
-                            onChange={(e) =>
-                              setjewelleryingCategoryId(e.target.value)
-                            }
-                          >
-                            <option value={'default'} disabled>
-                              Choose an option
-                            </option>
-                            {jewelleryingCategories.length > 0 &&
-                              jewelleryingCategories.map((category) => {
-                                return (
-                                  <option
-                                    key={category['_id']}
-                                    value={category['_id']}
-                                  >
-                                    {category['categoryName']}
-                                  </option>
-                                );
-                              })}
-                          </select>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Quantity
-                        </label>
-                        <div className="col-sm-10">
-                          <div className="input-group">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="quantity"
-                              id="quantity"
-                              data-msg-containerid="errroForQuantity"
-                              placeholder="Quantity"
-                              onChange={(e) => setQuantity(e.target.value)}
-                              value={quantity}
-                            ></input>
-                          </div>
-                          <div style={{ color: 'red' }} id="errroForQuantity" />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">Price</label>
-                        <div className="col-sm-10">
-                          <div className="input-group">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="price"
-                              id="price"
-                              data-msg-containerid="errroForprice"
-                              onChange={(e) => setprice(e.target.value)}
-                              value={price}
-                            ></input>
-                            <div className="input-group-append">
-                              <span className="input-group-text"></span>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Jewellery Name
+                            </label>
+
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="jewelleryName"
+                                placeholder="Jewellery name"
+                                className="form-control"
+                                value={values['jewelleryName']}
+                              />
+                              {errors['jewelleryName'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['jewelleryName']}
+                                </p>
+                              )}
                             </div>
                           </div>
-                          <div style={{ color: 'red' }} id="errroForprice" />
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Discount
-                        </label>
-                        <div className="col-sm-10">
-                          <div className="input-group">
-                            <input
-                              type="text"
-                              className="form-control"
-                              name="discount"
-                              data-msg-containerid="errroFordiscount"
-                              id="discount"
-                              onChange={(e) => setdiscount(e.target.value)}
-                              value={discount}
-                            ></input>
-                          </div>
-                          <div style={{ color: 'red' }} id="errroFordiscount" />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group row">
-                        <label htmlFor="file">Main Image</label>
-                        <Dropzone
-                          onChangeStatus={onMainImageChange}
-                          InputComponent={selectFileInput}
-                          // getUploadParams={fileParams}
-                          getFilesFromEvent={getFilesFromEvent}
-                          accept="image/*,audio/*,video/*"
-                          maxFiles={1}
-                          inputContent="Drop A File"
-                          styles={{
-                            dropzone: { width: 600, height: 100 },
-                            dropzoneActive: { borderColor: 'green' },
-                          }}
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label htmlFor="file">Sub Image</label>
-                        <Dropzone
-                          onChangeStatus={onSubImageChange}
-                          InputComponent={selectFileInput}
-                          // getUploadParams={fileParams}
-                          getFilesFromEvent={getFilesFromEvent}
-                          accept="image/*,audio/*,video/*"
-                          maxFiles={5}
-                          inputContent="Drop A File"
-                          styles={{
-                            dropzone: { width: 600, height: 400 },
-                            dropzoneActive: { borderColor: 'green' },
-                          }}
-                        />
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Description
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="description"
-                            id="description"
-                            placeholder="Description"
-                            onChange={(e) => setdescription(e.target.value)}
-                            value={description}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Fabric
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="inclusions"
-                            id="inclusions"
-                            placeholder="Fabric"
-                            onChange={(e) => setinclusions(e.target.value)}
-                            value={inclusions}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Features
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="gemStones"
-                            id="gemStones"
-                            placeholder="Features"
-                            onChange={(e) => setgemStones(e.target.value)}
-                            value={gemStones}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Measurements
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="metalAndFinish"
-                            id="metalAndFinish"
-                            placeholder="Measurements"
-                            onChange={(e) => setmetalAndFinish(e.target.value)}
-                            value={metalAndFinish}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">Style</label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="style"
-                            id="style"
-                            placeholder="Style"
-                            onChange={(e) => setstyle(e.target.value)}
-                            value={style}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Wash Instructions
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="detailing"
-                            id="detailing"
-                            placeholder="Wash Instructions"
-                            onChange={(e) => setdetailing(e.target.value)}
-                            value={detailing}
-                          ></input>
-                        </div>
-                      </div>
-                      <div className="form-group row">
-                        <label className="col-sm-2 col-form-label">
-                          Custom Alterations
-                        </label>
-                        <div className="col-sm-10">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="customization"
-                            id="customization"
-                            placeholder="Custom Alterations"
-                            onChange={(e) => setcustomization(e.target.value)}
-                            value={customization}
-                          ></input>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="card-footer">
-                  <button
-                    type="submit"
-                    className="btn btn-info"
-                    onClick={saveJewellery}
-                  >
-                    Submit
-                  </button>
-                  <Link to="/viewJewellerys" className="nav-link">
-                  <button type="submit" className="btn btn-default float-right">
-                    Cancel
-                  </button>
-                  </Link>
-                </div>
-              </form>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Jewellery Code
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="jewelleryCode"
+                                placeholder="Jewellery code"
+                                className="form-control"
+                                value={values['jewelleryCode']}
+                              />
+                              {errors && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['jewelleryCode']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Jewellery type
+                            </label>
+                            <div>
+                              <div className="row">
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="sellingJewelleries"
+                                    type="radio"
+                                    name="jewelleryType"
+                                    className="custom-control-input"
+                                    value="Sale"
+                                  />
+
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="sellingJewelleries"
+                                  >
+                                    Sale
+                                  </label>
+                                </div>
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="rentalJewelleries"
+                                    type="radio"
+                                    name="jewelleryType"
+                                    className="custom-control-input"
+                                    value="Rent"
+                                  />
+
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="rentalJewelleries"
+                                  >
+                                    Rent
+                                  </label>
+                                </div>
+                              </div>
+                              {errors['jewelleryType'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['jewelleryType']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Gender
+                            </label>
+                            <div>
+                              <div className="row">
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="womenCollections"
+                                    type="radio"
+                                    name="gender"
+                                    className="custom-control-input"
+                                    value="Women"
+                                  />
+
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="womenCollections"
+                                  >
+                                    Women Collections
+                                  </label>
+                                </div>
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="menCollections"
+                                    type="radio"
+                                    name="gender"
+                                    className="custom-control-input"
+                                    value="Men"
+                                  />
+
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="menCollections"
+                                  >
+                                    Men Colections
+                                  </label>
+                                </div>
+                              </div>
+                              {errors['gender'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['gender']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Occasion Type
+                            </label>
+                            <div className="col-md-6">
+                              {occasions.length > 0 &&
+                                occasions.map((occasion, index) => {
+                                  return (
+                                    <div className="row" key={index}>
+                                      <div
+                                        className={`custom-control custom-checkbox ${styles.marginCheckRadio}`}
+                                      >
+                                        <Field
+                                          id={occasion['categoryName']}
+                                          type="checkbox"
+                                          name="occasionTypeId"
+                                          className="custom-control-input"
+                                          value={occasion['_id']}
+                                        />
+
+                                        <label
+                                          className="custom-control-label"
+                                          htmlFor={occasion['categoryName']}
+                                        >
+                                          {occasion['categoryName']}
+                                        </label>
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              {errors['occasionTypeId'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['occasionTypeId']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Jewellery Category
+                            </label>
+
+                            <div className="col-sm-9">
+                              <Field
+                                name={'jewelleryCategoryId'}
+                                component={SelectField}
+                                options={jewelleryCategories}
+                              />
+                              {errors['jewelleryCategoryId'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['jewelleryCategoryId']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Quantity
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="quantity"
+                                placeholder="Quantity"
+                                className="form-control"
+                                value={values['quantity']}
+                              />
+                              {errors['quantity'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['quantity']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Price
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="price"
+                                placeholder="Price"
+                                className="form-control"
+                                value={values['price']}
+                              />
+                              {errors['price'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['price']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Discount
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="discount"
+                                placeholder="Discount"
+                                className="form-control"
+                                value={values['discount']}
+                              />
+                              {errors['discount'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['discount']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="col-md-6">
+                          <div className="form-group row">
+                            <label
+                              className="col-sm-3 col-form-label"
+                              htmlFor="file"
+                            >
+                              Main Image
+                            </label>
+                            <div className="col-sm-9">
+                              {jewelleryId && (
+                                <div>{handleMainImageDisplay()}</div>
+                              )}
+                              <Dropzone
+                                onChangeStatus={onMainImageChange}
+                                InputComponent={selectFileInput}
+                                getFilesFromEvent={getFilesFromEvent}
+                                accept="image/*"
+                                maxFiles={1}
+                                inputContent="Drop A File"
+                                styles={{
+                                  dropzone: {
+                                    overflow: 'hidden',
+                                    border: 'dashed 2px #dedede',
+                                  },
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label
+                              className="col-sm-3 col-form-label"
+                              htmlFor="file"
+                            >
+                              Sub Image
+                            </label>
+                            <div className="col-sm-9">
+                              {jewelleryId && (
+                                <div
+                                  style={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    gap: '10px',
+                                  }}
+                                >
+                                  {handleSubImageDisplay()}
+                                </div>
+                              )}
+                              <Dropzone
+                                onChangeStatus={onSubImageChange}
+                                InputComponent={selectFileInput}
+                                getFilesFromEvent={getFilesFromEvent}
+                                accept="image/*"
+                                maxFiles={5}
+                                inputContent="Drop A File"
+                                styles={{
+                                  dropzone: {
+                                    height: 200,
+                                    overflow: 'auto',
+                                    border: 'dashed 2px #dedede',
+                                  },
+                                }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Description
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="description"
+                                placeholder="Description"
+                                className="form-control"
+                                value={values['description']}
+                              />
+                              {errors['description'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['description']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Gem Stones
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="gemStones"
+                                placeholder="Gem Stones"
+                                className="form-control"
+                                value={values['gemStones']}
+                              />
+                              {errors['gemStones'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['gemStones']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Metal And Finish
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="metalAndFinish"
+                                placeholder="Metal And Finish"
+                                className="form-control"
+                                value={values['metalAndFinish']}
+                              />
+                              {errors['metalAndFinish'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['metalAndFinish']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Measurements
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="measurements"
+                                placeholder="Measurement"
+                                className="form-control"
+                                value={values['measurements']}
+                              />
+                              {errors['measurements'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['measurements']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Style
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="style"
+                                placeholder="Style"
+                                className="form-control"
+                                value={values['style']}
+                              />
+                              {errors['style'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['style']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Detailing
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="detailing"
+                                placeholder="Detailing"
+                                className="form-control"
+                                value={values['detailing']}
+                              />
+                              {errors['detailing'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['detailing']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="form-group row">
+                            <label className="col-sm-3 col-form-label">
+                              Customization
+                            </label>
+                            <div className="col-sm-9">
+                              <Field
+                                type="text"
+                                name="customization"
+                                placeholder="Customization"
+                                className="form-control"
+                                value={values['customization']}
+                              />
+                              {errors['customization'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['customization']}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="card-footer">
+                      <button type="submit" className="btn btn-info">
+                        Submit
+                      </button>
+                      <Link to="/viewJewellerys" className="nav-link">
+                        <button
+                          type="submit"
+                          className="btn btn-default float-right"
+                        >
+                          Cancel
+                        </button>
+                      </Link>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
             </div>
           </div>
         </section>
@@ -735,3 +929,15 @@ let AddJewellery = () => {
 };
 
 export default AddJewellery;
+
+export const SelectField = ({ options, field, form }) => (
+  <Select
+    options={options}
+    name={field.name}
+    value={
+      options ? options.find((option) => option.value === field.value) : ''
+    }
+    onChange={(option) => form.setFieldValue(field.name, option.value)}
+    onBlur={field.onBlur}
+  />
+);

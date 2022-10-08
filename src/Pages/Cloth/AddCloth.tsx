@@ -8,7 +8,53 @@ import Dropzone from 'react-dropzone-uploader';
 import { getDroppedOrSelectedFiles } from 'html5-file-selector';
 import { any } from 'prop-types';
 import { Formik, Form, Field } from 'formik';
-import * as yup from 'yup';
+import Select from 'react-select';
+import * as Yup from 'yup';
+
+const schema = Yup.object().shape({
+  clothName: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  clothCode: Yup.string()
+    .min(2, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  clothType: Yup.string().required('Required'),
+  gender: Yup.string().required('Required'),
+  occasionTypeId: Yup.array().min(1, 'Required'),
+  clothingCategoryId: Yup.string().required('Required'),
+  discount: Yup.string().required('Required'),
+  price: Yup.string().required('Required'),
+  description: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  fabric: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  features: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  measurements: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  style: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  washInstructions: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+  customAltrations: Yup.string()
+    .min(2, 'Too Short!')
+    .max(255, 'Too Long!')
+    .required('Required'),
+});
 
 const AddCloth = () => {
   const [occasions, setOccasions] = useState<any[]>([]);
@@ -119,7 +165,7 @@ const AddCloth = () => {
             occasionsTemp.push(dd);
           }
           if (dd.categoryType === 'clothingCategory') {
-            categoriesTemp.push(dd);
+            categoriesTemp.push({ value: dd._id, label: dd.categoryName });
           }
         });
       setOccasions(occasionsTemp);
@@ -253,7 +299,7 @@ const AddCloth = () => {
 
   const fetchCloth = async (id) => {
     const { data } = await ClothService.getClothById(id);
-    console.log('res', data);
+
     setInitialValues({
       clothName: data.clothName,
       clothCode: data.clothCode,
@@ -263,8 +309,6 @@ const AddCloth = () => {
       clothingCategoryId: data.clothingCategoryId._id,
       price: data.price,
       discount: data.discount,
-      // mainImage: '',
-      // subImage: [],
       description: data.description,
       fabric: data.fabric,
       features: data.features,
@@ -291,8 +335,6 @@ const AddCloth = () => {
         clothingCategoryId: '',
         price: '',
         discount: '',
-        // mainImage: '',
-        // subImage: [],
         description: '',
         fabric: '',
         features: '',
@@ -375,7 +417,7 @@ const AddCloth = () => {
               <Formik
                 initialValues={initialValues}
                 enableReinitialize
-                // validationSchema={schema}
+                validationSchema={schema}
                 onSubmit={(values, actions) => {
                   handleSubmit(values).then(() => {
                     actions.setSubmitting(false);
@@ -397,10 +439,10 @@ const AddCloth = () => {
                       <div className="row">
                         <div className="col-md-6">
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Cloth Name
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 type="text"
                                 name="clothName"
@@ -409,10 +451,7 @@ const AddCloth = () => {
                                 value={values['clothName']}
                               />
                               {errors['clothName'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['clothName']}
                                 </p>
                               )}
@@ -420,10 +459,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Cloth Code
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="clothCode"
                                 type="text"
@@ -432,10 +471,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['clothCode'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['clothCode']}
                                 </p>
                               )}
@@ -443,107 +479,109 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Cloth type
                             </label>
-                            <div
-                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                            >
-                              <Field
-                                id="sellingCloths"
-                                type="radio"
-                                name="clothType"
-                                className="custom-control-input"
-                                value="Sale"
-                              />
+                            <div>
+                              <div className=" row">
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="sellingCloths"
+                                    type="radio"
+                                    name="clothType"
+                                    className="custom-control-input"
+                                    value="Sale"
+                                  />
 
-                              <label
-                                className="custom-control-label"
-                                htmlFor="sellingCloths"
-                              >
-                                Sale
-                              </label>
-                            </div>
-                            <div
-                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                            >
-                              <Field
-                                id="rentalCloths"
-                                type="radio"
-                                name="clothType"
-                                className="custom-control-input"
-                                value="Rent"
-                              />
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="sellingCloths"
+                                  >
+                                    Sale
+                                  </label>
+                                </div>
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="rentalCloths"
+                                    type="radio"
+                                    name="clothType"
+                                    className="custom-control-input"
+                                    value="Rent"
+                                  />
 
-                              <label
-                                className="custom-control-label"
-                                htmlFor="rentalCloths"
-                              >
-                                Rent
-                              </label>
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="rentalCloths"
+                                  >
+                                    Rent
+                                  </label>
+                                </div>
+                              </div>
+                              {errors['clothType'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['clothType']}
+                                </p>
+                              )}
                             </div>
-                            {errors['clothType'] && (
-                              <p
-                                className="mt-2 text-sm text-red-600"
-                                id="email-error"
-                              >
-                                {errors['clothType']}
-                              </p>
-                            )}
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Gender
                             </label>
-                            <div
-                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                            >
-                              <Field
-                                id="womenCollections"
-                                type="radio"
-                                name="gender"
-                                className="custom-control-input"
-                                value="Women"
-                              />
+                            <div>
+                              <div className=" row">
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="womenCollections"
+                                    type="radio"
+                                    name="gender"
+                                    className="custom-control-input"
+                                    value="Women"
+                                  />
 
-                              <label
-                                className="custom-control-label"
-                                htmlFor="womenCollections"
-                              >
-                                Women Collections
-                              </label>
-                            </div>
-                            <div
-                              className={`custom-control custom-radio ${styles.marginCheckRadio}`}
-                            >
-                              <Field
-                                id="menCollections"
-                                type="radio"
-                                name="gender"
-                                className="custom-control-input"
-                                value="Men"
-                              />
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="womenCollections"
+                                  >
+                                    Women Collections
+                                  </label>
+                                </div>
+                                <div
+                                  className={`custom-control custom-radio ${styles.marginCheckRadio}`}
+                                >
+                                  <Field
+                                    id="menCollections"
+                                    type="radio"
+                                    name="gender"
+                                    className="custom-control-input"
+                                    value="Men"
+                                  />
 
-                              <label
-                                className="custom-control-label"
-                                htmlFor="menCollections"
-                              >
-                                Men Colections
-                              </label>
+                                  <label
+                                    className="custom-control-label"
+                                    htmlFor="menCollections"
+                                  >
+                                    Men Colections
+                                  </label>
+                                </div>
+                              </div>
+                              {errors['gender'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['gender']}
+                                </p>
+                              )}
                             </div>
-                            {errors['gender'] && (
-                              <p
-                                className="mt-2 text-sm text-red-600"
-                                id="email-error"
-                              >
-                                {errors['gender']}
-                              </p>
-                            )}
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Occasion Type
                             </label>
                             <div className="col-md-6">
@@ -572,53 +610,40 @@ const AddCloth = () => {
                                     </div>
                                   );
                                 })}
-                            </div>
 
-                            {errors['occasionTypeId'] && (
-                              <p
-                                className="mt-2 text-sm text-red-600"
-                                id="email-error"
-                              >
-                                {errors['occasionTypeId']}
-                              </p>
-                            )}
+                              {errors['occasionTypeId'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['occasionTypeId']}
+                                </p>
+                              )}
+                            </div>
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Cloth Category
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
-                                className="custom-select"
-                                as="select"
-                                name="clothingCategoryId"
-                              >
-                                <option value={'default'} disabled>
-                                  Choose an option
-                                </option>
-                                {clothingCategories.length > 0 &&
-                                  clothingCategories.map((category) => {
-                                    return (
-                                      <option
-                                        key={category['_id']}
-                                        value={category['_id']}
-                                      >
-                                        {category['categoryName']}
-                                      </option>
-                                    );
-                                  })}
-                              </Field>
+                                name={'jewelleryCategoryId'}
+                                component={SelectField}
+                                options={clothingCategories}
+                              />
+                              {errors['gender'] && (
+                                <p className={styles.error} id="email-error">
+                                  {errors['gender']}
+                                </p>
+                              )}
                             </div>
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Size And Count
                             </label>
                             <div className="col-md-6">
                               <div className="row">
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     XS
                                   </label>
@@ -641,7 +666,7 @@ const AddCloth = () => {
                                   ></input>
                                 </div>
 
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     S
                                   </label>
@@ -672,7 +697,7 @@ const AddCloth = () => {
                                   />
                                 </div>
 
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     M
                                   </label>
@@ -703,7 +728,7 @@ const AddCloth = () => {
                                   />
                                 </div>
 
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     L
                                   </label>
@@ -734,7 +759,7 @@ const AddCloth = () => {
                                   />
                                 </div>
 
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     XL
                                   </label>
@@ -765,7 +790,7 @@ const AddCloth = () => {
                                   />
                                 </div>
 
-                                <div className="col-sm-10 row">
+                                <div className="col-sm-9 row">
                                   <label className="col-sm-4 col-form-label">
                                     XXL
                                   </label>
@@ -801,10 +826,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Price
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="price"
                                 type="text"
@@ -812,10 +837,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['price'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['price']}
                                 </p>
                               )}
@@ -823,10 +845,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Discount
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="discount"
                                 type="text"
@@ -834,10 +856,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['discount'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['discount']}
                                 </p>
                               )}
@@ -848,13 +867,13 @@ const AddCloth = () => {
                         <div className="col-md-6">
                           <div className="form-group row">
                             <label
-                              className="col-sm-2 col-form-label"
+                              className="col-sm-3 col-form-label"
                               htmlFor="file"
                             >
                               Main Image
                             </label>
 
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               {clothId && <div>{handleMainImageDisplay()}</div>}
 
                               <Dropzone
@@ -876,12 +895,12 @@ const AddCloth = () => {
 
                           <div className="form-group row">
                             <label
-                              className="col-sm-2 col-form-label"
+                              className="col-sm-3 col-form-label"
                               htmlFor="file"
                             >
                               Sub Image
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               {clothId && (
                                 <div
                                   style={{
@@ -912,10 +931,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Description
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="description"
                                 type="text"
@@ -924,10 +943,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['description'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['description']}
                                 </p>
                               )}
@@ -935,10 +951,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Fabric
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="fabric"
                                 type="text"
@@ -947,10 +963,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['fabric'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['fabric']}
                                 </p>
                               )}
@@ -958,10 +971,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Features
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="features"
                                 type="text"
@@ -970,10 +983,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['features'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['features']}
                                 </p>
                               )}
@@ -981,10 +991,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Measurements
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="measurements"
                                 type="text"
@@ -993,10 +1003,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['measurements'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['measurements']}
                                 </p>
                               )}
@@ -1004,10 +1011,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               style
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="style"
                                 type="text"
@@ -1016,10 +1023,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['style'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['style']}
                                 </p>
                               )}
@@ -1027,10 +1031,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Wash Instructions
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="washInstructions"
                                 type="text"
@@ -1039,10 +1043,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['washInstructions'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['washInstructions']}
                                 </p>
                               )}
@@ -1050,10 +1051,10 @@ const AddCloth = () => {
                           </div>
 
                           <div className="form-group row">
-                            <label className="col-sm-2 col-form-label">
+                            <label className="col-sm-3 col-form-label">
                               Custom Alterations
                             </label>
-                            <div className="col-sm-10">
+                            <div className="col-sm-9">
                               <Field
                                 id="customAltrations"
                                 type="text"
@@ -1062,10 +1063,7 @@ const AddCloth = () => {
                                 className="form-control"
                               />
                               {errors['customAltrations'] && (
-                                <p
-                                  className="mt-2 text-sm text-red-600"
-                                  id="email-error"
-                                >
+                                <p className={styles.error} id="email-error">
                                   {errors['customAltrations']}
                                 </p>
                               )}
@@ -1099,3 +1097,15 @@ const AddCloth = () => {
 };
 
 export default AddCloth;
+
+export const SelectField = ({ options, field, form }) => (
+  <Select
+    options={options}
+    name={field.name}
+    value={
+      options ? options.find((option) => option.value === field.value) : ''
+    }
+    onChange={(option) => form.setFieldValue(field.name, option.value)}
+    onBlur={field.onBlur}
+  />
+);
