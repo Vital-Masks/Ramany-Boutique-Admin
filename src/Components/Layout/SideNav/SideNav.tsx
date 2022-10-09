@@ -1,8 +1,11 @@
+import { fontStyle, fontWeight, style } from '@mui/system';
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 let SideNav = () => {
+  let isActive = true
   return (
+    
     <div>
       <aside className="main-sidebar sidebar-dark-primary elevation-4">
         {/* Brand Logo */}
@@ -44,20 +47,18 @@ let SideNav = () => {
            with font-awesome or any other icon font library */}
 
               <li className="nav-item ">
-                <Link to="/" className="nav-link">
+                <NavLink 
+                  to="/dashboard" 
+                  className={({ isActive }) =>
+                        isActive ? 'active nav-link' : 'nav-link'
+                      }>
                   <i className="nav-icon fas fa-th" />
                   <p>Main Dashboard</p>
-                </Link>
+                </NavLink>
               </li>
-              <li className="nav-item has-treeview">
-                <a className="nav-link">
-                  <i className="nav-icon fas fa-copy" />
-                  <p>
-                    Cloths
-                    <i className="fas fa-angle-left right" />
-                  </p>
-                </a>
-                <ul className="nav nav-treeview">
+              {/* <li className="nav-item has-treeview"> */}
+              <li className={'nav-header'}><b>________CLOTHS_______________</b></li>
+                {/* <ul className="nav nav-treeview"> */}
                   <li className="nav-item">
                     <NavLink
                       to="/viewCloths"
@@ -80,17 +81,18 @@ let SideNav = () => {
                       <p>Add Cloth</p>
                     </NavLink>
                   </li>
-                </ul>
-              </li>
-              <li className="nav-item has-treeview">
-                <a className="nav-link">
+                {/* </ul> */}
+              {/* </li> */}
+              {/* <li className="nav-item has-treeview"> */}
+                {/* <a className="nav-link">
                   <i className="nav-icon fas fa-copy" />
                   <p>
                     Jewellery
                     <i className="fas fa-angle-left right" />
                   </p>
-                </a>
-                <ul className="nav nav-treeview">
+                </a> */}
+                {/* <ul className="nav nav-treeview"> */}
+                <li className="nav-header"><b>________JEWELLERY____________</b></li>
                   <li className="nav-item">
                     <NavLink
                       to="/viewJewellerys"
@@ -113,8 +115,8 @@ let SideNav = () => {
                       <p>Add Jewellery</p>
                     </NavLink>
                   </li>
-                </ul>
-              </li>
+                {/* </ul> */}
+              {/* </li> */}
 
               <li className="nav-item">
                 <NavLink

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./Jewellery.module.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CategoryService from "../../Services/CategoryService";
 import Swal from "sweetalert2";
 import ClothService from "../../Services/ClothService";
@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import fontawesome from '@fortawesome/fontawesome'
 
 let Categories = () => {
+    const navigate = useNavigate();
     let occasionsTemp: string[] = [];
     let jewelleryTemp: string[] = [];
     let clothTemp: string[] = [];
@@ -57,7 +58,7 @@ let Categories = () => {
                         confirmButtonText: "OK",
                     }).then((result)=>{
                         if(result.isConfirmed){ 
-                            window.location.reload()
+                            getAllCategories()
                         }
                       });
                 }
@@ -123,7 +124,7 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                     confirmButtonText: 'OK'
                   }).then((result)=>{
                     if(result.isConfirmed){ 
-                        window.location.reload()
+                        getAllCategories()
                     }
                   });
             }
@@ -159,7 +160,7 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                   confirmButtonText: "OK",
                 }).then((result)=>{
                   if(result.isConfirmed){ 
-                      window.location.reload()
+                    getAllCategories()
                   }
                 });
                 
@@ -199,13 +200,13 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                                 Choose Category
                                             </label>
                                             <div className="col-sm-8">
-                                                <select className="custom-select" defaultValue={"default"} onChange={(e) => setcategoryType(e.target.value)}>
+                                                <select className="custom-select" defaultValue={"default"} onChange={(e) => {setcategoryType(e.target.value)}}>
                                                     <option value={"default"} disabled>
                                                         Choose an option
                                                     </option>
                                                     <option key="occasionType" value="occasionType">Occasion Type</option>
-                                                    <option key="clothingCategory" value="clothingCategory">Jewellery Category</option>
-                                                    <option key="jewelleryCategory" value="jewelleryCategory">Clothing Category</option>
+                                                    <option key="clothingCategory" value="clothingCategory">Clothing Category</option>
+                                                    <option key="jewelleryCategory" value="jewelleryCategory">Jewellery Category</option>
                                                 </select>
                                             </div>
                                         </div>
