@@ -3,9 +3,8 @@ import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 let SideNav = () => {
-  let isActive = true
+  let isActive = true;
   return (
-    
     <div>
       <aside className="main-sidebar sidebar-dark-primary elevation-4">
         {/* Brand Logo */}
@@ -47,76 +46,72 @@ let SideNav = () => {
            with font-awesome or any other icon font library */}
 
               <li className="nav-item ">
-                <NavLink 
-                  to="/dashboard" 
+                <NavLink
+                  to="/dashboard"
                   className={({ isActive }) =>
-                        isActive ? 'active nav-link' : 'nav-link'
-                      }>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
                   <i className="nav-icon fas fa-th" />
                   <p>Main Dashboard</p>
                 </NavLink>
               </li>
+              <hr style={{ borderTop: '1px solid #595959', width: '100%' }} />
               {/* <li className="nav-item has-treeview"> */}
-              <li className={'nav-header'}><b>________CLOTHS_______________</b></li>
-                {/* <ul className="nav nav-treeview"> */}
-                  <li className="nav-item">
-                    <NavLink
-                      to="/viewCloths"
-                      className={({ isActive }) =>
-                        isActive ? 'active nav-link' : 'nav-link'
-                      }
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>View Cloths</p>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/addCloth"
-                      className={({ isActive }) =>
-                        isActive ? 'active nav-link' : 'nav-link'
-                      }
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Add Cloth</p>
-                    </NavLink>
-                  </li>
-                {/* </ul> */}
-              {/* </li> */}
-              {/* <li className="nav-item has-treeview"> */}
-                {/* <a className="nav-link">
-                  <i className="nav-icon fas fa-copy" />
-                  <p>
-                    Jewellery
-                    <i className="fas fa-angle-left right" />
-                  </p>
-                </a> */}
-                {/* <ul className="nav nav-treeview"> */}
-                <li className="nav-header"><b>________JEWELLERY____________</b></li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/viewJewellerys"
-                      className={({ isActive }) =>
-                        isActive ? 'active nav-link' : 'nav-link'
-                      }
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>View Jewelleries</p>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/addJewellery"
-                      className={({ isActive }) =>
-                        isActive ? 'active nav-link' : 'nav-link'
-                      }
-                    >
-                      <i className="far fa-circle nav-icon" />
-                      <p>Add Jewellery</p>
-                    </NavLink>
-                  </li>
-                {/* </ul> */}
-              {/* </li> */}
+              <li className={'nav-header'}>
+                <b>CLOTHS</b>
+              </li>
+              {/* <ul className="nav nav-treeview"> */}
+              <li className="nav-item">
+                <NavLink
+                  to="/viewCloths"
+                  className={({ isActive }) =>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>View Cloths</p>
+                </NavLink>
+              </li>
+
+              <li className="nav-item">
+                <NavLink
+                  to="/addCloth"
+                  className={({ isActive }) =>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>Add Cloth</p>
+                </NavLink>
+              </li>
+              <hr style={{ borderTop: '1px solid #595959', width: '100%' }} />
+              <li className="nav-header">
+                <b>JEWELLERY</b>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/viewJewellerys"
+                  className={({ isActive }) =>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>View Jewelleries</p>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/addJewellery"
+                  className={({ isActive }) =>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
+                  <i className="far fa-circle nav-icon" />
+                  <p>Add Jewellery</p>
+                </NavLink>
+              </li>
+              <hr style={{ borderTop: '1px solid #595959', width: '100%' }} />
 
               <li className="nav-item">
                 <NavLink
