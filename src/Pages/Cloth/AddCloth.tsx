@@ -355,6 +355,7 @@ const AddCloth = () => {
   };
 
   const handleSubmit = async (values) => {
+    try {
     const obj = {
       ...values,
       sizeAndCount,
@@ -362,7 +363,7 @@ const AddCloth = () => {
       subImage,
     };
 
-    try {
+    
       await ClothService.saveCloths(obj);
       Swal.fire({
         title: 'Success',
@@ -614,7 +615,7 @@ const AddCloth = () => {
                             </label>
                             <div className="col-sm-9">
                               <Field
-                                name={'jewelleryCategoryId'}
+                                name={'clothingCategoryId'}
                                 component={SelectField}
                                 options={clothingCategories}
                               />
