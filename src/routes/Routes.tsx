@@ -58,7 +58,7 @@ function Router() {
           )}
           <Route
             path="*"
-            element={<Navigate to={authToken ? '/dashboard' : '/login'} />}
+            element={<Navigate to={authToken ? '/viewJewelleries' : '/login'} />}
           />
         </Routes>
       </Layout>

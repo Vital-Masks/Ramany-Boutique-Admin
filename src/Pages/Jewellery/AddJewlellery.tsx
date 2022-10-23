@@ -29,11 +29,11 @@ const schema = Yup.object().shape({
     .min(0, 'Too Short')
     .max(100000, 'Too Long')
     .required('Required'),
-  price: Yup.number()
+  price: Yup.number().typeError('Value should be a number')
     .positive('Please enter positive number')
     .max(10000, 'The price is too much')
     .required('Required'),
-  discount: Yup.number()
+  discount: Yup.number().typeError('Value should be a number')
     .positive('Please enter positive number')
     .max(100, 'Not possible to give this discount')
     .required('Required'),

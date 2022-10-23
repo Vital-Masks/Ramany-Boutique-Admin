@@ -19,7 +19,7 @@ let Login = ({ setToken }) => {
         console.log(response.data);
         if (response.data.token) {
           setToken(response.data.token);
-          navigate('/dashboard');
+          navigate('/viewJewelleries');
         } else {
           Swal.fire({
             title: 'Error',
