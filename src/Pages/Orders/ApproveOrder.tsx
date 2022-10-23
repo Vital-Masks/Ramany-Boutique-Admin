@@ -33,30 +33,30 @@ let ApproveOrder = (props) => {
 
       if (obj.orderType === "Rent") {
         if (obj.status === "Pending") {
-          setButtonStatus("Change to In progress");
+          setButtonStatus("Change To In Progress");
         }
         if (obj.status === "InProgress") {
-          setButtonStatus("Deliver the Order");
+          setButtonStatus("Deliver The Order");
         }
         if (obj.status === "Delivered") {
           setButtonStatus("Return Item");
         }
         if (obj.status === "Returned") {
-          setButtonStatus("Order returned successfully.");
+          setButtonStatus("Order Returned Successfully.");
         }
       }
       if (obj.orderType === "Sale") {
         if (obj.status === "Pending") {
-          setButtonStatus("Change to In progress");
+          setButtonStatus("Change To In Progress");
         }
         if (obj.status === "InProgress") {
-          setButtonStatus("Deliver the Order");
+          setButtonStatus("Deliver The Order");
         }
         if (obj.status === "Delivered") {
-          setButtonStatus("Close the Order");
+          setButtonStatus("Close The Order");
         }
         if (obj.status === "Closed") {
-          setButtonStatus("Order closed successfully.");
+          setButtonStatus("Order Closed Successfully.");
         }
       }
     });
@@ -66,10 +66,11 @@ let ApproveOrder = (props) => {
     if (
       orderId &&
       order["status"] === "Pending" &&
-      buttonStatus === "Change to In progress"
+      buttonStatus === "Change To In Progress"
     ) {
       Swal.fire({
-        title: "Are you sure ypu want to" + buttonStatus + "?",
+        // title: "Are you sure ypu want to" + buttonStatus + "?",
+        title: "Are You Sure You Want To Change The Status ?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -83,7 +84,7 @@ let ApproveOrder = (props) => {
               if (response["status"] === 200) {
                 Swal.fire({
                   title: "Success",
-                  text: "The Order has take to In Progress",
+                  text: "The Order Is In Progress",
                   icon: "success",
                   confirmButtonText: "OK",
                 }).then((result) => {
@@ -108,10 +109,10 @@ let ApproveOrder = (props) => {
     if (
       orderId &&
       order["status"] === "InProgress" &&
-      buttonStatus === "Deliver the Order"
+      buttonStatus === "Deliver The Order"
     ) {
       Swal.fire({
-        title: "Are you sure you want to " + buttonStatus + "?",
+        title: "Are You Sure You Want To " + buttonStatus + "?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -125,7 +126,7 @@ let ApproveOrder = (props) => {
               if (response["status"] === 200) {
                 Swal.fire({
                   title: "Success",
-                  text: "The Order has been Delivered Successfully",
+                  text: "The Order Has Been Delivered Successfully",
                   icon: "success",
                   confirmButtonText: "OK",
                 }).then((result) => {
@@ -153,7 +154,7 @@ let ApproveOrder = (props) => {
       buttonStatus === "Return Item"
     ) {
       Swal.fire({
-        title: "Are you sure you want to " + buttonStatus + "?",
+        title: "Are You Sure You Want To" + buttonStatus + "?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -167,7 +168,7 @@ let ApproveOrder = (props) => {
               if (response["status"] === 200) {
                 Swal.fire({
                   title: "Success",
-                  text: "The Order has been returned Successfully",
+                  text: "The Order Has Been Returned Successfully",
                   icon: "success",
                   confirmButtonText: "OK",
                 }).then((result) => {
@@ -192,10 +193,10 @@ let ApproveOrder = (props) => {
       orderId &&
       order["status"] === "Delivered" &&
       order["orderType"] === "Sale" &&
-      buttonStatus === "Close the Order"
+      buttonStatus === "Close The Order"
     ) {
       Swal.fire({
-        title: "Are you sure you want to " + buttonStatus + "?",
+        title: "Are You Sure You Want To " + buttonStatus + "?",
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
@@ -209,7 +210,7 @@ let ApproveOrder = (props) => {
               if (response["status"] === 200) {
                 Swal.fire({
                   title: "Success",
-                  text: "The Order has been closed Successfully",
+                  text: "The Order Has Been Closed Successfully",
                   icon: "success",
                   confirmButtonText: "OK",
                 }).then((result) => {
@@ -273,7 +274,7 @@ let ApproveOrder = (props) => {
                   <div className="col-12">
                     <h4>
                       <i className="fas fa-globe" /> Ramany Boutique
-                      <small className="float-right">Date: 09/08/2022</small>
+                      <small className="float-right">Date: {order["created_at"]}</small>
                     </h4>
                   </div>
                 </div>
@@ -341,7 +342,7 @@ let ApproveOrder = (props) => {
                 </div>
                 <div className="row">
                   <div className="col-12 table-responsive">
-                    <h5>Cloth Details</h5>
+                    {/* <h5>Cloth Details</h5>
                     <table className="table table-striped">
                       <thead>
                         <tr>
@@ -390,7 +391,7 @@ let ApproveOrder = (props) => {
                             );
                           })}
                       </tbody>
-                    </table>
+                    </table> */}
                     <h5>Jewellery Details</h5>
 
                     <table className="table table-striped">

@@ -333,7 +333,7 @@ let AddJewellery = () => {
     setSubImage(data.subImage);
   };
 
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values, actions) => {
     try {
       const obj = {
         ...values,
@@ -341,6 +341,15 @@ let AddJewellery = () => {
         mainImage,
         subImage,
       };
+      if(obj.mainImage.file === null ){
+        Swal.fire({
+          title: 'Warning',
+          text: 'Main image not selected. Please check',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+        })
+      }
+      else{
 
       if (jewelleryId) {
         await JewelleryService.updateJewelleryById(jewelleryId, obj);
@@ -356,8 +365,10 @@ let AddJewellery = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           navigate('/viewJewelleries');
+          actions.resetForm();
         }
       });
+    }
     } catch (error) {
       Swal.fire({
         title: 'Oops!',
@@ -417,9 +428,8 @@ let AddJewellery = () => {
                 enableReinitialize
                 validationSchema={schema}
                 onSubmit={(values, actions) => {
-                  handleSubmit(values).then(() => {
-                    actions.setSubmitting(false);
-                    actions.resetForm();
+                  handleSubmit(values, actions).then(() => {
+                    actions.setSubmitting(false);                 
                   });
                 }}
               >
