@@ -20,13 +20,12 @@ function Router() {
 
   function setToken(userToken) {
     setAuthToken(userToken);
-    sessionStorage.setItem('token', JSON.stringify(userToken));
+    localStorage.setItem('token', JSON.stringify(userToken));
   }
 
   function getToken() {
-    const tokenString: any = sessionStorage.getItem('token');
+    const tokenString: any = localStorage.getItem('token');
     if (tokenString) {
-      console.log(tokenString);
       setAuthToken(JSON.parse(tokenString));
     }
   }
@@ -58,7 +57,9 @@ function Router() {
           )}
           <Route
             path="*"
-            element={<Navigate to={authToken ? '/viewJewelleries' : '/login'} />}
+            element={
+              <Navigate to={authToken ? '/viewJewelleries' : '/login'} />
+            }
           />
         </Routes>
       </Layout>

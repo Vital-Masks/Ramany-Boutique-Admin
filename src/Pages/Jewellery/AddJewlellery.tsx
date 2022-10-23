@@ -13,10 +13,12 @@ import * as Yup from 'yup';
 
 const schema = Yup.object().shape({
   jewelleryName: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
   jewelleryCode: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
@@ -24,44 +26,54 @@ const schema = Yup.object().shape({
   gender: Yup.string().required('Required'),
   occasionTypeId: Yup.array().min(1, 'Required'),
   jewelleryCategoryId: Yup.string().required('Required'),
-  quantity: Yup.number().typeError('Value should be a number')
+  quantity: Yup.number()
+    .typeError('Value should be a number')
     .positive('Please enter positive number')
     .min(0, 'Too Short')
     .max(100000, 'Too Long')
     .required('Required'),
-  price: Yup.number().typeError('Value should be a number')
+  price: Yup.number()
+    .typeError('Value should be a number')
     .positive('Please enter positive number')
     .max(10000, 'The price is too much')
     .required('Required'),
-  discount: Yup.number().typeError('Value should be a number')
+  discount: Yup.number()
+    .typeError('Value should be a number')
     .positive('Please enter positive number')
     .max(100, 'Not possible to give this discount')
     .required('Required'),
   description: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   gemStones: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   metalAndFinish: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   measurements: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   style: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   detailing: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   customization: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
@@ -341,34 +353,32 @@ let AddJewellery = () => {
         mainImage,
         subImage,
       };
-      if(obj.mainImage.file === null ){
+      if (obj.mainImage.file === null) {
         Swal.fire({
           title: 'Warning',
           text: 'Main image not selected. Please check',
           icon: 'warning',
           confirmButtonText: 'OK',
-        })
-      }
-      else{
-
-      if (jewelleryId) {
-        await JewelleryService.updateJewelleryById(jewelleryId, obj);
+        });
       } else {
-        await JewelleryService.saveJewellerys(obj);
-      }
-
-      Swal.fire({
-        title: 'Success',
-        text: 'Jewellery saved successfully',
-        icon: 'success',
-        confirmButtonText: 'OK',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          navigate('/viewJewelleries');
-          actions.resetForm();
+        if (jewelleryId) {
+          await JewelleryService.updateJewelleryById(jewelleryId, obj);
+        } else {
+          await JewelleryService.saveJewellerys(obj);
         }
-      });
-    }
+
+        Swal.fire({
+          title: 'Success',
+          text: 'Jewellery saved successfully',
+          icon: 'success',
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate('/viewJewelleries');
+            actions.resetForm();
+          }
+        });
+      }
     } catch (error) {
       Swal.fire({
         title: 'Oops!',
@@ -429,7 +439,7 @@ let AddJewellery = () => {
                 validationSchema={schema}
                 onSubmit={(values, actions) => {
                   handleSubmit(values, actions).then(() => {
-                    actions.setSubmitting(false);                 
+                    actions.setSubmitting(false);
                   });
                 }}
               >
@@ -592,7 +602,7 @@ let AddJewellery = () => {
                               Occasion Type
                             </label>
                             <div className="col-md-6">
-                              {occasions.length > 0 &&
+                              {occasions.length > 0 ? (
                                 occasions.map((occasion, index) => {
                                   return (
                                     <div className="row" key={index}>
@@ -616,7 +626,13 @@ let AddJewellery = () => {
                                       </div>
                                     </div>
                                   );
-                                })}
+                                })
+                              ) : (
+                                <p style={{ color: 'red' }}>
+                                  Please add occasion type from manage
+                                  categories menu, it is required!
+                                </p>
+                              )}
                               {errors['occasionTypeId'] && (
                                 <p className={styles.error} id="email-error">
                                   {errors['occasionTypeId']}
@@ -631,11 +647,19 @@ let AddJewellery = () => {
                             </label>
 
                             <div className="col-sm-9">
-                              <Field
-                                name={'jewelleryCategoryId'}
-                                component={SelectField}
-                                options={jewelleryCategories}
-                              />
+                              {jewelleryCategories.length > 0 ? (
+                                <Field
+                                  name={'jewelleryCategoryId'}
+                                  component={SelectField}
+                                  options={jewelleryCategories}
+                                />
+                              ) : (
+                                <p style={{ color: 'red' }}>
+                                  Please add categories from manage categories
+                                  menu, it is required!
+                                </p>
+                              )}
+
                               {errors['jewelleryCategoryId'] && (
                                 <p className={styles.error} id="email-error">
                                   {errors['jewelleryCategoryId']}

@@ -99,16 +99,14 @@ let ViewJewellerys = () => {
             </thead>
             <tbody>
               {jewelleryData.length > 0 &&
-                jewelleryData.map((jewellery) => {
+                jewelleryData.map((jewellery: any) => {
                   return (
                     <tr key={jewellery['_id']}>
                       <td>{jewellery['jewelleryName']}</td>
                       <td>{jewellery['jewelleryCode']}</td>
                       <td>{jewellery['jewelleryType']}</td>
                       <td>{jewellery['gender']}</td>
-                      <td>
-                        {jewellery['jewelleryingCategoryId']['categoryName']}
-                      </td>
+                      <td>{jewellery?.jewelleryingCategoryId?.categoryName}</td>
                       <td>{jewellery['price']}</td>
                       <td>{jewellery['discount']}</td>
                       <td>

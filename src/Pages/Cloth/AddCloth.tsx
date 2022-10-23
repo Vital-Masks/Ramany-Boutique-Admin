@@ -13,10 +13,12 @@ import * as Yup from 'yup';
 
 const schema = Yup.object().shape({
   clothName: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
   clothCode: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(50, 'Too Long!')
     .required('Required'),
@@ -35,30 +37,37 @@ const schema = Yup.object().shape({
     .max(10000, 'The price is too much')
     .required('Required'),
   description: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   fabric: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   features: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   measurements: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   style: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   washInstructions: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
   customAltrations: Yup.string()
+    .trim()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
     .required('Required'),
@@ -364,14 +373,13 @@ const AddCloth = () => {
 
   const handleSubmit = async (values) => {
     try {
-    const obj = {
-      ...values,
-      sizeAndCount,
-      mainImage,
-      subImage,
-    };
+      const obj = {
+        ...values,
+        sizeAndCount,
+        mainImage,
+        subImage,
+      };
 
-    
       await ClothService.saveCloths(obj);
       Swal.fire({
         title: 'Success',
