@@ -45,7 +45,7 @@ let SideNav = () => {
               {/* Add icons to the links using the .nav-icon class
            with font-awesome or any other icon font library */}
 
-              <li className="nav-item ">
+              {/* <li className="nav-item ">
                 <NavLink
                   to="/dashboard"
                   className={({ isActive }) =>
@@ -55,8 +55,8 @@ let SideNav = () => {
                   <i className="nav-icon fas fa-th" />
                   <p>Main Dashboard</p>
                 </NavLink>
-              </li>
-              <hr style={{ borderTop: '1px solid #595959', width: '100%' }} />
+              </li> */}
+              {/* <hr style={{ borderTop: '1px solid #595959', width: '100%' }} /> */}
               {/* <li className="nav-item has-treeview"> */}
               <li className={'nav-header'}>
                 <b>CLOTHS</b>
