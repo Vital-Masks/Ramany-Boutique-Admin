@@ -13,6 +13,8 @@ let Categories = () => {
     let jewelleryTemp: string[] = [];
     let clothTemp: string[] = [];
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const [categoryType, setcategoryType] = useState("");
     const [categoryName, setcategoryName] = useState("");
 
@@ -21,6 +23,7 @@ let Categories = () => {
     const [clothCategories, setClothCategories] = useState([{}]);
 
     const getAllCategories = async () => {
+        setIsLoading(true)
         CategoryService.getAllCategories().then((response) => {
             let categoryResponse = response.data;
             categoryResponse.length > 0 &&
@@ -38,6 +41,7 @@ let Categories = () => {
             setoccasions(occasionsTemp);
             setJewelleryCategories(jewelleryTemp);
             setClothCategories(clothTemp);
+            setIsLoading(false)
         });
     };
 
@@ -48,6 +52,15 @@ let Categories = () => {
             categoryName: categoryName
         };
         console.log("categoryObj", categoryObj);
+        if (!categoryType || !categoryName) {
+            Swal.fire({
+                title: "Warning!",
+                text: "Category type or Category name missing",
+                icon: "warning",
+                confirmButtonText: "OK",
+            });
+        }
+        else {
         CategoryService.saveCategory(categoryObj)
             .then((response) => {
                 if (response["status"] === 200) {
@@ -56,8 +69,8 @@ let Categories = () => {
                         text: "Category saved successfully",
                         icon: "success",
                         confirmButtonText: "OK",
-                    }).then((result)=>{
-                        if(result.isConfirmed){ 
+                        }).then((result) => {
+                            if (result.isConfirmed) {
                             getAllCategories()
                         }
                       });
@@ -66,13 +79,14 @@ let Categories = () => {
             .catch((err) => {
                 Swal.fire({
                     title: "Oops!",
-                    text: "Something Went Wrong",
+                        text: "Category type or Category name missing",
                     icon: "warning",
                     confirmButtonText: "OK",
                 });
             });
+        }
     };
-const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
+    const showUpdateAlert = (categoryId, categoryName, categoryType) => {
     Swal.fire({
         title: 'Update Category',
         input: 'text',
@@ -100,8 +114,18 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
         allowOutsideClick: () => !Swal.isLoading()
       }).then((result) => {
         if (result.isConfirmed) {
-            updateCategory(categoryId,result.value, categoryType)
-            console.log("res",result)
+                if (!result.value) {
+                    Swal.fire({
+                        title: "Warning!",
+                        text: "Category name missing.",
+                        icon: "warning",
+                        confirmButtonText: "OK",
+                    });
+                }
+                else {
+                    updateCategory(categoryId, result.value, categoryType)
+                    console.log("res", result)
+                }
         //   Swal.fire({
         //     title: `${result.value}'s avatar`,
         //     imageUrl: result.value.avatar_url
@@ -109,21 +133,22 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
         }
       })
 }
-    const updateCategory =(categoryId, categoryName, categoryType) =>{
-        let updatedObj ={
-            _id:categoryId,
-            categoryName:categoryName,
-            categoryType:categoryType
+    const updateCategory = (categoryId, categoryName, categoryType) => {
+        let updatedObj = {
+            _id: categoryId,
+            categoryName: categoryName,
+            categoryType: categoryType
         }
-        CategoryService.updateCategoryById(categoryId,updatedObj).then(response => {
-            if(response['status'] === 200){
+
+        CategoryService.updateCategoryById(categoryId, updatedObj).then(response => {
+            if (response['status'] === 200) {
                 Swal.fire({
                     title: 'Success',
                     text: 'Category updated successfully',
                     icon: 'success',
                     confirmButtonText: 'OK'
-                  }).then((result)=>{
-                    if(result.isConfirmed){ 
+                }).then((result) => {
+                    if (result.isConfirmed) {
                         getAllCategories()
                     }
                   });
@@ -158,8 +183,8 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                   text: "Category Deleted Successfully",
                   icon: "success",
                   confirmButtonText: "OK",
-                }).then((result)=>{
-                  if(result.isConfirmed){ 
+                        }).then((result) => {
+                            if (result.isConfirmed) {
                     getAllCategories()
                   }
                 });
@@ -200,7 +225,7 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                                 Choose Category
                                             </label>
                                             <div className="col-sm-8">
-                                                <select className="custom-select" defaultValue={"default"} onChange={(e) => {setcategoryType(e.target.value)}}>
+                                                <select className="custom-select" defaultValue={"default"} onChange={(e) => {setcategoryType(e.target.value) }}>
                                                     <option value={"default"} disabled>
                                                         Choose an option
                                                     </option>
@@ -240,7 +265,14 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                         <h3>Occasion Type</h3>
                                         {/* </div> */}
                                         {
-                                            occasions.length > 0 && occasions.map((occasion, index) => {
+                                            isLoading ? (
+                                                // <tr>
+                                                <div className="text-center" >
+                                                    Loading...
+                                                </div>
+                                                // </tr>
+                                            ) : (
+                                                occasions.length ? (occasions.map((occasion, index) => {
                                                 return (
                                                     <div className="row">
                                                         <div className="col-md-6">
@@ -258,22 +290,25 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                                         </div>
                                                         <div className="col-sm-3">
                                                             <div style={{ marginRight: 4 }}>
-                                                                <button type="button" className="btn btn-block btn-success" onClick={()=>showUpdateAlert(occasion['_id'],occasion['categoryName'], occasion['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
+                                                                    <button type="button" className="btn btn-block btn-success" onClick={() => showUpdateAlert(occasion['_id'], occasion['categoryName'], occasion['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
                                                             </div>
                                                         </div>
                                                         <div className="col-sm-3">
                                                             <div className="form-group row">
-                                                                <button type="button" className=" btn btn-block btn-danger" onClick={()=>deleteCategory(occasion['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
+                                                                    <button type="button" className=" btn btn-block btn-danger" onClick={() => deleteCategory(occasion['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                 )
-                                            })
-
+                                                }
+                                                )) : (
+                                                    <div className="text-center" >
+                                                        No Data!
+                                                    </div>
+                                                )
+                                            )
                                         }
-
-
 
                                     </div>
                                 </div>
@@ -282,38 +317,48 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                         {/* <div className="card-header "> */}
                                         <h3>Clothing Category</h3>
                                         {/* </div> */}
-                                        {
-                                            clothCategories.length > 0 && clothCategories.map((cloth, index) => {
+                                        {    
+                                           isLoading ? (
+                                            // <tr>
+                                            <div className="text-center" >
+                                                Loading...
+                                            </div>
+                                            // </tr>
+                                        ) : (                                          
+                                           clothCategories.length ? (clothCategories.map((cloth, index) => {
                                                 return (
                                                     <div className="row">
                                                         <div className="col-md-6">
                                                             {/* <div className="form-group row"> */}
                                                             {/* <div className="col-sm-10"> */}
-                                                            <input
-                                                                type="text"
-                                                                className="form-control"
-                                                                id={cloth['categoryName']}
-                                                                onChange={(e) => e.target.value}
-                                                                value={cloth['categoryName']}
-                                                            ></input>
-                                                            {/* </div> */}
-                                                            {/* </div> */}
-                                                        </div>
-                                                        <div className="col-sm-3">
-                                                            <div style={{ marginRight: 4 }}>
-                                                                <button type="button" className="btn btn-block btn-success"onClick={()=>showUpdateAlert(cloth['_id'],cloth['categoryName'], cloth['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-sm-3">
-                                                            <div className="form-group row">
-                                                                <button type="button" className=" btn btn-block btn-danger" onClick={()=>deleteCategory(cloth['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
-                                                            </div>
-                                                        </div>
+                                                           <input
+                                                               type="text"
+                                                               className="form-control"
+                                                               id={cloth['categoryName']}
+                                                               onChange={(e) => e.target.value}
+                                                               value={cloth['categoryName']}
+                                                           ></input>
+                                                           {/* </div> */}
+                                                           {/* </div> */}
+                                                       </div>
+                                                       <div className="col-sm-3">
+                                                           <div style={{ marginRight: 4 }}>
+                                                               <button type="button" className="btn btn-block btn-success" onClick={() => showUpdateAlert(cloth['_id'], cloth['categoryName'], cloth['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
+                                                           </div>
+                                                       </div>
+                                                       <div className="col-sm-3">
+                                                           <div className="form-group row">
+                                                               <button type="button" className=" btn btn-block btn-danger" onClick={() => deleteCategory(cloth['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
+                                                           </div>
+                                                       </div>
+                                                   </div>
+                                               )
+                                           })) : (
+                                                    <div className="text-center" >
+                                                        No Data!
                                                     </div>
-
                                                 )
-                                            })
-
+                                            )
                                         }
 
 
@@ -327,7 +372,14 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                     <h3>Jewellery Category</h3>
                                     {/* </div> */}
                                     {
-                                        jewelleryCategories.length > 0 && jewelleryCategories.map((jewellery, index) => {
+                                         isLoading ? (
+                                            // <tr>
+                                            <div className="text-center" >
+                                                Loading...
+                                            </div>
+                                            // </tr>
+                                        ) : (                                          
+                                           jewelleryCategories.length ? (jewelleryCategories.map((jewellery, index) => {
                                             return (
                                                 <div className="row">
                                                     <div className="col-md-6">
@@ -345,23 +397,26 @@ const showUpdateAlert = (categoryId,categoryName, categoryType)=>{
                                                     </div>
                                                     <div className="col-sm-3">
                                                         <div style={{ marginRight: 4 }}>
-                                                            <button type="button" className="btn btn-block btn-success" onClick={()=>showUpdateAlert(jewellery['_id'],jewellery['categoryName'], jewellery['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
+                                                            <button type="button" className="btn btn-block btn-success" onClick={() => showUpdateAlert(jewellery['_id'], jewellery['categoryName'], jewellery['categoryType'])}><i className="fa-regular fa-pen-to-square"></i>Update</button>
                                                         </div>
                                                     </div>
                                                     <div className="col-sm-3">
                                                         <div className="form-group row">
-                                                            <button type="button" className=" btn btn-block btn-danger" onClick={()=>deleteCategory(jewellery['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
+                                                            <button type="button" className=" btn btn-block btn-danger" onClick={() => deleteCategory(jewellery['_id'])}><i className="fa-regular fa-trash-can"></i>Delete</button>
                                                         </div>
                                                     </div>
                                                 </div>
 
                                             )
-                                        })
+                                        })) : (
+                                                    <div className="text-center" >
+                                                        No Data!
+                                                    </div>
+                                                )
+                                            )
+                                        
 
                                     }
-
-
-
                                 </div>
                             </div>
 

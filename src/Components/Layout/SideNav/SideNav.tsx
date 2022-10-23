@@ -91,7 +91,7 @@ let SideNav = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="/viewJewellerys"
+                  to="/viewJewelleries"
                   className={({ isActive }) =>
                     isActive ? 'active nav-link' : 'nav-link'
                   }

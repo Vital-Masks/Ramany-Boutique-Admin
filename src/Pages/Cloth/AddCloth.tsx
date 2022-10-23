@@ -24,8 +24,16 @@ const schema = Yup.object().shape({
   gender: Yup.string().required('Required'),
   occasionTypeId: Yup.array().min(1, 'Required'),
   clothingCategoryId: Yup.string().required('Required'),
-  discount: Yup.string().required('Required'),
-  price: Yup.string().required('Required'),
+  discount: Yup.number()
+    .positive('Please enter positive number')
+    .min(0, 'Too short')
+    .max(100, 'Not possible to give this discount')
+    .required('Required'),
+  price: Yup.number()
+    .positive('Please enter positive number')
+    .min(0, 'Too short')
+    .max(10000, 'The price is too much')
+    .required('Required'),
   description: Yup.string()
     .min(2, 'Too Short!')
     .max(255, 'Too Long!')
@@ -929,7 +937,7 @@ const AddCloth = () => {
                                 id="description"
                                 type="text"
                                 name="description"
-                                placeholder="description"
+                                placeholder="Description"
                                 className="form-control"
                               />
                               {errors['description'] && (
@@ -949,7 +957,7 @@ const AddCloth = () => {
                                 id="fabric"
                                 type="text"
                                 name="fabric"
-                                placeholder="fabric"
+                                placeholder="Fabric"
                                 className="form-control"
                               />
                               {errors['fabric'] && (
@@ -969,7 +977,7 @@ const AddCloth = () => {
                                 id="features"
                                 type="text"
                                 name="features"
-                                placeholder="features"
+                                placeholder="Features"
                                 className="form-control"
                               />
                               {errors['features'] && (
@@ -989,7 +997,7 @@ const AddCloth = () => {
                                 id="measurements"
                                 type="text"
                                 name="measurements"
-                                placeholder="measurements"
+                                placeholder="Measurements"
                                 className="form-control"
                               />
                               {errors['measurements'] && (
@@ -1002,14 +1010,14 @@ const AddCloth = () => {
 
                           <div className="form-group row">
                             <label className="col-sm-3 col-form-label">
-                              style
+                              Style
                             </label>
                             <div className="col-sm-9">
                               <Field
                                 id="style"
                                 type="text"
                                 name="style"
-                                placeholder="style"
+                                placeholder="Style"
                                 className="form-control"
                               />
                               {errors['style'] && (
@@ -1029,7 +1037,7 @@ const AddCloth = () => {
                                 id="washInstructions"
                                 type="text"
                                 name="washInstructions"
-                                placeholder="washInstructions"
+                                placeholder="Wash Instructions"
                                 className="form-control"
                               />
                               {errors['washInstructions'] && (
@@ -1049,7 +1057,7 @@ const AddCloth = () => {
                                 id="customAltrations"
                                 type="text"
                                 name="customAltrations"
-                                placeholder="custom altrations"
+                                placeholder="Custom Altrations"
                                 className="form-control"
                               />
                               {errors['customAltrations'] && (
@@ -1066,7 +1074,7 @@ const AddCloth = () => {
                       <button type="submit" className="btn btn-info">
                         Submit
                       </button>
-                      <Link to="/viewCloths" className="nav-link">
+                      <Link to="/viewCloths">
                         <button
                           type="submit"
                           className="btn btn-default float-right"

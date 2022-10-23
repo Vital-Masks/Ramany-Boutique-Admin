@@ -45,7 +45,7 @@ function Router() {
               <Route path="/viewCloths" element={<ViewCloths />} />
               <Route path="/addCloth" element={<AddCloth />} />
               <Route path="/updateCloth" element={<UpdateCloth />} />
-              <Route path="/viewJewellerys" element={<ViewJewellerys />} />
+              <Route path="/viewJewelleries" element={<ViewJewellerys />} />
               <Route path="/addJewellery" element={<AddJewellery />} />
               <Route path="/updateJewellery" element={<UpdateJewellery />} />
               <Route path="/categories" element={<Categories />} />

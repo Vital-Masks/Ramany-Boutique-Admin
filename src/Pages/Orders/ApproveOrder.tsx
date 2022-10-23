@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import OrdersService from "../../Services/OrdersService";
 import Swal from "sweetalert2";
 import "react-dropzone-uploader/dist/styles.css";
@@ -7,6 +7,7 @@ import ReactToPrint from "react-to-print";
 
 let ApproveOrder = (props) => {
   const search = useLocation().search;
+  const navigate = useNavigate();
   const componentRef = useRef(null);
   const orderId = new URLSearchParams(search).get("id");
 
@@ -87,7 +88,7 @@ let ApproveOrder = (props) => {
                   confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
-                    window.location.reload();
+                    getOrderById()
                   }
                 });
               } else {
@@ -129,7 +130,7 @@ let ApproveOrder = (props) => {
                   confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
-                    window.location.reload();
+                    getOrderById()
                   }
                 });
               } else {
@@ -171,7 +172,7 @@ let ApproveOrder = (props) => {
                   confirmButtonText: "OK",
                 }).then((result) => {
                   if (result.isConfirmed) {
-                    window.location.reload();
+                    getOrderById()
                   }
                 });
               } else {

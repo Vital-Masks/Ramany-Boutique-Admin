@@ -24,11 +24,18 @@ const schema = Yup.object().shape({
   gender: Yup.string().required('Required'),
   occasionTypeId: Yup.array().min(1, 'Required'),
   jewelleryCategoryId: Yup.string().required('Required'),
-  quantity: Yup.string().required('Required'),
-  price: Yup.string().required('Required'),
-  discount: Yup.string()
-    .min(2, 'Too Short!')
-    .max(255, 'Too Long!')
+  quantity: Yup.number().typeError('Value should be a number')
+    .positive('Please enter positive number')
+    .min(0, 'Too Short')
+    .max(100000, 'Too Long')
+    .required('Required'),
+  price: Yup.number()
+    .positive('Please enter positive number')
+    .max(10000, 'The price is too much')
+    .required('Required'),
+  discount: Yup.number()
+    .positive('Please enter positive number')
+    .max(100, 'Not possible to give this discount')
     .required('Required'),
   description: Yup.string()
     .min(2, 'Too Short!')
@@ -348,7 +355,7 @@ let AddJewellery = () => {
         confirmButtonText: 'OK',
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate('/viewJewellerys');
+          navigate('/viewJewelleries');
         }
       });
     } catch (error) {
@@ -898,7 +905,7 @@ let AddJewellery = () => {
                       <button type="submit" className="btn btn-info">
                         Submit
                       </button>
-                      <Link to="/viewJewellerys" className="nav-link">
+                      <Link to="/viewJewelleries">
                         <button
                           type="submit"
                           className="btn btn-default float-right"
