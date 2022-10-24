@@ -98,38 +98,16 @@ let Categories = () => {
       showCancelButton: true,
       confirmButtonText: 'Update',
       showLoaderOnConfirm: true,
-      // preConfirm: (login) => {
-      //   return fetch(`//api.github.com/users/${login}`)
-      //     .then(response => {
-      //       if (!response.ok) {
-      //         throw new Error(response.statusText)
-      //       }
-      //       return response.json()
-      //     })
-      //     .catch(error => {
-      //       Swal.showValidationMessage(
-      //         `Request failed: ${error}`
-      //       )
-      //     })
-      // },
+      inputValidator: (value) => {
+        if (!value) return 'Field cannot be null';
+        if (value.length > 15) return 'Characters must be less than 15';
+        else return null;
+      },
       allowOutsideClick: () => !Swal.isLoading(),
     }).then((result) => {
       if (result.isConfirmed) {
-        if (!result.value) {
-          Swal.fire({
-            title: 'Warning!',
-            text: 'Category name missing.',
-            icon: 'warning',
-            confirmButtonText: 'OK',
-          });
-        } else {
-          updateCategory(categoryId, result.value, categoryType);
-          console.log('res', result);
-        }
-        //   Swal.fire({
-        //     title: `${result.value}'s avatar`,
-        //     imageUrl: result.value.avatar_url
-        //   })
+        updateCategory(categoryId, result.value, categoryType);
+        console.log('res', result);
       }
     });
   };
@@ -267,7 +245,7 @@ let Categories = () => {
                           value={categoryName}
                           onChange={(e) => {
                             setcategoryName(e.target.value);
-                            categoryName.length > 30
+                            categoryName.length > 15
                               ? setError('Too long')
                               : setError('');
                           }}
@@ -281,7 +259,7 @@ let Categories = () => {
                       type="button"
                       className="btn btn-block btn-success"
                       onClick={saveCategory}
-                      disabled={categoryName.length > 30}
+                      disabled={categoryName.length > 15}
                     >
                       <i className="fab fa-creative-commons-nd"></i>Add Category
                     </button>

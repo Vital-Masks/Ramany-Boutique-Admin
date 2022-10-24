@@ -412,7 +412,7 @@ const AddCloth = () => {
           <div className="container-fluid">
             <br></br>
             <div className="col-sm-6">
-              <h1>Add Clothing</h1>
+              <h1>{clothId ? 'Update' : 'Add'} Clothing</h1>
             </div>
 
             <div className="card card-primary">

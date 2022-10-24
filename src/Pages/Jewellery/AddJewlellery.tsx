@@ -425,7 +425,7 @@ let AddJewellery = () => {
           <div className="container-fluid">
             <br></br>
             <div className="col-sm-6">
-              <h1>Add Jewellerying</h1>
+              <h1>{jewelleryId ? 'Update' : 'Add'} Jewellery</h1>
             </div>
 
             <div className="card card-primary">
