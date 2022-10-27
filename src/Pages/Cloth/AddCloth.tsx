@@ -841,6 +841,7 @@ const AddCloth = () => {
                                 type="text"
                                 name="price"
                                 className="form-control"
+                                value={Number(values['price']).toFixed(2)}
                               />
                               {errors['price'] && (
                                 <p className={styles.error} id="email-error">
