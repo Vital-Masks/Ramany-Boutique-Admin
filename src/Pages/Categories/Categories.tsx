@@ -334,22 +334,21 @@ let Categories = () => {
                     )}
                   </div>
                 </div>
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <div className={`card card-body ${styles.marginCard}`}>
-                    {/* <div className="card-header "> */}
+    
                     <h3>Clothing Category</h3>
-                    {/* </div> */}
+       
                     {isLoading ? (
-                      // <tr>
+        
                       <div className="text-center">Loading...</div>
-                    ) : // </tr>
+                    ) : 
                     clothCategories.length ? (
                       clothCategories.map((cloth, index) => {
                         return (
                           <div className="row">
                             <div className="col-md-6">
-                              {/* <div className="form-group row"> */}
-                              {/* <div className="col-sm-10"> */}
+                      
                               <input
                                 type="text"
                                 className="form-control"
@@ -357,8 +356,6 @@ let Categories = () => {
                                 onChange={(e) => e.target.value}
                                 value={cloth['categoryName']}
                               ></input>
-                              {/* </div> */}
-                              {/* </div> */}
                             </div>
                             <div className="col-sm-3">
                               <div style={{ marginRight: 4 }}>
@@ -397,70 +394,73 @@ let Categories = () => {
                       <div className="text-center">No Data!</div>
                     )}
                   </div>
-                </div>
-              </div>
-              <div className="col-md-6">
-                <div className={`card card-body ${styles.marginCard}`}>
-                  {/* <div className="card-header "> */}
-                  <h3>Jewellery Category</h3>
-                  {/* </div> */}
-                  {isLoading ? (
-                    // <tr>
-                    <div className="text-center">Loading...</div>
-                  ) : // </tr>
-                  jewelleryCategories.length ? (
-                    jewelleryCategories.map((jewellery, index) => {
-                      return (
-                        <div className="row">
-                          <div className="col-md-6">
-                            {/* <div className="form-group row"> */}
-                            {/* <div className="col-sm-10"> */}
-                            <input
-                              type="text"
-                              className="form-control"
-                              id={jewellery['categoryName']}
-                              onChange={(e) => e.target.value}
-                              value={jewellery['categoryName']}
-                            ></input>
-                            {/* </div> */}
-                            {/* </div> */}
-                          </div>
-                          <div className="col-sm-3">
-                            <div style={{ marginRight: 4 }}>
-                              <button
-                                type="button"
-                                className="btn btn-block btn-success"
-                                onClick={() =>
-                                  showUpdateAlert(
-                                    jewellery['_id'],
-                                    jewellery['categoryName'],
-                                    jewellery['categoryType']
-                                  )
-                                }
-                              >
-                                <i className="fa-regular fa-pen-to-square"></i>
-                                Update
-                              </button>
+                </div> */}
+
+                <div className="col-md-6">
+                  <div className={`card card-body ${styles.marginCard}`}>
+                    {/* <div className="card-header "> */}
+                    <h3>Jewellery Category</h3>
+                    {/* </div> */}
+                    {isLoading ? (
+                      // <tr>
+                      <div className="text-center">Loading...</div>
+                    ) : // </tr>
+                    jewelleryCategories.length ? (
+                      jewelleryCategories.map((jewellery, index) => {
+                        return (
+                          <div className="row">
+                            <div className="col-md-6">
+                              {/* <div className="form-group row"> */}
+                              {/* <div className="col-sm-10"> */}
+                              <input
+                                type="text"
+                                className="form-control"
+                                id={jewellery['categoryName']}
+                                onChange={(e) => e.target.value}
+                                value={jewellery['categoryName']}
+                              ></input>
+                              {/* </div> */}
+                              {/* </div> */}
+                            </div>
+                            <div className="col-sm-3">
+                              <div style={{ marginRight: 4 }}>
+                                <button
+                                  type="button"
+                                  className="btn btn-block btn-success"
+                                  onClick={() =>
+                                    showUpdateAlert(
+                                      jewellery['_id'],
+                                      jewellery['categoryName'],
+                                      jewellery['categoryType']
+                                    )
+                                  }
+                                >
+                                  <i className="fa-regular fa-pen-to-square"></i>
+                                  Update
+                                </button>
+                              </div>
+                            </div>
+                            <div className="col-sm-3">
+                              <div className="form-group row">
+                                <button
+                                  type="button"
+                                  className=" btn btn-block btn-danger"
+                                  onClick={() =>
+                                    deleteCategory(jewellery['_id'])
+                                  }
+                                >
+                                  <i className="fa-regular fa-trash-can"></i>
+                                  Delete
+                                </button>
+                              </div>
                             </div>
                           </div>
-                          <div className="col-sm-3">
-                            <div className="form-group row">
-                              <button
-                                type="button"
-                                className=" btn btn-block btn-danger"
-                                onClick={() => deleteCategory(jewellery['_id'])}
-                              >
-                                <i className="fa-regular fa-trash-can"></i>
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="text-center">No Data!</div>
-                  )}
+                        );
+                      })
+                    ) : (
+                      <div className="text-center">No Data!</div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
