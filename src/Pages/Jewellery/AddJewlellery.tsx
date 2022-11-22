@@ -81,6 +81,7 @@ const schema = Yup.object().shape({
 
 let AddJewellery = () => {
   const navigate = useNavigate();
+  const [isSubmit, setIsSubmit] = useState(false);
   const [initialValues, setInitialValues] = useState({});
   const [occasions, setOccasions] = useState<any[]>([]);
   const [jewelleryCategories, setJewelleryCategories] = useState<any[]>([]);
@@ -364,6 +365,7 @@ let AddJewellery = () => {
         if (jewelleryId) {
           await JewelleryService.updateJewelleryById(jewelleryId, obj);
         } else {
+          setIsSubmit(true)
           await JewelleryService.saveJewellerys(obj);
         }
 
@@ -386,6 +388,7 @@ let AddJewellery = () => {
         icon: 'warning',
         confirmButtonText: 'OK',
       });
+      setIsSubmit(false)
     }
   };
 
@@ -936,7 +939,7 @@ let AddJewellery = () => {
                     </div>
 
                     <div className="card-footer">
-                      <button type="submit" className="btn btn-info">
+                      <button type="submit" disabled ={isSubmit ? true : false} className="btn btn-info">
                         Submit
                       </button>
                       <Link to="/viewJewelleries">
