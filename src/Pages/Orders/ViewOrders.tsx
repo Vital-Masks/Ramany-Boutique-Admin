@@ -124,7 +124,7 @@ let ViewOrders = () => {
                                             {/* <td>{jewellery['mainImage']}</td>
                                             <td>{jewellery['subImage']}</td> */}
                                             <td><Link to={{pathname:'/approveOrder', search:`?id=${order['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
-                                            <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteOrder(order['_id'])} >Delete</button></td>
+                                            {/* <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteOrder(order['_id'])} >Delete</button></td> */}
                                         </tr>                                        
                                     );
                                 })

@@ -32,7 +32,7 @@ let ApproveOrder = (props) => {
       setJewelleryDetails(obj.jewelleryDetails);
 
       if (obj.orderType === "Rent") {
-        if (obj.status === "Pending") {
+        if (obj.status === "Pending" || obj.status === "pending" ) {
           setButtonStatus("Change To In Progress");
         }
         if (obj.status === "InProgress") {
@@ -46,7 +46,7 @@ let ApproveOrder = (props) => {
         }
       }
       if (obj.orderType === "Sale") {
-        if (obj.status === "Pending") {
+        if (obj.status === "Pending" || obj.status === "pending") {
           setButtonStatus("Change To In Progress");
         }
         if (obj.status === "InProgress") {
@@ -320,7 +320,7 @@ let ApproveOrder = (props) => {
                     <b>Order Type:</b> {order["orderType"]}
                     <br />
                     <b>Status:</b>{" "}
-                    {order["status"] === "Pending" ? (
+                    {order["status"] === "Pending" || "pending" ? (
                       <strong style={{ color: "red" }}>
                         {" "}
                         {order["status"]}{" "}

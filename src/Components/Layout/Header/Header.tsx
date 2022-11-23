@@ -1,7 +1,7 @@
 let Header = () => {
   const logout = async (e) => {
     e.preventDefault();
-    sessionStorage.removeItem('token');
+    localStorage.removeItem('token');
     window.location.reload();
   };
 

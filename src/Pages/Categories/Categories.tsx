@@ -215,12 +215,12 @@ let Categories = () => {
                           <option key="occasionType" value="occasionType">
                             Occasion Type
                           </option>
-                          <option
+                          {/* <option
                             key="clothingCategory"
                             value="clothingCategory"
                           >
                             Clothing Category
-                          </option>
+                          </option> */}
                           <option
                             key="jewelleryCategory"
                             value="jewelleryCategory"
