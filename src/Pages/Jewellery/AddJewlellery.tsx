@@ -696,7 +696,7 @@ let AddJewellery = () => {
                                 name="price"
                                 placeholder="Price"
                                 className="form-control"
-                                value={Number(values['price']).toFixed(2)}
+                                value={values['price']}
                               />
                               {errors['price'] && (
                                 <p className={styles.error} id="email-error">
