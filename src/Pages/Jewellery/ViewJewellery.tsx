@@ -3,16 +3,25 @@ import styles from './Jewellery.module.css';
 import { Link, useNavigate } from 'react-router-dom';
 import JewelleryService from '../../Services/JewelleryService';
 import Swal from 'sweetalert2';
+import ReactPaginate from 'react-paginate';
 
 let ViewJewellerys = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [jewelleryData, setJewelleryData] = useState([]);
+  const [total, setTotal] = useState(0);
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0);
 
   const fetchJewellery = async () => {
     try {
       setIsLoading(true);
       const response = await JewelleryService.getAllJewellerys();
+      console.log(response.data);
       setJewelleryData(response.data);
     } catch (error) {
       console.log(error);
@@ -20,12 +29,25 @@ let ViewJewellerys = () => {
     setIsLoading(false);
   };
 
-  const fetchJewellerys = async () => {
-    fetchJewellery();
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * 9) % jewelleryData.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
   };
 
   useEffect(() => {
-    fetchJewellerys();
+    // Fetch items from another resources.
+    const endOffset = itemOffset + 10;
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    console.log(jewelleryData.slice(itemOffset, endOffset));
+    setCurrentItems(jewelleryData.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(jewelleryData.length / 10));
+  }, [jewelleryData, itemOffset]);
+
+  useEffect(() => {
+    fetchJewellery();
   }, []);
 
   const deleteJewellery = (jewelleryId) => {
@@ -49,7 +71,7 @@ let ViewJewellerys = () => {
             }).then((result) => {
               if (result.isConfirmed) {
                 // navigate("/viewCloths")
-                fetchJewellerys();
+                fetchJewellery();
               }
             });
           } else {
@@ -64,6 +86,40 @@ let ViewJewellerys = () => {
       }
     });
   };
+
+  function Items({ products }: any) {
+    return products.map((jewellery: any) => {
+      return (
+        <tr key={jewellery['_id']}>
+          <td>{jewellery['jewelleryName']}</td>
+          <td>{jewellery['jewelleryCode']}</td>
+          <td>{jewellery['jewelleryType']}</td>
+          <td>{jewellery['gender']}</td>
+          <td>{jewellery?.jewelleryingCategoryId?.categoryName}</td>
+          <td>{jewellery['price']}</td>
+          <td>{jewellery['discount']}</td>
+          <td>
+            <Link
+              to={{
+                pathname: '/addJewellery',
+                search: `?id=${jewellery['_id']}`,
+              }}
+            >
+              <button className="btn btn-block bg-gradient-info">View</button>
+            </Link>{' '}
+          </td>
+          <td>
+            <button
+              className="btn btn-block bg-gradient-danger"
+              onClick={() => deleteJewellery(jewellery['_id'])}
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      );
+    });
+  }
 
   return (
     <div className="content-wrapper">
@@ -84,7 +140,7 @@ let ViewJewellerys = () => {
           </div>
         </div>
 
-        <div className="card-body">
+        <div className={`${styles.table} card-body`}>
           <table id="example1" className="table table-bordered table-hover">
             <thead>
               <tr>
@@ -98,41 +154,7 @@ let ViewJewellerys = () => {
               </tr>
             </thead>
             <tbody>
-              {jewelleryData.length > 0 &&
-                jewelleryData.map((jewellery: any) => {
-                  return (
-                    <tr key={jewellery['_id']}>
-                      <td>{jewellery['jewelleryName']}</td>
-                      <td>{jewellery['jewelleryCode']}</td>
-                      <td>{jewellery['jewelleryType']}</td>
-                      <td>{jewellery['gender']}</td>
-                      <td>{jewellery?.jewelleryingCategoryId?.categoryName}</td>
-                      <td>{jewellery['price']}</td>
-                      <td>{jewellery['discount']}</td>
-                      <td>
-                        <Link
-                          to={{
-                            pathname: '/addJewellery',
-                            search: `?id=${jewellery['_id']}`,
-                          }}
-                        >
-                          <button className="btn btn-block bg-gradient-info">
-                            View
-                          </button>
-                        </Link>{' '}
-                      </td>
-                      <td>
-                        <button
-                          className="btn btn-block bg-gradient-danger"
-                          onClick={() => deleteJewellery(jewellery['_id'])}
-                        >
-                          Delete
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-
+              <Items products={currentItems} />
               {isLoading ? (
                 <tr>
                   <td className="text-center" colSpan={8}>
@@ -150,6 +172,20 @@ let ViewJewellerys = () => {
               )}
             </tbody>
           </table>
+
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel=" >>"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="<<"
+            className={styles.paginate}
+            pageClassName={styles.break}
+            previousClassName={styles.previous}
+            nextClassName={styles.next}
+            activeClassName={styles.active}
+          />
         </div>
       </div>
     </div>
