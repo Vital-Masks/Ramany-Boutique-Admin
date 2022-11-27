@@ -1,155 +1,191 @@
 import React, { useEffect, useState } from 'react';
-import styles from './Jewellery.module.css'
-import { Link } from 'react-router-dom'
-import OrdersService from '../../Services/OrdersService'
-import Swal from 'sweetalert2'
+import styles from './Jewellery.module.css';
+import { Link } from 'react-router-dom';
+import OrdersService from '../../Services/OrdersService';
+import Swal from 'sweetalert2';
+import ReactPaginate from 'react-paginate';
 
 let ViewOrders = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [ordersData, setOrdersData] = useState([]);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [ordersData, setOrdersData] = useState({
-        orders: []
-    });
-  
-    const fetchOrders= async () => {
-        setIsLoading(true);
-        try {
-            OrdersService.getAllOrders().then((response) => {
-                console.log(response)
-                if(response){
-                    setOrdersData(() => ({
-                        orders: response.data
-                    }))
-                    setIsLoading(false); 
+  // We start with an empty list of items.
+  const [currentItems, setCurrentItems] = useState([]);
+  const [pageCount, setPageCount] = useState(0);
+  // Here we use item offsets; we could also use page offsets
+  // following the API or data you're working with.
+  const [itemOffset, setItemOffset] = useState(0);
 
-                }                                
-            })
-        } catch (err) {
-            console.log(err)
-        }
-        
-    }
-
-    useEffect(() => {
-        fetchOrders()
-    }, []);
-
-    const deleteOrder = (orderId) => {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          OrdersService.deleteOrder(orderId).then((response) => {
-            if (response["status"] === 200) {
-              Swal.fire({
-                title: "Deleted",
-                text: "Order Deleted Successfully",
-                icon: "success",
-                confirmButtonText: "OK",
-              }).then((result)=>{
-                if(result.isConfirmed){ 
-                    fetchOrders()
-                }
-              });
-              
-            } else {
-              Swal.fire({
-                title: "Oops!",
-                text: "Something Went Wrong",
-                icon: "warning",
-                confirmButtonText: "OK",
-              });
-            }
-          });
+  const fetchOrders = async () => {
+    setIsLoading(true);
+    try {
+      OrdersService.getAllOrders().then((response) => {
+        if (response) {
+          setOrdersData(response.data);
+          setIsLoading(false);
         }
       });
-    };
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-    
+  const handlePageClick = (event) => {
+    const newOffset = (event.selected * 9) % ordersData.length;
+    console.log(
+      `User requested page number ${event.selected}, which is offset ${newOffset}`
+    );
+    setItemOffset(newOffset);
+  };
 
+  useEffect(() => {
+    // Fetch items from another resources.
+    const endOffset = itemOffset + 10;
+    console.log(`Loading items from ${itemOffset} to ${endOffset}`);
+    console.log(ordersData.slice(itemOffset, endOffset));
+    setCurrentItems(ordersData.slice(itemOffset, endOffset));
+    setPageCount(Math.ceil(ordersData.length / 10));
+  }, [ordersData, itemOffset]);
 
-    let { orders } = ordersData
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
+  const deleteOrder = (orderId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        OrdersService.deleteOrder(orderId).then((response) => {
+          if (response['status'] === 200) {
+            Swal.fire({
+              title: 'Deleted',
+              text: 'Order Deleted Successfully',
+              icon: 'success',
+              confirmButtonText: 'OK',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                fetchOrders();
+              }
+            });
+          } else {
+            Swal.fire({
+              title: 'Oops!',
+              text: 'Something Went Wrong',
+              icon: 'warning',
+              confirmButtonText: 'OK',
+            });
+          }
+        });
+      }
+    });
+  };
 
-    return (
-        <div className="content-wrapper">
-            <div className="card">
-                <div className="card-header ">
-                    <br></br>
-                    <div className="row">
-                        <div className="col ">
-                            <h3>Orders List</h3>
-                        </div>
-                        {/* <div className="col col-lg-2">
+  function Items({ orders }: any) {
+    return orders?.map((order) => {
+      return (
+        <tr key={order['_id']}>
+          <td>{order['_id']}</td>
+          <td>{order['customerId']['firstName']}</td>
+          <td>{order['totalCost']}</td>
+          <td>{order['orderType']}</td>
+          <td>{order['status']}</td>
+          {/* <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
+                                    <td>{jewellery['price']}</td>
+                                    <td>{jewellery['discount']}</td> */}
+          {/* <td>{jewellery['mainImage']}</td>
+                                    <td>{jewellery['subImage']}</td> */}
+          <td>
+            <Link
+              to={{
+                pathname: '/approveOrder',
+                search: `?id=${order['_id']}`,
+              }}
+            >
+              <button className="btn btn-block bg-gradient-info">View</button>
+            </Link>{' '}
+          </td>
+          {/* <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteOrder(order['_id'])} >Delete</button></td> */}
+        </tr>
+      );
+    });
+  }
+
+  return (
+    <div className="content-wrapper">
+      <div className="card">
+        <div className="card-header ">
+          <br></br>
+          <div className="row">
+            <div className="col ">
+              <h3>Orders List</h3>
+            </div>
+            {/* <div className="col col-lg-2">
                         <Link to='/addJewellery'>
                             <button type="button" className="btn btn-block btn-success"><i className="fa fa-home" ></i>Add Jewellery</button>
                             </Link>
                         </div> */}
-                    </div>
-                </div>
-
-                <div className="card-body">
-                    <table id="example1" className="table table-bordered table-hover">
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer Name</th>
-                                <th>Total Cost </th>
-                                <th>Order Type</th>
-                                <th>Status</th>
-                                
-                                {/* <th>Main Image</th>
-                                <th>Sub Image</th> */}
-                            </tr>                           
-                        </thead>
-                        <tbody>
-                            {
-                                orders.length > 0 && orders.map(order => {
-                                    return (
-                                        <tr key={order['_id']}>
-                                            <td>{order['_id']}</td>
-                                            <td>{order['customerId']['firstName']}</td>
-                                            <td>{order['totalCost']}</td>
-                                            <td>{order['orderType']}</td>
-                                            <td>{order['status']}</td>
-                                            {/* <td>{jewellery['jewelleryingCategoryId']['categoryName']}</td>
-                                            <td>{jewellery['price']}</td>
-                                            <td>{jewellery['discount']}</td> */}
-                                            {/* <td>{jewellery['mainImage']}</td>
-                                            <td>{jewellery['subImage']}</td> */}
-                                            <td><Link to={{pathname:'/approveOrder', search:`?id=${order['_id']}`}} ><button className="btn btn-block bg-gradient-info">View</button></Link> </td>
-                                            {/* <td><button className="btn btn-block bg-gradient-danger" onClick={()=>deleteOrder(order['_id'])} >Delete</button></td> */}
-                                        </tr>                                        
-                                    );
-                                })
-                            }
-                            {isLoading ? (
-                                <tr>
-                                    <td className="text-center" colSpan={8}>
-                                        Loading...
-                                    </td>
-                                </tr>
-                            ) : (
-                                !ordersData.orders.length && (
-                                    <tr>
-                                        <td className="text-center" colSpan={8}>
-                                            No Data!
-                                        </td>
-                                    </tr>
-                                )
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          </div>
         </div>
-    );
-}
+
+        <div className="card-body">
+          <table id="example1" className="table table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer Name</th>
+                <th>Total Cost </th>
+                <th>Order Type</th>
+                <th>Status</th>
+
+                {/* <th>Main Image</th>
+                                <th>Sub Image</th> */}
+              </tr>
+            </thead>
+            <tbody>
+              <Items orders={currentItems} />
+
+              {isLoading ? (
+                <tr>
+                  <td className="text-center" colSpan={8}>
+                    Loading...
+                  </td>
+                </tr>
+              ) : (
+                !ordersData.length && (
+                  <tr>
+                    <td className="text-center" colSpan={8}>
+                      No Data!
+                    </td>
+                  </tr>
+                )
+              )}
+            </tbody>
+          </table>
+
+          <ReactPaginate
+            breakLabel="..."
+            nextLabel=" >>"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={5}
+            pageCount={pageCount}
+            previousLabel="<<"
+            className={styles.paginate}
+            pageClassName={styles.break}
+            previousClassName={styles.previous}
+            nextClassName={styles.next}
+            activeClassName={styles.active}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default ViewOrders;

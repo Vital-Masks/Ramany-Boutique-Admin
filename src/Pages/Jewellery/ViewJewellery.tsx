@@ -21,7 +21,6 @@ let ViewJewellerys = () => {
     try {
       setIsLoading(true);
       const response = await JewelleryService.getAllJewellerys();
-      console.log(response.data);
       setJewelleryData(response.data);
     } catch (error) {
       console.log(error);
