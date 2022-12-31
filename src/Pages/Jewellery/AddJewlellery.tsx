@@ -29,19 +29,15 @@ const schema = Yup.object().shape({
   quantity: Yup.number()
     .typeError('Value should be a number')
     .positive('Please enter positive number')
-    .min(0, 'Too Short')
-    .max(100000, 'Too Long')
-    .required('Required'),
+    .min(1, 'Too Short'),
   price: Yup.number()
     .typeError('Value should be a number')
     .positive('Please enter positive number')
-    .max(10000, 'The price is too much')
-    .required('Required'),
+    .max(10000, 'The price is too much'),
   discount: Yup.number()
     .typeError('Value should be a number')
-    .positive('Please enter positive number')
-    .max(100, 'Not possible to give this discount')
-    .required('Required'),
+    .positive('Discount shoudbe more than zero')
+    .max(100, 'Not possible to give this discount'),
   description: Yup.string()
     .trim()
     .min(2, 'Too Short!')
@@ -366,20 +362,23 @@ let AddJewellery = () => {
           await JewelleryService.updateJewelleryById(jewelleryId, obj);
         } else {
           setIsSubmit(true)
-          await JewelleryService.saveJewellerys(obj);
+          await JewelleryService.saveJewellerys(obj).then(res=>{
+            console.log("res",res)
+            Swal.fire({
+              title: 'Success',
+              text: 'Jewellery saved successfully',
+              icon: 'success',
+              confirmButtonText: 'OK',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                navigate('/viewJewelleries');
+                actions.resetForm();
+              }
+            });
+          })
         }
 
-        Swal.fire({
-          title: 'Success',
-          text: 'Jewellery saved successfully',
-          icon: 'success',
-          confirmButtonText: 'OK',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            navigate('/viewJewelleries');
-            actions.resetForm();
-          }
-        });
+        
       }
     } catch (error) {
       Swal.fire({
@@ -403,7 +402,7 @@ let AddJewellery = () => {
         gender: '',
         occasionTypeId: [],
         jewelleryCategoryId: '',
-        quantity: '',
+        quantity: 1,
         price: '',
         discount: '',
         description: '',
