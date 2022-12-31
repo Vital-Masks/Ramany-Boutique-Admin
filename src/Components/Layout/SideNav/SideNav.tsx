@@ -58,11 +58,11 @@ let SideNav = () => {
               </li> */}
               {/* <hr style={{ borderTop: '1px solid #595959', width: '100%' }} /> */}
               {/* <li className="nav-item has-treeview"> */}
-              <li className={'nav-header'}>
+              {/* <li className={'nav-header'}>
                 <b>CLOTHS</b>
-              </li>
+              </li> */}
               {/* <ul className="nav nav-treeview"> */}
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <NavLink
                   to="/viewCloths"
                   className={({ isActive }) =>
@@ -72,9 +72,9 @@ let SideNav = () => {
                   <i className="far fa-circle nav-icon" />
                   <p>View Cloths</p>
                 </NavLink>
-              </li>
+              </li> */}
 
-              <li className="nav-item">
+              {/* <li className="nav-item">
                 <NavLink
                   to="/addCloth"
                   className={({ isActive }) =>
@@ -84,8 +84,8 @@ let SideNav = () => {
                   <i className="far fa-circle nav-icon" />
                   <p>Add Cloth</p>
                 </NavLink>
-              </li>
-              <hr style={{ borderTop: '1px solid #595959', width: '100%' }} />
+              </li> */}
+              {/* <hr style={{ borderTop: '1px solid #595959', width: '100%' }} /> */}
               <li className="nav-header">
                 <b>JEWELLERY</b>
               </li>

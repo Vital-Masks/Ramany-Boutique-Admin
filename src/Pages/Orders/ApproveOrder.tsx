@@ -42,6 +42,7 @@ let ApproveOrder = (props) => {
           setButtonStatus("Return Item");
         }
         if (obj.status === "Returned") {
+          //product count should increase
           setButtonStatus("Order Returned Successfully.");
         }
       }
@@ -65,7 +66,7 @@ let ApproveOrder = (props) => {
   const changeOrderStatus = () => {
     if (
       orderId &&
-      order["status"] === "Pending" &&
+      (order["status"] === "Pending" || order["status"] === "pending" )&&
       buttonStatus === "Change To In Progress"
     ) {
       Swal.fire({
@@ -284,15 +285,9 @@ let ApproveOrder = (props) => {
                     <address>
                       <strong>Ramany Boutique</strong>
                       <br />
-                      Dubai Main Road,
+                      Phone: +1 (416) 474-2388
                       <br />
-                      Dumai Kurukku santhu,
-                      <br />
-                      Dubai.
-                      <br />
-                      Phone: (804) 123-5432
-                      <br />
-                      Email:yathushan@gmail.com
+                      Email: theramyaboutique@gmail.com
                     </address>
                   </div>
                   <div className="col-sm-4 invoice-col">
@@ -421,24 +416,14 @@ let ApproveOrder = (props) => {
                 </div>
                 <div className="row">
                   <div className="col-6">
-                    <p className="lead">Payment Methods:</p>
-                    <img src="../../dist/img/credit/visa.png" alt="Visa" />
-                    <img
-                      src="../../dist/img/credit/mastercard.png"
-                      alt="Mastercard"
-                    />
-                    <img
-                      src="../../dist/img/credit/american-express.png"
-                      alt="American Express"
-                    />
-                    <img src="../../dist/img/credit/paypal2.png" alt="Paypal" />
-                    <p
+                    <img src="/logo.png" alt="Paypal" width={250} height={250} />
+                    {/* <p
                       className="text-muted well well-sm shadow-none"
                       style={{ marginTop: 10 }}
                     >
                       If there any descriptions about the Invoice, We can add in
                       this place. Lets ask from client
-                    </p>
+                    </p> */}
                   </div>
                   <div className="col-6">
                     <p className="lead">Amount Due 2/22/2014</p>
