@@ -1,6 +1,6 @@
 import axios from 'axios';
 
 export default axios.create({
-  // baseURL: `http://localhost:3000/api/`
-  baseURL: `https://api.theramyaboutique.com/api/`,
+  baseURL: `http://localhost:3001/api/`
+  // baseURL: `https://api.theramyaboutique.com/api/`,
 });

@@ -136,6 +136,17 @@ let SideNav = () => {
                   <p>Manage Orders</p>
                 </NavLink>
               </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/images"
+                  className={({ isActive }) =>
+                    isActive ? 'active nav-link' : 'nav-link'
+                  }
+                >
+                  <i className="nav-icon fas fa-file" />
+                  <p>Images</p>
+                </NavLink>
+              </li>
             </ul>
           </nav>
           {/* /.sidebar-menu */}

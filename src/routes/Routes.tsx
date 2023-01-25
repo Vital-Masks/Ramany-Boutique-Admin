@@ -13,6 +13,7 @@ import {
   Login,
   ViewOrders,
   ApproveOrder,
+  Image
 } from '../Pages';
 
 function Router() {
@@ -50,6 +51,8 @@ function Router() {
               <Route path="/categories" element={<Categories />} />
               <Route path="/viewOrders" element={<ViewOrders />} />
               <Route path="/approveOrder" element={<ApproveOrder />} />
+              <Route path="/images" element={<Image />} />
+
             </>
           )}
           {!authToken && (
