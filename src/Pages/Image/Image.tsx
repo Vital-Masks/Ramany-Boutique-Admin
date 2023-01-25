@@ -117,6 +117,7 @@ let Categories = () => {
         if (aboutUsImg.base64URL) {
           return (
             <div
+            className={styles.mainImage}
               style={{
                 border: '2px solid #d9d9d9',
                 marginLeft: 10,
@@ -132,7 +133,7 @@ let Categories = () => {
                 height="120px"
                 alt="placeholder grey 100px"
               />
-              <button onClick={() => removeAboutUsImg(aboutUsImg.file.id)}>X</button>
+              <button className={styles.xBtn} onClick={() => removeAboutUsImg(aboutUsImg.file.id)}>X</button>
             </div>
           );
         } else {
@@ -188,6 +189,7 @@ let Categories = () => {
         if (jewelleryCategoryImg.base64URL) {
           return (
             <div
+            className={styles.mainImage}
               style={{
                 border: '2px solid #d9d9d9',
                 marginLeft: 10,
@@ -203,7 +205,7 @@ let Categories = () => {
                 height="120px"
                 alt="placeholder grey 100px"
               />
-              <button onClick={() => removeJewelleryCategoryImg(jewelleryCategoryImg.file.id)}>X</button>
+              <button className={styles.xBtn} onClick={() => removeJewelleryCategoryImg(jewelleryCategoryImg.file.id)}>X</button>
             </div>
           );
         } else {
@@ -259,6 +261,7 @@ let Categories = () => {
         if (occasionTypeImg.base64URL) {
           return (
             <div
+            className={styles.mainImage}
               style={{
                 border: '2px solid #d9d9d9',
                 marginLeft: 10,
@@ -274,7 +277,7 @@ let Categories = () => {
                 height="120px"
                 alt="placeholder grey 100px"
               />
-              <button onClick={() => removeOccasionTypeImg(occasionTypeImg.file.id)}>X</button>
+              <button className={styles.xBtn} onClick={() => removeOccasionTypeImg(occasionTypeImg.file.id)}>X</button>
             </div>
           );
         } else {
@@ -330,6 +333,7 @@ let Categories = () => {
         if (whoWeAreImg.base64URL) {
           return (
             <div
+            className={styles.mainImage}
               style={{
                 border: '2px solid #d9d9d9',
                 marginLeft: 10,
@@ -345,7 +349,7 @@ let Categories = () => {
                 height="120px"
                 alt="placeholder grey 100px"
               />
-              <button onClick={() => removeWhoWeAreImg(whoWeAreImg.file.id)}>X</button>
+              <button className={styles.xBtn} onClick={() => removeWhoWeAreImg(whoWeAreImg.file.id)}>X</button>
             </div>
           );
         } else {
@@ -402,6 +406,7 @@ let Categories = () => {
           return bannerImg.map((img, index) => {
             return (
               <div
+              className={styles.mainImage}
                 key={img.file.id}
                 style={{
                   border: '2px solid #d9d9d9',
@@ -419,7 +424,8 @@ let Categories = () => {
                   height="120px"
                   alt="placeholder grey 100px"
                 />
-                <button onClick={() => removeBannerImg(img.file.id)}>X</button>
+                <button
+                className={styles.xBtn} onClick={() => removeBannerImg(img.file.id)}>X</button>
               </div>
             );
           });
