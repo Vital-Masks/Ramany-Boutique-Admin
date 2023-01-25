@@ -424,7 +424,7 @@ let Categories = () => {
             );
           });
         }
-        if (bannerImgLength < 6) {
+        if (bannerImgLength < 5) {
           return (
             <Dropzone
               onChangeStatus={onBannerImgChange}
@@ -541,7 +541,7 @@ let Categories = () => {
                                         className="col-sm-3 col-form-label"
                                         htmlFor="file"
                                     >
-                                        Jewellery Category Image
+                                        Occasion Type Image
                                     </label>
                                     <div className="col-sm-9">
                                         {/* {jewelleryId && ( */}
@@ -561,7 +561,7 @@ let Categories = () => {
                                         className="col-sm-3 col-form-label"
                                         htmlFor="file"
                                     >
-                                        Jewellery Category Image
+                                        Who We Are Image
                                     </label>
                                     <div className="col-sm-9">
                                         {/* {jewelleryId && ( */}
@@ -581,7 +581,7 @@ let Categories = () => {
                                         className="col-sm-3 col-form-label"
                                         htmlFor="file"
                                     >
-                                        Jewellery Category Image
+                                        Banner Image
                                     </label>
                                     <div className="col-sm-9">
                                         {/* {jewelleryId && ( */}
@@ -598,7 +598,7 @@ let Categories = () => {
                                 </div>
                                 <div 
                                     >
-                                    {bannerImg.length < 6 && (
+                                    {bannerImg.length < 5 && (
                                         <Dropzone
                                             onChangeStatus={onBannerImgChange}
                                             InputComponent={selectFileInput}
